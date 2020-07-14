@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="0 0 53 53">
+    <defs>
+        <linearGradient id="prefix__linear-gradient" x1=".129" x2=".948" y1=".957" y2="-.036" gradientUnits="objectBoundingBox">
+            <stop offset="0" stop-color="#f07"/>
+            <stop offset="1" stop-color="#ff724e"/>
+        </linearGradient>
+        <clipPath id="prefix__clip-path">
+            <path id="prefix__Path_144" fill="none" d="M185.629 372c0 8.873-7.193 8.544-16.066 8.544S153.5 380.87 153.5 372a16.066 16.066 0 1 1 32.132 0z" data-name="Path 144" transform="translate(-153.497 -355.931)"/>
+        </clipPath>
+        <style>
+            .prefix__cls-3{fill:#fff}
+        </style>
+    </defs>
+    <g id="prefix__googly_icon" data-name="googly icon" transform="translate(-70 -15)">
+        <rect id="prefix__Rectangle_17" width="53" height="53" fill="url(#prefix__linear-gradient)" data-name="Rectangle 17" rx="19" transform="translate(70 15)"/>
+        <circle id="prefix__Ellipse_68" cx="3.5" cy="3.5" r="3.5" class="prefix__cls-3" data-name="Ellipse 68" transform="translate(109 23)"/>
+        <path id="prefix__Path_137" d="M185.629 372c0 8.873-7.193 8.544-16.066 8.544S153.5 380.87 153.5 372a16.066 16.066 0 1 1 32.132 0z" class="prefix__cls-3" data-name="Path 137" transform="translate(-73.114 -327.214)"/>
+        <g id="prefix__Group_52" clip-path="url(#prefix__clip-path)" data-name="Group 52" transform="translate(80.383 28.717)">
+            <g id="prefix__Group_51" data-name="Group 51" transform="translate(4.909 8.67)">
+                <circle id="prefix__Ellipse_47" cx="11.157" cy="11.157" r="11.157" fill="#0a9dff" data-name="Ellipse 47"/>
+                <path id="prefix__Path_142" fill="aqua" d="M188.8 403.556a10.041 10.041 0 0 1-20.083 0c0-5.546 4.5 5 10.041 5s10.042-10.546 10.042-5z" data-name="Path 142" opacity="0.4" transform="translate(-167.6 -392.399)"/>
+                <circle id="prefix__Ellipse_48" cx="8.133" cy="8.133" r="8.133" fill="#242323" data-name="Ellipse 48" transform="rotate(-76.597 11.56 7.73)"/>
+                <path id="prefix__Path_143" d="M202.934 396.064a1.229 1.229 0 1 1-1.229-1.23 1.229 1.229 0 0 1 1.229 1.23z" class="prefix__cls-3" data-name="Path 143" transform="translate(-186.787 -388.103)"/>
+            </g>
+        </g>
+        <path id="prefix__Path_145" d="M202.938 405.623a2.125 2.125 0 1 1-2.125-2.125 2.125 2.125 0 0 1 2.125 2.125z" class="prefix__cls-3" data-name="Path 145" transform="translate(-100.416 -355.95)"/>
+        <path id="prefix__Path_147" d="M191.315 391.2a2.549 2.549 0 1 1-2.549-2.549 2.549 2.549 0 0 1 2.549 2.549z" class="prefix__cls-3" data-name="Path 147" transform="translate(-92.881 -346.98)"/>
+        <path id="prefix__Path_156" fill="#dff3fd" d="M203.1 370.388s8.65 1.5 9.214 10.342c2.825-10.718-9.214-10.342-9.214-10.342z" data-name="Path 156" transform="translate(-103.084 -335.946)"/>
+    </g>
+</svg>
