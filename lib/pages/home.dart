@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:googly_eyes/utilities/getImage.dart';
 
 class Home extends StatelessWidget {
+  SelectImage _image = SelectImage();
+
+  // void pickImage(String type) async {
+  //   return type == 'gallery' ? _image.getImage() :
+  //   _image.takePicture();
+  // }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -76,6 +84,10 @@ class Home extends StatelessWidget {
                         iconSize: 105,
                         onPressed: () {
                           print('add to gallery presed');
+                          _image.getImage().then((img) {
+                            Navigator.pushNamed(context, '/image',
+                                arguments: {'imgFile': img});
+                          });
                         },
                       ),
                       SizedBox(height: 20),
@@ -107,7 +119,12 @@ class Home extends StatelessWidget {
                         icon: Image.asset('assets/camera_icon.png'),
                         iconSize: 105,
                         onPressed: () {
-                          print('tale a picture presed');
+                          _image.getPicture().then((img) {
+                            Navigator.pushNamed(context, '/image',
+                                arguments: {'imgFile': img});
+                          });
+                          print('take a picture presed');
+                          print(_image.getPicture());
                         },
                       ),
                       SizedBox(height: 20),
@@ -138,18 +155,24 @@ class Home extends StatelessWidget {
                 height: 100,
               ),
             ),
-            FlatButton(
-              onPressed: () {
-                print('pick your choice presed');
-              },
-              color: Colors.transparent,
-              child: Text('Pick your choice',
-                  style: TextStyle(
-                      fontSize: 24,
-                      color: Colors.white,
-                      fontFamily: 'HelveticaNeue',
-                      fontWeight: FontWeight.w100)),
-            ),
+            Text('Pick your choice',
+                style: TextStyle(
+                    fontSize: 24,
+                    color: Colors.white,
+                    fontFamily: 'HelveticaNeue',
+                    fontWeight: FontWeight.w100)),
+            // FlatButton(
+            //   onPressed: () {
+            //     print('pick your choice presed');
+            //   },
+            //   color: Colors.transparent,
+            //   child: Text('Pick your choice',
+            //       style: TextStyle(
+            //           fontSize: 24,
+            //           color: Colors.white,
+            //           fontFamily: 'HelveticaNeue',
+            //           fontWeight: FontWeight.w100)),
+            // ),
             Expanded(
               flex: 1,
               child: Container(
