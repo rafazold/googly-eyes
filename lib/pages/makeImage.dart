@@ -5,6 +5,7 @@ import 'package:googly_eyes/utilities/getImage.dart';
 import 'package:googly_eyes/utilities/eyesCard.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'dart:convert';
 
 class MakeImage extends StatefulWidget {
   @override
@@ -15,13 +16,32 @@ class _MakeImageState extends State<MakeImage> {
   // SelectImage _image = SelectImage();
   ScrollController _controller = new ScrollController();
   String _assetsPath;
-
+  List someImages;
   @override
   void initState() {
     getEyes().then((path) => setState(() {
           _assetsPath = path;
         }));
+    _initImages('initial');
     super.initState();
+  }
+
+  Future _initImages(String batch) async {
+    // >> To get paths you need these 2 lines
+    final manifestContent =
+        await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
+
+    final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+    // >> To get paths you need these 2 lines
+
+    final imagePaths = manifestMap.keys
+        .where((String key) => key.contains('eyes/$batch'))
+        .where((String key) => key.contains('.png'))
+        .toList();
+
+    setState(() {
+      someImages = imagePaths;
+    });
   }
 
   Future<String> getEyes() async {
@@ -31,23 +51,11 @@ class _MakeImageState extends State<MakeImage> {
 
     print('yoooooo: $appDocPath');
     return appDocPath;
-    // final eyesDir = new Directory('/assets');
-    // eyesDir
-    //     .list(recursive: true, followLinks: false)
-    //     .listen((FileSystemEntity entity) {
-    //   print(entity.path);
-    // });
   }
 
   Future printPath() async {
-    final dir = Directory('$_assetsPath/flutter_assets/');
-    final files = await dir
-        .list(recursive: true, followLinks: false)
-        .listen((FileSystemEntity entity) {
-      print(entity.path);
-    });
-    ;
-    print('+++++++++++++++++++++++++++++++++++++++++++++++++$files');
+    _initImages('initial')
+        .then((value) => someImages.forEach((element) => print(element)));
   }
 
   @override
@@ -70,52 +78,63 @@ class _MakeImageState extends State<MakeImage> {
             ),
             Expanded(
               child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xffff0077), Color(0xffff724e)],
-                    stops: [0, 1],
-                    begin: Alignment(-0.93, 0.36),
-                    end: Alignment(0.93, -0.36),
-                    // angle: 69,
-                    // scale: undefined,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xffff0077), Color(0xffff724e)],
+                      stops: [0, 1],
+                      begin: Alignment(-0.93, 0.36),
+                      end: Alignment(0.93, -0.36),
+                      // angle: 69,
+                      // scale: undefined,
+                    ),
                   ),
-                ),
-                child: ListView(
-                  physics: const AlwaysScrollableScrollPhysics(), // new
-                  controller: _controller,
-                  scrollDirection: Axis.horizontal,
-                  children: <Widget>[
-                    EyesCard(
-                        index: 1,
-                        onPress: () {},
-                        eyes: 'assets/eyes/initial/group_84.png'),
-                    EyesCard(
-                        index: 1,
-                        onPress: () {},
-                        eyes: 'assets/eyes/initial/group_84.png'),
-                    EyesCard(
-                        index: 1,
-                        onPress: () {},
-                        eyes: 'assets/eyes/initial/group_84.png'),
-                    EyesCard(
-                        index: 1,
-                        onPress: () {},
-                        eyes: 'assets/eyes/initial/group_84.png'),
-                    EyesCard(
-                        index: 1,
-                        onPress: () {},
-                        eyes: 'assets/eyes/initial/group_84.png'),
-                    EyesCard(
-                        index: 1,
-                        onPress: () {},
-                        eyes: 'assets/eyes/initial/group_84.png'),
-                    EyesCard(
-                        index: 1,
-                        onPress: () {},
-                        eyes: 'assets/eyes/initial/group_84.png')
-                  ],
-                ),
-              ),
+                  // child: ListView(
+                  // physics: const AlwaysScrollableScrollPhysics(), // new
+                  // controller: _controller,
+                  // scrollDirection: Axis.horizontal,
+                  //   children: <Widget>[
+                  // EyesCard(
+                  //     index: 1,
+                  //     onPress: () {},
+                  //     eyes: 'assets/eyes/initial/group_84.png'),
+                  //     EyesCard(
+                  //         index: 1,
+                  //         onPress: () {},
+                  //         eyes: 'assets/eyes/initial/group_84.png'),
+                  //     EyesCard(
+                  //         index: 1,
+                  //         onPress: () {},
+                  //         eyes: 'assets/eyes/initial/group_84.png'),
+                  //     EyesCard(
+                  //         index: 1,
+                  //         onPress: () {},
+                  //         eyes: 'assets/eyes/initial/group_84.png'),
+                  //     EyesCard(
+                  //         index: 1,
+                  //         onPress: () {},
+                  //         eyes: 'assets/eyes/initial/group_84.png'),
+                  //     EyesCard(
+                  //         index: 1,
+                  //         onPress: () {},
+                  //         eyes: 'assets/eyes/initial/group_84.png'),
+                  //     EyesCard(
+                  //         index: 1,
+                  //         onPress: () {},
+                  //         eyes: 'assets/eyes/initial/group_84.png')
+                  //   ],
+                  // ),
+                  child: ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(), // new
+                    controller: _controller,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: someImages.length,
+                    itemBuilder: (context, index) {
+                      return EyesCard(
+                          index: index,
+                          onPress: () {},
+                          imagePath: someImages[index]);
+                    },
+                  )),
               flex: 1,
             )
           ],

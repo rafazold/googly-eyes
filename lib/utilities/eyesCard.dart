@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 class EyesCard extends StatelessWidget {
-  EyesCard({@required this.index, @required this.onPress, this.eyes});
+  EyesCard(
+      {@required this.index, @required this.onPress, @required this.imagePath});
 
   final index;
   final Function onPress;
-  final eyes;
+  final imagePath;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,8 @@ class EyesCard extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Image.asset('assets/eyes/initial/group_84.png'),
+            child:
+                FittedBox(child: Image.asset(imagePath), fit: BoxFit.scaleDown),
           ),
         ),
       ),
