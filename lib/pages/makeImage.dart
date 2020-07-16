@@ -16,6 +16,11 @@ class _MakeImageState extends State<MakeImage> {
   // SelectImage _image = SelectImage();
   ScrollController _controller = new ScrollController();
   String _assetsPath;
+  Map droppedEyes = {
+    'xPos': 0,
+    'yPos': 0,
+    'img': '',
+  };
   List someImages;
   @override
   void initState() {
@@ -69,11 +74,13 @@ class _MakeImageState extends State<MakeImage> {
         child: Column(
           children: <Widget>[
             Expanded(
-              child: Container(
-                child: arguments['imgFile'] != null
-                    ? Image.asset(arguments['imgFile'].path)
-                    : Text('No image selected'),
-              ),
+              child: DragTarget(builder: (context, list, list2) {
+                return Stack(children: [
+                  arguments['imgFile'] != null
+                      ? Image.asset(arguments['imgFile'].path)
+                      : Text('No image selected'),
+                ]);
+              }),
               flex: 7,
             ),
             Expanded(
@@ -88,41 +95,6 @@ class _MakeImageState extends State<MakeImage> {
                       // scale: undefined,
                     ),
                   ),
-                  // child: ListView(
-                  // physics: const AlwaysScrollableScrollPhysics(), // new
-                  // controller: _controller,
-                  // scrollDirection: Axis.horizontal,
-                  //   children: <Widget>[
-                  // EyesCard(
-                  //     index: 1,
-                  //     onPress: () {},
-                  //     eyes: 'assets/eyes/initial/group_84.png'),
-                  //     EyesCard(
-                  //         index: 1,
-                  //         onPress: () {},
-                  //         eyes: 'assets/eyes/initial/group_84.png'),
-                  //     EyesCard(
-                  //         index: 1,
-                  //         onPress: () {},
-                  //         eyes: 'assets/eyes/initial/group_84.png'),
-                  //     EyesCard(
-                  //         index: 1,
-                  //         onPress: () {},
-                  //         eyes: 'assets/eyes/initial/group_84.png'),
-                  //     EyesCard(
-                  //         index: 1,
-                  //         onPress: () {},
-                  //         eyes: 'assets/eyes/initial/group_84.png'),
-                  //     EyesCard(
-                  //         index: 1,
-                  //         onPress: () {},
-                  //         eyes: 'assets/eyes/initial/group_84.png'),
-                  //     EyesCard(
-                  //         index: 1,
-                  //         onPress: () {},
-                  //         eyes: 'assets/eyes/initial/group_84.png')
-                  //   ],
-                  // ),
                   child: ListView.builder(
                     physics: const AlwaysScrollableScrollPhysics(), // new
                     controller: _controller,

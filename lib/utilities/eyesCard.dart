@@ -14,7 +14,7 @@ class EyesCard extends StatelessWidget {
       color: Colors.transparent,
       elevation: 0,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
         child: Container(
           width: 80,
           height: 80,
@@ -31,8 +31,11 @@ class EyesCard extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child:
-                FittedBox(child: Image.asset(imagePath), fit: BoxFit.scaleDown),
+            child: FittedBox(
+                child: LongPressDraggable(
+                    child: Image.asset(imagePath),
+                    feedback: Image.asset(imagePath)),
+                fit: BoxFit.scaleDown),
           ),
         ),
       ),
