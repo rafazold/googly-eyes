@@ -1,7 +1,7 @@
-import 'dart:ffi';
+// import 'dart:ffi';
 
 import 'package:flutter/material.dart';
-import 'package:googly_eyes/utilities/getImage.dart';
+// import 'package:googly_eyes/utilities/getImage.dart';
 import 'package:googly_eyes/utilities/eyesCard.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -74,9 +74,9 @@ class _MakeImageState extends State<MakeImage> {
     bool succesfulDrop;
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     return Scaffold(
-      appBar: AppBar(
-        title: FlatButton(onPressed: printPath, child: Text('get Eyes')),
-      ),
+      // appBar: AppBar(
+      //   title: FlatButton(onPressed: printPath, child: Text('get Eyes')),
+      // ),
       body: Container(
         child: Column(
           children: <Widget>[
@@ -100,7 +100,7 @@ class _MakeImageState extends State<MakeImage> {
                 builder: (context, list, list2) {
                   return Stack(children: [
                     arguments['imgFile'] != null
-                        ? Image.asset(arguments['imgFile'].path)
+                        ? Center(child: Image.asset(arguments['imgFile'].path))
                         : Text('No image selected'),
                     !showEyes
                         ? Text('')
@@ -115,7 +115,7 @@ class _MakeImageState extends State<MakeImage> {
                               onDragEnd: (details) {
                                 setState(() {
                                   eyesPosX = details.offset.dx;
-                                  eyesPosy = details.offset.dy - 80;
+                                  eyesPosy = details.offset.dy;
                                 });
                                 print(
                                     'details::::::::::::::::::::::::::::::::   ${details.offset} - direction: ${details.offset.direction} - x: ${details.offset.dx} - y: ${details.offset.dy}');
