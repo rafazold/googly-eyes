@@ -82,101 +82,56 @@ class _MakeImageState extends State<MakeImage> {
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         elevation: 0.0,
-        centerTitle: true,
-        title: Row(
-          children: <Widget>[
-            RawMaterialButton(
-              onPressed: () {},
-              child: Stack(
-                alignment: AlignmentDirectional.center,
+        // centerTitle: true,
+        title: RawMaterialButton(
+          onPressed: () {},
+          child: Stack(
+            alignment: AlignmentDirectional.center,
+            children: <Widget>[
+              Opacity(
+                opacity: 0.25999999046325684,
+                child: Container(
+                    width: 67,
+                    height: 30,
+                    decoration: BoxDecoration(
+                        color: Color(0xff000000),
+                        borderRadius: BorderRadius.circular(21))),
+              ),
+              Text('Back'),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          // Container(),
+          SizedBox(width: 20),
+          RawMaterialButton(
+            onPressed: () {},
+            child: Container(
+              width: 89,
+              height: 30,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(21),
+                  gradient: LinearGradient(
+                    colors: [Color(0xffff0775), Color(0xfffc6c4e)],
+                    stops: [0, 1],
+                    begin: Alignment(-0.98, 0.19),
+                    end: Alignment(0.98, -0.19),
+                    // angle: 79,
+                    // scale: undefined,
+                  )),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                  Opacity(
-                    opacity: 0.25999999046325684,
-                    child: Container(
-                        width: 67,
-                        height: 30,
-                        decoration: BoxDecoration(
-                            color: Color(0xff000000),
-                            borderRadius: BorderRadius.circular(21))),
-                  ),
-                  Text('Back'),
+                  // SizedBox(width: 20),
+                  Icon(Icons.save),
+                  Text('Save'),
+                  // SizedBox(width: 20),
                 ],
               ),
             ),
-            RawMaterialButton(
-              onPressed: () {},
-              child: Container(
-                width: 89,
-                height: 30,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(21),
-                    gradient: LinearGradient(
-                      colors: [Color(0xffff0775), Color(0xfffc6c4e)],
-                      stops: [0, 1],
-                      begin: Alignment(-0.98, 0.19),
-                      end: Alignment(0.98, -0.19),
-                      // angle: 79,
-                      // scale: undefined,
-                    )),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    SizedBox(width: 20),
-                    Icon(Icons.save),
-                    Text('Save'),
-                    SizedBox(width: 20),
-                  ],
-                ),
-              ),
-            )
-          ],
-        ),
-        // leading: RawMaterialButton(
-        //   onPressed: () {},
-        //   child: Stack(
-        //     alignment: AlignmentDirectional.center,
-        //     children: <Widget>[
-        //       Opacity(
-        //         opacity: 0.25999999046325684,
-        //         child: Container(
-        //             width: 67,
-        //             height: 30,
-        //             decoration: BoxDecoration(
-        //                 color: Color(0xff000000),
-        //                 borderRadius: BorderRadius.circular(21))),
-        //       ),
-        //       Text('Back'),
-        //     ],
-        //   ),
-        // ),
-        // actions: <Widget>[
-        // RawMaterialButton(
-        //   onPressed: () {},
-        //   child: Container(
-        //     width: 89,
-        //     height: 30,
-        //     decoration: BoxDecoration(
-        //         borderRadius: BorderRadius.circular(21),
-        //         gradient: LinearGradient(
-        //           colors: [Color(0xffff0775), Color(0xfffc6c4e)],
-        //           stops: [0, 1],
-        //           begin: Alignment(-0.98, 0.19),
-        //           end: Alignment(0.98, -0.19),
-        //           // angle: 79,
-        //           // scale: undefined,
-        //         )),
-        //     child: Row(
-        //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //       children: <Widget>[
-        //         SizedBox(width: 20),
-        //         Icon(Icons.save),
-        //         Text('Save'),
-        //         SizedBox(width: 20),
-        //       ],
-        //     ),
-        //   ),
-        // )
-        // ],
+          ),
+          SizedBox(width: 20),
+        ],
       ),
       body: Container(
         child: Column(
