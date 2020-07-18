@@ -20,6 +20,9 @@ class _MakeImageState extends State<MakeImage> {
   double eyesPosX = 100.0;
   double eyesPosy = 200.0;
   String eyesImg = 'assets/eyes/initial/group_84.png';
+  double eyesScale = 1.6;
+  double eyesBaseSize = 1.6;
+  double eyesLastSize;
   bool showEyes = false;
   // Map droppedEyes = {
   //   'xPos': 0,
@@ -74,9 +77,107 @@ class _MakeImageState extends State<MakeImage> {
     bool succesfulDrop;
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     return Scaffold(
-      // appBar: AppBar(
-      //   title: FlatButton(onPressed: printPath, child: Text('get Eyes')),
-      // ),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        centerTitle: true,
+        title: Row(
+          children: <Widget>[
+            RawMaterialButton(
+              onPressed: () {},
+              child: Stack(
+                alignment: AlignmentDirectional.center,
+                children: <Widget>[
+                  Opacity(
+                    opacity: 0.25999999046325684,
+                    child: Container(
+                        width: 67,
+                        height: 30,
+                        decoration: BoxDecoration(
+                            color: Color(0xff000000),
+                            borderRadius: BorderRadius.circular(21))),
+                  ),
+                  Text('Back'),
+                ],
+              ),
+            ),
+            RawMaterialButton(
+              onPressed: () {},
+              child: Container(
+                width: 89,
+                height: 30,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(21),
+                    gradient: LinearGradient(
+                      colors: [Color(0xffff0775), Color(0xfffc6c4e)],
+                      stops: [0, 1],
+                      begin: Alignment(-0.98, 0.19),
+                      end: Alignment(0.98, -0.19),
+                      // angle: 79,
+                      // scale: undefined,
+                    )),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    SizedBox(width: 20),
+                    Icon(Icons.save),
+                    Text('Save'),
+                    SizedBox(width: 20),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+        // leading: RawMaterialButton(
+        //   onPressed: () {},
+        //   child: Stack(
+        //     alignment: AlignmentDirectional.center,
+        //     children: <Widget>[
+        //       Opacity(
+        //         opacity: 0.25999999046325684,
+        //         child: Container(
+        //             width: 67,
+        //             height: 30,
+        //             decoration: BoxDecoration(
+        //                 color: Color(0xff000000),
+        //                 borderRadius: BorderRadius.circular(21))),
+        //       ),
+        //       Text('Back'),
+        //     ],
+        //   ),
+        // ),
+        // actions: <Widget>[
+        // RawMaterialButton(
+        //   onPressed: () {},
+        //   child: Container(
+        //     width: 89,
+        //     height: 30,
+        //     decoration: BoxDecoration(
+        //         borderRadius: BorderRadius.circular(21),
+        //         gradient: LinearGradient(
+        //           colors: [Color(0xffff0775), Color(0xfffc6c4e)],
+        //           stops: [0, 1],
+        //           begin: Alignment(-0.98, 0.19),
+        //           end: Alignment(0.98, -0.19),
+        //           // angle: 79,
+        //           // scale: undefined,
+        //         )),
+        //     child: Row(
+        //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //       children: <Widget>[
+        //         SizedBox(width: 20),
+        //         Icon(Icons.save),
+        //         Text('Save'),
+        //         SizedBox(width: 20),
+        //       ],
+        //     ),
+        //   ),
+        // )
+        // ],
+      ),
       body: Container(
         child: Column(
           children: <Widget>[
@@ -98,36 +199,58 @@ class _MakeImageState extends State<MakeImage> {
                   print("LEAVE 2!");
                 },
                 builder: (context, list, list2) {
-                  return Stack(children: [
-                    arguments['imgFile'] != null
-                        ? Center(child: Image.asset(arguments['imgFile'].path))
-                        : Text('No image selected'),
-                    !showEyes
-                        ? Text('')
-                        : Positioned(
-                            top: eyesPosy,
-                            left: eyesPosX,
-                            // height: 38,
-                            // width: 80,
-                            child: LongPressDraggable<String>(
-                              onDragStarted: () => print("DRAG START!"),
-                              onDragCompleted: () => print("DRAG COMPLETED!"),
-                              onDragEnd: (details) {
-                                setState(() {
-                                  eyesPosX = details.offset.dx;
-                                  eyesPosy = details.offset.dy;
-                                });
-                                print(
-                                    'details::::::::::::::::::::::::::::::::   ${details.offset} - direction: ${details.offset.direction} - x: ${details.offset.dx} - y: ${details.offset.dy}');
-                              },
-                              feedback: Image.asset(eyesImg),
-                              // child: ZoomableImage(AssetImage(eyesImg)),
-                              child: Image.asset(eyesImg),
-                              data: eyesImg,
-                              childWhenDragging: Container(),
-                            ),
-                          )
-                  ]);
+                  return GestureDetector(
+                    onScaleStart: (details) {
+                      print('scale details::::: ----- $details');
+                    },
+                    onScaleUpdate: (details) {
+                      if (details.scale != 1.0) {
+                        print(
+                            'UPDATE!!!! ${num.parse(details.scale.toStringAsFixed(2))}');
+                        setState(() {
+                          eyesScale = eyesBaseSize /
+                              num.parse(details.scale.toStringAsFixed(1));
+                        });
+                      }
+                    },
+                    onScaleEnd: (details) {
+                      print('FINISHED!!! ------->>>> $details');
+                      eyesBaseSize = eyesScale;
+                    },
+                    child: Stack(children: [
+                      arguments['imgFile'] != null
+                          ? Center(
+                              child:
+                                  Image.file(File(arguments['imgFile'].path)))
+                          : Text('No image selected'),
+                      !showEyes
+                          ? Text('')
+                          : Positioned(
+                              top: eyesPosy,
+                              left: eyesPosX,
+                              // height: 38,
+                              // width: 80,
+                              child: Draggable<String>(
+                                onDragStarted: () => print("DRAG START!"),
+                                onDragCompleted: () => print("DRAG COMPLETED!"),
+                                onDragEnd: (details) {
+                                  setState(() {
+                                    eyesPosX = details.offset.dx;
+                                    eyesPosy = details.offset.dy;
+                                  });
+                                  print(
+                                      'details::::::::::::::::::::::::::::::::   ${details.offset} - direction: ${details.offset.direction} - x: ${details.offset.dx} - y: ${details.offset.dy}');
+                                },
+                                feedback:
+                                    Image.asset(eyesImg, scale: eyesScale),
+                                // child: ZoomableImage(AssetImage(eyesImg)),
+                                child: Image.asset(eyesImg, scale: eyesScale),
+                                data: eyesImg,
+                                childWhenDragging: Container(),
+                              ),
+                            )
+                    ]),
+                  );
                 },
                 // onAccept: (data) => print('data'),
               ),
