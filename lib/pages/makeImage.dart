@@ -1,13 +1,13 @@
 // import 'dart:ffi';
 
 import 'package:flutter/material.dart';
-// import 'package:googly_eyes/utilities/getImage.dart';
 import 'package:googly_eyes/utilities/eyesCard.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'dart:async';
-// import 'package:zoomable_image/zoomable_image.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 
 class MakeImage extends StatefulWidget {
   @override
@@ -16,14 +16,16 @@ class MakeImage extends StatefulWidget {
 
 class _MakeImageState extends State<MakeImage> {
   ScrollController _controller = new ScrollController();
+  ScreenshotController screenshotController = ScreenshotController();
   String _assetsPath;
-  double eyesPosX = 100.0;
+  double eyesPosX = 200.0;
   double eyesPosy = 200.0;
   String eyesImg = 'assets/eyes/initial/group_84.png';
   double eyesScale = 1.6;
   double eyesBaseSize = 1.6;
   double eyesLastSize;
   bool showEyes = false;
+  File _imageFile;
   // Map droppedEyes = {
   //   'xPos': 0,
   //   'yPos': 0,
@@ -69,32 +71,32 @@ class _MakeImageState extends State<MakeImage> {
   Future printPath() async {
     // _initImages('initial')
     //     .then((value) => someImages.forEach((element) => print(element)));
-    print('');
   }
 
   @override
   Widget build(BuildContext context) {
-    bool succesfulDrop;
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     return Scaffold(
-      extendBodyBehindAppBar: true,
+      // extendBodyBehindAppBar: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         // centerTitle: true,
         title: RawMaterialButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
           child: Stack(
             alignment: AlignmentDirectional.center,
             children: <Widget>[
               Opacity(
                 opacity: 0.25999999046325684,
                 child: Container(
-                    width: 67,
-                    height: 30,
+                    width: 67.0,
+                    height: 30.0,
                     decoration: BoxDecoration(
-                        color: Color(0xff000000),
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(21))),
               ),
               Text('Back'),
@@ -105,7 +107,24 @@ class _MakeImageState extends State<MakeImage> {
           // Container(),
           SizedBox(width: 20),
           RawMaterialButton(
-            onPressed: () {},
+            onPressed: () {
+              print('save pressed');
+              _imageFile = null;
+              screenshotController
+                  .capture(delay: Duration(milliseconds: 10))
+                  .then((File image) async {
+                print('Capture Done: ${image.path}');
+                setState(() {
+                  _imageFile = image;
+                });
+                final result =
+                    await GallerySaver.saveImage(image.path).then((path) {
+                  print("File Saved to Gallery: $path");
+                });
+              }).catchError((onError) {
+                print(onError);
+              });
+            },
             child: Container(
               width: 89,
               height: 30,
@@ -159,12 +178,14 @@ class _MakeImageState extends State<MakeImage> {
                       print('scale details::::: ----- $details');
                     },
                     onScaleUpdate: (details) {
-                      if (details.scale != 1.0) {
-                        print(
-                            'UPDATE!!!! ${num.parse(details.scale.toStringAsFixed(2))}');
+                      double scaleValue =
+                          num.parse(details.scale.toStringAsFixed(2));
+                      int rounded = (scaleValue * 100).toInt();
+
+                      if (rounded.isEven) {
+                        // print('UPDATE!!!! $scaleValue}');
                         setState(() {
-                          eyesScale = eyesBaseSize /
-                              num.parse(details.scale.toStringAsFixed(1));
+                          eyesScale = (eyesBaseSize / scaleValue).clamp(0.3, 5);
                         });
                       }
                     },
@@ -172,39 +193,49 @@ class _MakeImageState extends State<MakeImage> {
                       print('FINISHED!!! ------->>>> $details');
                       eyesBaseSize = eyesScale;
                     },
-                    child: Stack(children: [
-                      arguments['imgFile'] != null
-                          ? Center(
-                              child:
-                                  Image.file(File(arguments['imgFile'].path)))
-                          : Text('No image selected'),
-                      !showEyes
-                          ? Text('')
-                          : Positioned(
-                              top: eyesPosy,
-                              left: eyesPosX,
-                              // height: 38,
-                              // width: 80,
-                              child: Draggable<String>(
-                                onDragStarted: () => print("DRAG START!"),
-                                onDragCompleted: () => print("DRAG COMPLETED!"),
-                                onDragEnd: (details) {
-                                  setState(() {
-                                    eyesPosX = details.offset.dx;
-                                    eyesPosy = details.offset.dy;
-                                  });
-                                  print(
-                                      'details::::::::::::::::::::::::::::::::   ${details.offset} - direction: ${details.offset.direction} - x: ${details.offset.dx} - y: ${details.offset.dy}');
-                                },
-                                feedback:
-                                    Image.asset(eyesImg, scale: eyesScale),
-                                // child: ZoomableImage(AssetImage(eyesImg)),
-                                child: Image.asset(eyesImg, scale: eyesScale),
-                                data: eyesImg,
-                                childWhenDragging: Container(),
-                              ),
-                            )
-                    ]),
+                    child: Screenshot(
+                      controller: screenshotController,
+                      child: Stack(children: [
+                        arguments['imgFile'] != null
+                            ? Center(
+                                child: OverflowBox(
+                                    minWidth: 0.0,
+                                    minHeight: 0.0,
+                                    maxHeight: double.infinity,
+                                    child: Image.file(
+                                        File(arguments['imgFile'].path))))
+                            : Text('No image selected'),
+                        !showEyes
+                            ? Text('')
+                            : Positioned(
+                                top: eyesPosy - 80.00,
+                                left: eyesPosX,
+                                // height: 38,
+                                // width: 80,
+                                child: Draggable<String>(
+                                  onDragStarted: () => print("DRAG START!"),
+                                  onDragCompleted: () =>
+                                      print("DRAG COMPLETED!"),
+                                  onDragEnd: (details) {
+                                    setState(() {
+                                      eyesPosX =
+                                          details.offset.dx.clamp(-30, 300);
+                                      eyesPosy =
+                                          details.offset.dy.clamp(-30, 700);
+                                    });
+                                    print(
+                                        'details::::::::::::::::::::::::::::::::   ${details.offset} - direction: ${details.offset.direction} - x: ${details.offset.dx} - y: ${details.offset.dy} POSx: $eyesPosX POSy: $eyesPosy');
+                                  },
+                                  feedback:
+                                      Image.asset(eyesImg, scale: eyesScale),
+                                  // child: ZoomableImage(AssetImage(eyesImg)),
+                                  child: Image.asset(eyesImg, scale: eyesScale),
+                                  data: eyesImg,
+                                  childWhenDragging: Container(),
+                                ),
+                              )
+                      ]),
+                    ),
                   );
                 },
                 // onAccept: (data) => print('data'),
