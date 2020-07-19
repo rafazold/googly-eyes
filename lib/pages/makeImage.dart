@@ -8,6 +8,8 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:screenshot/screenshot.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'package:wc_flutter_share/wc_flutter_share.dart';
+import 'package:flutter/services.dart';
 
 class MakeImage extends StatefulWidget {
   @override
@@ -77,7 +79,7 @@ class _MakeImageState extends State<MakeImage> {
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     return Scaffold(
-      // extendBodyBehindAppBar: true,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
@@ -105,10 +107,73 @@ class _MakeImageState extends State<MakeImage> {
         ),
         actions: <Widget>[
           // Container(),
+          // SizedBox(width: 20),
+          // RawMaterialButton(
+          //   // onPressed: () { // for SAVE
+          //   //   print('save pressed');
+          //   //   _imageFile = null;
+          //   //   screenshotController
+          //   //       .capture(delay: Duration(milliseconds: 10))
+          //   //       .then((File image) async {
+          //   //     print('Capture Done: ${image.path}');
+          //   //     setState(() {
+          //   //       _imageFile = image;
+          //   //     });
+          //   //     final result =
+          //   //         await GallerySaver.saveImage(image.path).then((path) {
+          //   //       print("File Saved to Gallery: $path");
+          //   //     });
+          //   //   }).catchError((onError) {
+          //   //     print(onError);
+          //   //   });
+          //   // },
+          //   onPressed: () {
+          //     print('save pressed');
+          //     _imageFile = null;
+          //     screenshotController
+          //         .capture(delay: Duration(milliseconds: 10))
+          //         .then((File image) async {
+          //       print('Capture Done: ${image.path}');
+          //       setState(() {
+          //         _imageFile = image;
+          //       });
+          //       final result =
+          //           await GallerySaver.saveImage(image.path).then((path) {
+          //         print("File Saved to Gallery: $path");
+          //         return image.path;
+          //       });
+          //     }).catchError((onError) {
+          //       print(onError);
+          //     });
+          //   },
+          //   child: Container(
+          //     width: 89,
+          //     height: 30,
+          //     decoration: BoxDecoration(
+          //         borderRadius: BorderRadius.circular(21),
+          //         gradient: LinearGradient(
+          //           colors: [Color(0xffff0775), Color(0xfffc6c4e)],
+          //           stops: [0, 1],
+          //           begin: Alignment(-0.98, 0.19),
+          //           end: Alignment(0.98, -0.19),
+          //           // angle: 79,
+          //           // scale: undefined,
+          //         )),
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       children: <Widget>[
+          //         // SizedBox(width: 20),
+          //         Icon(Icons.save),
+          //         Text('Save'),
+          //         // SizedBox(width: 20),
+          //       ],
+          //     ),
+          //   ),
+          // ),
           SizedBox(width: 20),
           RawMaterialButton(
             onPressed: () {
-              print('save pressed');
+              print('done pressed');
               _imageFile = null;
               screenshotController
                   .capture(delay: Duration(milliseconds: 10))
@@ -117,10 +182,8 @@ class _MakeImageState extends State<MakeImage> {
                 setState(() {
                   _imageFile = image;
                 });
-                final result =
-                    await GallerySaver.saveImage(image.path).then((path) {
-                  print("File Saved to Gallery: $path");
-                });
+                Navigator.pushNamed(context, '/edit',
+                    arguments: {'imgFile': image.path});
               }).catchError((onError) {
                 print(onError);
               });
@@ -139,17 +202,17 @@ class _MakeImageState extends State<MakeImage> {
                     // scale: undefined,
                   )),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   // SizedBox(width: 20),
-                  Icon(Icons.save),
-                  Text('Save'),
+                  Icon(Icons.done),
+                  Text('Done'),
                   // SizedBox(width: 20),
                 ],
               ),
             ),
           ),
-          SizedBox(width: 20),
+          SizedBox(width: 10),
         ],
       ),
       body: Container(
@@ -208,7 +271,7 @@ class _MakeImageState extends State<MakeImage> {
                         !showEyes
                             ? Text('')
                             : Positioned(
-                                top: eyesPosy - 80.00,
+                                top: eyesPosy,
                                 left: eyesPosX,
                                 // height: 38,
                                 // width: 80,

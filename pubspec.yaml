@@ -30,6 +30,7 @@ dependencies:
   screenshot: ^0.2.0
   image_gallery_saver: ^1.5.0
   gallery_saver: ^2.0.1
+  wc_flutter_share: ^0.2.2
 
 
   # The following adds the Cupertino Icons font to your application.
