@@ -8,6 +8,9 @@ import 'package:screenshot/screenshot.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 import 'package:flutter/services.dart';
+import 'package:googly_eyes/utilities/recordSound.dart';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class AddVoice extends StatefulWidget {
   @override
@@ -22,7 +25,7 @@ class _AddVoiceState extends State<AddVoice> {
       print('path to bytes');
       await WcFlutterShare.share(
           sharePopupTitle: 'share',
-          fileName: 'share.png',
+          fileName: 'googly_eyes.png',
           mimeType: 'image/png',
           bytesOfFile: bytes.buffer.asUint8List());
     } catch (e) {
@@ -34,6 +37,8 @@ class _AddVoiceState extends State<AddVoice> {
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     bool audioRecorded = false;
+    String audioUrl;
+    FlutterSoundRecorder recorderModule = FlutterSoundRecorder();
 
     print(arguments);
     return Scaffold(
@@ -87,6 +92,7 @@ class _AddVoiceState extends State<AddVoice> {
             // },
             onPressed: () {
               print('share pressed');
+              _shareImage(arguments['imgFile']);
               // _imageFile = null;
               // screenshotController
               //     .capture(delay: Duration(milliseconds: 10))
@@ -131,7 +137,7 @@ class _AddVoiceState extends State<AddVoice> {
           SizedBox(width: 2),
           RawMaterialButton(
             onPressed: () {
-              print('share pressed');
+              print('Clip pressed');
             },
             child: Container(
               width: 80,
@@ -193,13 +199,7 @@ class _AddVoiceState extends State<AddVoice> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        IconButton(
-                            iconSize: 53,
-                            icon: Image.asset(
-                              'assets/record_icon.png',
-                              // height: 53,
-                            ),
-                            onPressed: () {}),
+                        RecordSound(),
                         Text('Record a short message',
                             style: TextStyle(
                               fontFamily: 'HelveticaNeue',

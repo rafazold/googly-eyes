@@ -16,26 +16,6 @@ class EyesCard extends StatefulWidget {
 class _EyesCardState extends State<EyesCard> {
   StreamController<double> controller = StreamController<double>();
 
-  Future<String>() {}
-
-// Future _initImages(String batch) async {
-//     // >> To get paths you need these 2 lines
-//     final manifestContent =
-//         await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
-
-//     final Map<String, dynamic> manifestMap = json.decode(manifestContent);
-//     // >> To get paths you need these 2 lines
-
-//     final imagePaths = manifestMap.keys
-//         .where((String key) => key.contains('eyes/$batch'))
-//         .where((String key) => key.contains('.png'))
-//         .toList();
-
-//     setState(() {
-//       someImages = imagePaths;
-//     });
-//   }
-
   @override
   Widget build(BuildContext context) {
     return Card(
