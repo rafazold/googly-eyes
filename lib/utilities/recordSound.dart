@@ -1,14 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:googly_eyes/utilities/eyesCard.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import 'dart:convert';
-import 'dart:async';
-import 'package:screenshot/screenshot.dart';
-import 'package:gallery_saver/gallery_saver.dart';
-import 'package:wc_flutter_share/wc_flutter_share.dart';
-import 'package:flutter/services.dart';
-import 'package:googly_eyes/utilities/recordSound.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -20,6 +12,7 @@ class RecordSound extends StatefulWidget {
 class _RecordSoundState extends State<RecordSound> {
   String audioPath;
   FlutterSoundRecorder audioRecorder;
+  FlutterSoundRecorder audioPlayer;
   PermissionStatus status;
   Directory tempDir;
   File outputFile;
@@ -53,7 +46,10 @@ class _RecordSoundState extends State<RecordSound> {
   void endRecording() async {
     await audioRecorder.stopRecorder();
     print('recorded to: $audioPath');
+    audioRecorder.closeAudioSession();
   }
+
+  void playRecording() async {}
 
   @override
   Widget build(BuildContext context) {

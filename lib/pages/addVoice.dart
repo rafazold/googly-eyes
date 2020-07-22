@@ -1,16 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:googly_eyes/utilities/eyesCard.dart';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
-import 'dart:convert';
-import 'dart:async';
-import 'package:screenshot/screenshot.dart';
-import 'package:gallery_saver/gallery_saver.dart';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 import 'package:flutter/services.dart';
 import 'package:googly_eyes/utilities/recordSound.dart';
 import 'package:flutter_sound/flutter_sound.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class AddVoice extends StatefulWidget {
   @override
@@ -18,10 +11,10 @@ class AddVoice extends StatefulWidget {
 }
 
 class _AddVoiceState extends State<AddVoice> {
-  void _shareImage(String path) async {
+  void _shareImage(File file) async {
     try {
-      print('starting share');
-      final ByteData bytes = await rootBundle.load(path);
+      print('sharing ${file.path}');
+      final ByteData bytes = file.readAsBytesSync().buffer.asByteData();
       print('path to bytes');
       await WcFlutterShare.share(
           sharePopupTitle: 'share',
@@ -176,7 +169,7 @@ class _AddVoiceState extends State<AddVoice> {
                           minWidth: 0.0,
                           minHeight: 0.0,
                           maxHeight: double.infinity,
-                          child: Image.file(File(arguments['imgFile']))))
+                          child: Image.file(arguments['imgFile'])))
                   : Text('No image selected'),
               flex: 5,
             ),

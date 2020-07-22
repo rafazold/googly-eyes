@@ -183,7 +183,7 @@ class _MakeImageState extends State<MakeImage> {
                   _imageFile = image;
                 });
                 Navigator.pushNamed(context, '/edit',
-                    arguments: {'imgFile': image.path});
+                    arguments: {'imgFile': image});
               }).catchError((onError) {
                 print(onError);
               });
