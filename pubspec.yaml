@@ -31,9 +31,13 @@ dependencies:
   image_gallery_saver: ^1.5.0
   gallery_saver: ^2.0.1
   wc_flutter_share: ^0.2.2
-  flutter_sound: ^5.1.1
+  flutter_sound_lite: ^5.1.1
   permission_handler: ^5.0.1+1
-  # flutter_ffmpeg: ^0.2.10
+  flutter_ffmpeg:
+    git:
+       url: git://github.com/tanersener/flutter-ffmpeg.git
+       ref: v^0.2.10
+       path: packages/flutter_ffmpeg_https-gpl
 
 
   # The following adds the Cupertino Icons font to your application.

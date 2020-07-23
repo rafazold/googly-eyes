@@ -1,9 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
+import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 import 'package:flutter/services.dart';
 import 'package:googly_eyes/utilities/recordSound.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 
 class AddVoice extends StatefulWidget {
   @override
@@ -11,36 +14,85 @@ class AddVoice extends StatefulWidget {
 }
 
 class _AddVoiceState extends State<AddVoice> {
-  String audioPath;
+  String audioUrl;
+  Directory tempDir;
+  bool audioRecorded = false;
+  String videoUrl;
+  File imageFile;
 
-  void _shareImage(File file) async {
+  final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
+
+  void shareFile(file, String mimeType, String ext) async {
     try {
       print('sharing ${file.path}');
       final ByteData bytes = file.readAsBytesSync().buffer.asByteData();
       print('path to bytes');
       await WcFlutterShare.share(
           sharePopupTitle: 'share',
-          fileName: 'googly_eyes.png',
-          mimeType: 'image/png',
+          fileName: 'googly_eyes.$ext',
+          mimeType: mimeType,
           bytesOfFile: bytes.buffer.asUint8List());
     } catch (e) {
       print('error: $e');
     }
   }
 
+  void buildVideo(String audioUrl) async {
+    tempDir = await getTemporaryDirectory();
+    String timeStamp = (new DateTime.now().millisecondsSinceEpoch).toString();
+    setState(() {
+      videoUrl = '${tempDir.path}/goggly_video-$timeStamp.mp4';
+    });
+    List<String> arguments = [
+      "-i",
+      "${imageFile.path}",
+      "-i",
+      "$audioUrl",
+      "-loop",
+      "1",
+      "-c:v",
+      "libx264",
+      "-t",
+      "15",
+      "-pix_fmt",
+      "yuv420p",
+      "-vf",
+      "scale=320:-1",
+      "$videoUrl"
+    ];
+
+    _flutterFFmpeg
+        .executeWithArguments(arguments)
+        .then((rc) =>
+            print("FFmpeg process exited with rc $rc and saved as $videoUrl"))
+        .then((res) => videoPathToBytes(videoUrl)
+                // .then((res) => videoToFile(videoUrl)
+                .then((file) => shareFile(File(videoUrl), 'video/mp4', 'mp4'))
+            // .then((value) => print('seems done'))
+            )
+        .catchError((e) => print(e));
+  }
+
+  Future<Uint8List> videoPathToBytes(String path) async {
+    Uint8List assetByteData = await File(path).readAsBytes();
+    return assetByteData;
+  }
+
+  Future<ByteData> videoToFile(String path) async {
+    final videoData = await rootBundle.load(path);
+    return videoData;
+  }
+
   _updateAudioPath(String path) {
     setState(() {
-      audioPath = path;
+      audioUrl = path;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
-    bool audioRecorded = false;
-    String audioUrl;
-    FlutterSoundRecorder recorderModule = FlutterSoundRecorder();
-
+    imageFile = arguments['imgFile'];
     print(arguments);
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -93,7 +145,7 @@ class _AddVoiceState extends State<AddVoice> {
             // },
             onPressed: () {
               print('share pressed');
-              _shareImage(arguments['imgFile']);
+              shareFile(arguments['imgFile'], 'image/png', 'png');
               // _imageFile = null;
               // screenshotController
               //     .capture(delay: Duration(milliseconds: 10))
@@ -138,7 +190,8 @@ class _AddVoiceState extends State<AddVoice> {
           SizedBox(width: 2),
           RawMaterialButton(
             onPressed: () {
-              print('Clip pressed: $audioPath');
+              buildVideo(audioUrl);
+              print('Clip pressed: $audioUrl');
             },
             child: Container(
               width: 80,
