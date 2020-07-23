@@ -3,8 +3,13 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:googly_eyes/pages/addVoice.dart';
 
 class RecordSound extends StatefulWidget {
+  // final CallbackImage callbackImage;
+  const RecordSound({Key key, @required this.pathCallback}) : super(key: key);
+  final ValueChanged<String> pathCallback;
+
   @override
   _RecordSoundState createState() => _RecordSoundState();
 }
@@ -46,6 +51,7 @@ class _RecordSoundState extends State<RecordSound> {
   void endRecording() async {
     await audioRecorder.stopRecorder();
     print('recorded to: $audioPath');
+    widget.pathCallback(audioPath);
     audioRecorder.closeAudioSession();
   }
 

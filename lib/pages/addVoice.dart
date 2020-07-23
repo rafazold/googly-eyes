@@ -11,6 +11,8 @@ class AddVoice extends StatefulWidget {
 }
 
 class _AddVoiceState extends State<AddVoice> {
+  String audioPath;
+
   void _shareImage(File file) async {
     try {
       print('sharing ${file.path}');
@@ -24,6 +26,12 @@ class _AddVoiceState extends State<AddVoice> {
     } catch (e) {
       print('error: $e');
     }
+  }
+
+  _updateAudioPath(String path) {
+    setState(() {
+      audioPath = path;
+    });
   }
 
   @override
@@ -130,7 +138,7 @@ class _AddVoiceState extends State<AddVoice> {
           SizedBox(width: 2),
           RawMaterialButton(
             onPressed: () {
-              print('Clip pressed');
+              print('Clip pressed: $audioPath');
             },
             child: Container(
               width: 80,
@@ -192,7 +200,7 @@ class _AddVoiceState extends State<AddVoice> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        RecordSound(),
+                        RecordSound(pathCallback: _updateAudioPath),
                         Text('Record a short message',
                             style: TextStyle(
                               fontFamily: 'HelveticaNeue',
