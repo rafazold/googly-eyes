@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:googly_eyes/utilities/getImage.dart';
 
 class Home extends StatelessWidget {
-  SelectImage _image = SelectImage();
+  final SelectImage _image = SelectImage();
 
   // void pickImage(String type) async {
   //   return type == 'gallery' ? _image.getImage() :
@@ -33,7 +33,7 @@ class Home extends StatelessWidget {
                     ),
                     SizedBox(width: 14),
                     Text(
-                      'Goggly Eyes',
+                      'Googly Eyes',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 30,
