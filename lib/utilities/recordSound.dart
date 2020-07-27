@@ -3,7 +3,6 @@ import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:googly_eyes/pages/addVoice.dart';
 
 class RecordSound extends StatefulWidget {
   // final CallbackImage callbackImage;
@@ -20,6 +19,7 @@ class _RecordSoundState extends State<RecordSound> {
   FlutterSoundRecorder audioPlayer;
   PermissionStatus status;
   Directory tempDir;
+  bool recording = false;
   File outputFile;
   @override
   void initState() {
@@ -27,10 +27,17 @@ class _RecordSoundState extends State<RecordSound> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    audioRecorder.closeAudioSession();
+  }
+
   void checkPermissions() async {
+    audioRecorder = await FlutterSoundRecorder().openAudioSession();
     status = await Permission.microphone.request();
     tempDir = await getTemporaryDirectory();
-    outputFile = await File('${tempDir.path}/goggly_sound-tmp.aac');
+    outputFile = File('${tempDir.path}/goggly_sound-tmp.aac');
     if (status == PermissionStatus.granted && tempDir != null) {
       print('all ready');
     } else {
@@ -39,17 +46,24 @@ class _RecordSoundState extends State<RecordSound> {
   }
 
   void startRecording() async {
-    audioRecorder = await FlutterSoundRecorder().openAudioSession();
+    if (audioRecorder.isInited.toString() == 'Initialized.notInitialized') {
+      audioRecorder = await FlutterSoundRecorder().openAudioSession();
+      print('audio session inited');
+    }
     if (status != PermissionStatus.granted)
       throw RecordingPermissionException("Microphone permission not granted");
     await audioRecorder.startRecorder(toFile: outputFile.path);
     setState(() {
+      recording = true;
       audioPath = outputFile.path;
     });
   }
 
   void endRecording() async {
     await audioRecorder.stopRecorder();
+    setState(() {
+      recording = false;
+    });
     print('recorded to: $audioPath');
     widget.pathCallback(audioPath);
     audioRecorder.closeAudioSession();
@@ -61,9 +75,13 @@ class _RecordSoundState extends State<RecordSound> {
   Widget build(BuildContext context) {
     return GestureDetector(
       // iconSize: 53,
-      child: Image.asset(
-        'assets/record_icon.png',
-        height: 53,
+      child: ColorFiltered(
+        colorFilter: ColorFilter.mode(
+            recording ? Colors.blueGrey : Colors.transparent, BlendMode.color),
+        child: Image.asset(
+          'assets/record_icon.png',
+          height: 53,
+        ),
       ),
       onLongPress: () {
         startRecording();

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
+// import 'dart:async';
 
 class EyesCard extends StatefulWidget {
   EyesCard(
@@ -14,7 +14,7 @@ class EyesCard extends StatefulWidget {
 }
 
 class _EyesCardState extends State<EyesCard> {
-  StreamController<double> controller = StreamController<double>();
+  // StreamController<double> controller = StreamController<double>();
 
   @override
   Widget build(BuildContext context) {

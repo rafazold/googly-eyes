@@ -16,7 +16,7 @@ class AddVoice extends StatefulWidget {
 class _AddVoiceState extends State<AddVoice> {
   String audioUrl;
   Directory tempDir;
-  bool audioRecorded = false;
+  bool isAudioAnimated = false;
   String videoUrl;
   File imageFile;
 
@@ -83,9 +83,33 @@ class _AddVoiceState extends State<AddVoice> {
     return videoData;
   }
 
-  _updateAudioPath(String path) {
+  void _clipAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          // title: Text('Not in stock'),
+          content: const Text('Please add some audio to make a clip'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _updateAudioPath(String path) {
     setState(() {
       audioUrl = path;
+      isAudioAnimated = true;
     });
   }
 
@@ -190,7 +214,7 @@ class _AddVoiceState extends State<AddVoice> {
           SizedBox(width: 2),
           RawMaterialButton(
             onPressed: () {
-              buildVideo(audioUrl);
+              isAudioAnimated ? buildVideo(audioUrl) : _clipAlert(context);
               print('Clip pressed: $audioUrl');
             },
             child: Container(
@@ -199,7 +223,9 @@ class _AddVoiceState extends State<AddVoice> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(21),
                   gradient: LinearGradient(
-                    colors: [Color(0xffff0775), Color(0xfffc6c4e)],
+                    colors: isAudioAnimated
+                        ? [Color(0xffff0775), Color(0xfffc6c4e)]
+                        : [Colors.black, Colors.grey],
                     stops: [0, 1],
                     begin: Alignment(-0.98, 0.19),
                     end: Alignment(0.98, -0.19),
