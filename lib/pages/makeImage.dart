@@ -7,6 +7,8 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:screenshot/screenshot.dart';
+import 'package:vector_math/vector_math_64.dart' as vector;
+// import ‘package:vector_math/vector_math_64.dart’ as vector;
 
 class MakeImage extends StatefulWidget {
   @override
@@ -201,7 +203,7 @@ class _MakeImageState extends State<MakeImage> {
                       if (rounded.isEven) {
                         // print('UPDATE!!!! $scaleValue}');
                         setState(() {
-                          eyesScale = (eyesBaseSize / scaleValue).clamp(0.3, 5);
+                          eyesScale = (eyesBaseSize * scaleValue).clamp(0.3, 5);
                         });
                       }
                     },
@@ -242,10 +244,20 @@ class _MakeImageState extends State<MakeImage> {
                                     print(
                                         'details::::::::::::::::::::::::::::::::   ${details.offset} - direction: ${details.offset.direction} - x: ${details.offset.dx} - y: ${details.offset.dy} POSx: $eyesPosX POSy: $eyesPosy');
                                   },
-                                  feedback:
-                                      Image.asset(eyesImg, scale: eyesScale),
+                                  feedback: Transform(
+                                      transform: Matrix4.diagonal3(
+                                          vector.Vector3(
+                                              eyesScale, eyesScale, eyesScale)),
+                                      alignment: FractionalOffset.center,
+                                      child: Image.asset(eyesImg)),
+                                  // Image.asset(eyesImg, scale: eyesScale),
                                   // child: ZoomableImage(AssetImage(eyesImg)),
-                                  child: Image.asset(eyesImg, scale: eyesScale),
+                                  child: Transform(
+                                      transform: Matrix4.diagonal3(
+                                          vector.Vector3(
+                                              eyesScale, eyesScale, eyesScale)),
+                                      alignment: FractionalOffset.center,
+                                      child: Image.asset(eyesImg)),
                                   data: eyesImg,
                                   childWhenDragging: Container(),
                                 ),

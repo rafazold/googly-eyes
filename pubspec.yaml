@@ -28,16 +28,14 @@ dependencies:
   image_cropper: ^1.2.3
   zoom_widget: ^0.1.3
   screenshot: ^0.2.0
-  image_gallery_saver: ^1.5.0
   gallery_saver: ^2.0.1
   wc_flutter_share: ^0.2.2
-  flutter_sound_lite: ^5.1.1
   permission_handler: ^5.0.1+1
-  flutter_ffmpeg:
-    git:
-       url: git://github.com/tanersener/flutter-ffmpeg.git
-       ref: v^0.2.10
-       path: packages/flutter_ffmpeg_https-gpl
+  flutter_ffmpeg: ^0.2.10
+  flutter_sound_lite: ^5.1.1
+  vector_math: ^2.0.8
+  
+  # widget_record: ^0.0.2
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -45,8 +43,8 @@ dependencies:
   cupertino_icons: ^0.1.3
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
+  # flutter_test:
+  #   sdk: flutter
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
