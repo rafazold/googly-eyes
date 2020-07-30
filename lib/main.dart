@@ -8,5 +8,5 @@ void main() => runApp(MaterialApp(initialRoute: '/home', routes: {
       '/home': (context) => Home(),
       '/image': (context) => MakeImage(),
       '/voice': (context) => AddVoice(),
-      '/fbshare': (context) => FbShare(),
+      '/fbshare': (context) => VideoApp(),
     }));

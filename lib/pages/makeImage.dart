@@ -86,6 +86,13 @@ class _MakeImageState extends State<MakeImage> {
 
   Future<File> setAnimatedImage() {}
 
+  void _setInitialEyesPosition(Map eyesPosition) {
+    setState(() {
+      eyesPosX = eyesPosition['offsetX'];
+      eyesPosy = eyesPosition['offsetY'];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
@@ -289,9 +296,11 @@ class _MakeImageState extends State<MakeImage> {
                     itemCount: someImages.length,
                     itemBuilder: (context, index) {
                       return EyesCard(
-                          index: index,
-                          onPress: () {},
-                          imagePath: someImages[index]);
+                        index: index,
+                        onPress: () {},
+                        imagePath: someImages[index],
+                        eyesPossition: _setInitialEyesPosition,
+                      );
                     },
                   )),
               flex: 1,

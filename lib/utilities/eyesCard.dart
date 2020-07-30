@@ -3,11 +3,16 @@ import 'package:flutter/material.dart';
 
 class EyesCard extends StatefulWidget {
   EyesCard(
-      {@required this.index, @required this.onPress, @required this.imagePath});
-
+      {Key key,
+      @required this.index,
+      @required this.onPress,
+      @required this.imagePath,
+      @required this.eyesPossition})
+      : super(key: key);
+  final ValueChanged<Map> eyesPossition;
   final index;
   final Function onPress;
-  final imagePath;
+  final imagePath; //TODO: make eyesImage as map and pass position
 
   @override
   _EyesCardState createState() => _EyesCardState();
@@ -44,6 +49,10 @@ class _EyesCardState extends State<EyesCard> {
                     onDragStarted: () => print("DRAG START!"),
                     onDragCompleted: () => print("DRAG COMPLETED!"),
                     onDragEnd: (details) {
+                      widget.eyesPossition({
+                        'offsetX': details.offset.dx,
+                        'offsetY': details.offset.dy
+                      });
                       print(
                           'details::::::::::::::::::::::::::::::::   ${details.offset}');
                     },

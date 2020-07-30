@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 import 'package:flutter/services.dart';
 import 'package:googly_eyes/utilities/recordSound.dart';
+import 'package:googly_eyes/utilities/shareFiles.dart';
 
 class AddVoice extends StatefulWidget {
   @override
@@ -18,8 +19,10 @@ class _AddVoiceState extends State<AddVoice> {
   Directory tempDir;
   bool isAudioAnimated = false;
   String videoUrl;
+  File videoFile;
   File imageFile;
 
+  final ShareFile _file = ShareFile();
   final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
 
   void shareFile(file, String mimeType, String ext) async {
@@ -37,11 +40,12 @@ class _AddVoiceState extends State<AddVoice> {
     }
   }
 
-  void buildVideo(String audioUrl) async {
+  Future buildVideo(String audioUrl) async {
     tempDir = await getTemporaryDirectory();
     String timeStamp = (new DateTime.now().millisecondsSinceEpoch).toString();
     setState(() {
-      videoUrl = '${tempDir.path}/goggly_video-$timeStamp.mp4';
+      // videoUrl = '${tempDir.path}/googly_video-$timeStamp.mp4';
+      videoUrl = '${tempDir.path}/googly_video-$timeStamp.mp4';
     });
     List<String> arguments = [
       "-i",
@@ -61,22 +65,29 @@ class _AddVoiceState extends State<AddVoice> {
       "$videoUrl"
     ];
 
-    _flutterFFmpeg
-        .executeWithArguments(arguments)
-        .then((rc) =>
-            print("FFmpeg process exited with rc $rc and saved as $videoUrl"))
-        .then((res) => videoPathToBytes(videoUrl)
-                // .then((res) => videoToFile(videoUrl)
-                .then((file) => shareFile(File(videoUrl), 'video/mp4', 'mp4'))
-            // .then((value) => print('seems done'))
-            )
-        .catchError((e) => print(e));
+    final encoded = await _flutterFFmpeg.executeWithArguments(arguments)
+        // .then((rc) =>
+        //     {print("FFmpeg process exited with rc $rc and saved as $videoUrl")})
+        // .then((res) => _file.videoPathToFile(videoUrl))
+        .then((rc) {
+      setState(() {
+        videoFile = File(videoUrl);
+      });
+    });
+
+    return videoUrl;
+
+    //         // .then((res) => videoToFile(videoUrl)
+    //         .then((file) => shareFile(File(videoUrl), 'video/mp4', 'mp4'))
+    //     // .then((value) => print('seems done'))
+    //     )
+    // .catchError((e) => print(e));
   }
 
-  Future<Uint8List> videoPathToBytes(String path) async {
-    Uint8List assetByteData = await File(path).readAsBytes();
-    return assetByteData;
-  }
+  // Future<Uint8List> videoPathToBytes(String path) async {
+  //   Uint8List assetByteData = await File(path).readAsBytes();
+  //   return assetByteData;
+  // }
 
   Future<ByteData> videoToFile(String path) async {
     final videoData = await rootBundle.load(path);
@@ -111,6 +122,14 @@ class _AddVoiceState extends State<AddVoice> {
       audioUrl = path;
       isAudioAnimated = true;
     });
+  }
+
+  void _renderAndShowVideo() {
+    buildVideo(audioUrl).then((vidUrl) => {
+          // print('this is the video URL: $vidUrl')
+          Navigator.pushNamed(context, '/fbshare',
+              arguments: {'videoUrl': vidUrl, 'videoFile': videoFile})
+        });
   }
 
   @override
@@ -205,7 +224,7 @@ class _AddVoiceState extends State<AddVoice> {
                 children: <Widget>[
                   // SizedBox(width: 20),
                   Icon(Icons.share),
-                  Text(' Share'),
+                  Text(' Image'),
                   // SizedBox(width: 20),
                 ],
               ),
@@ -214,7 +233,7 @@ class _AddVoiceState extends State<AddVoice> {
           SizedBox(width: 2),
           RawMaterialButton(
             onPressed: () {
-              isAudioAnimated ? buildVideo(audioUrl) : _clipAlert(context);
+              isAudioAnimated ? _renderAndShowVideo() : _clipAlert(context);
               print('Clip pressed: $audioUrl');
             },
             child: Container(
