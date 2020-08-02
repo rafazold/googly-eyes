@@ -24,6 +24,7 @@ class _AddVoiceState extends State<AddVoice> {
 
   final ShareFile _file = ShareFile();
   final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
+  final GlobalKey _recordSound = GlobalKey();
 
   void shareFile(file, String mimeType, String ext) async {
     try {
@@ -234,6 +235,7 @@ class _AddVoiceState extends State<AddVoice> {
           SizedBox(width: 2),
           RawMaterialButton(
             onPressed: () {
+              _recordSound.currentState.dispose();
               isAudioAnimated ? _renderAndShowVideo() : _clipAlert(context);
               print('Clip pressed: $audioUrl');
             },
@@ -299,7 +301,8 @@ class _AddVoiceState extends State<AddVoice> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        RecordSound(pathCallback: _updateAudioPath),
+                        RecordSound(
+                            pathCallback: _updateAudioPath, key: _recordSound),
                         Text('Record a short message',
                             style: TextStyle(
                               fontFamily: 'HelveticaNeue',

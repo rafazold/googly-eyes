@@ -29,8 +29,12 @@ class _RecordSoundState extends State<RecordSound> {
 
   @override
   void dispose() {
+    print('audio recorder disposed &*&*&*&*&*&*&*&**&*&*&*&*&');
+    audioRecorder
+        .closeAudioSession()
+        .then((_) => print('audio session closed'));
+    audioRecorder = null;
     super.dispose();
-    audioRecorder.closeAudioSession();
   }
 
   void checkPermissions() async {
@@ -65,8 +69,8 @@ class _RecordSoundState extends State<RecordSound> {
       recording = false;
     });
     print('recorded to: $audioPath');
-    widget.pathCallback(audioPath);
     audioRecorder.closeAudioSession();
+    widget.pathCallback(audioPath);
   }
 
   void playRecording() async {}

@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gallery_saver/gallery_saver.dart';
+import 'package:googly_eyes/utilities/shareFiles.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoApp extends StatefulWidget {
@@ -13,6 +15,7 @@ class _VideoAppState extends State<VideoApp> {
   VideoPlayerController _controller;
   bool loading = true;
   bool videoReady = false;
+  final ShareFile _file = ShareFile();
 
   @override
   void initState() {
@@ -105,6 +108,137 @@ class _VideoAppState extends State<VideoApp> {
             ),
           ))
         : Scaffold(
+            extendBodyBehindAppBar: true,
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+              // centerTitle: true,
+              title: RawMaterialButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Stack(
+                  alignment: AlignmentDirectional.center,
+                  children: <Widget>[
+                    Opacity(
+                      opacity: 0.25999999046325684,
+                      child: Container(
+                          width: 67.0,
+                          height: 30.0,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(21))),
+                    ),
+                    Text('Back'),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                // Container(),
+                SizedBox(width: 20),
+                RawMaterialButton(
+                  // onPressed: () { // for SAVE
+                  //   print('save pressed');
+                  //   _imageFile = null;
+                  //   screenshotController
+                  //       .capture(delay: Duration(milliseconds: 10))
+                  //       .then((File image) async {
+                  //     print('Capture Done: ${image.path}');
+                  //     setState(() {
+                  //       _imageFile = image;
+                  //     });
+                  //     final result =
+                  //         await GallerySaver.saveImage(image.path).then((path) {
+                  //       print("File Saved to Gallery: $path");
+                  //     });
+                  //   }).catchError((onError) {
+                  //     print(onError);
+                  //   });
+                  // },
+                  onPressed: () {
+                    print('share pressed');
+                    _file.shareFile(arguments['videoFile'], 'video/mp4', 'mp4');
+                    // _imageFile = null;
+                    // screenshotController
+                    //     .capture(delay: Duration(milliseconds: 10))
+                    //     .then((File image) async {
+                    //   print('Capture Done: ${image.path}');
+                    //   setState(() {
+                    //     _imageFile = image;
+                    //   });
+                    //   final result =
+                    //       await GallerySaver.saveImage(image.path).then((path) {
+                    //     print("File Saved to Gallery: $path");
+                    //     _shareImage(image.path);
+                    //   });
+                    // }).catchError((onError) {
+                    //   print(onError);
+                    // });
+                  },
+                  child: Container(
+                    width: 80,
+                    height: 30,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(21),
+                        gradient: LinearGradient(
+                          colors: [Color(0xffff0775), Color(0xfffc6c4e)],
+                          stops: [0, 1],
+                          begin: Alignment(-0.98, 0.19),
+                          end: Alignment(0.98, -0.19),
+                          // angle: 79,
+                          // scale: undefined,
+                        )),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        // SizedBox(width: 20),
+                        Icon(Icons.share),
+                        Text(' Share'),
+                        // SizedBox(width: 20),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(width: 2),
+                RawMaterialButton(
+                  onPressed: () {
+                    // for SAVE
+                    print('Save pressed: ${arguments['videoUrl']}');
+
+                    GallerySaver.saveVideo(arguments['videoUrl']).then((path) {
+                      print("File Saved to Gallery: $path");
+                    }).catchError((onError) {
+                      print(onError);
+                    });
+                  },
+                  child: Container(
+                    width: 80,
+                    height: 30,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(21),
+                        gradient: LinearGradient(
+                          colors: [Color(0xffff0775), Color(0xfffc6c4e)],
+                          stops: [0, 1],
+                          begin: Alignment(-0.98, 0.19),
+                          end: Alignment(0.98, -0.19),
+                          // angle: 79,
+                          // scale: undefined,
+                        )),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        // SizedBox(width: 20),
+                        Icon(Icons.save),
+                        Text(' Save'),
+                        // SizedBox(width: 20),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+              ],
+            ),
             body: Center(
               child: _controller.value.initialized
                   ? AspectRatio(
