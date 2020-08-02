@@ -11,7 +11,7 @@ class VideoApp extends StatefulWidget {
 
 class _VideoAppState extends State<VideoApp> {
   VideoPlayerController _controller;
-  bool loading = false;
+  bool loading = true;
   bool videoReady = false;
 
   @override
@@ -81,9 +81,29 @@ class _VideoAppState extends State<VideoApp> {
     //     'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4');
     // initPlayer();
     return loading
-        ? Container(
-            child: Text('Hello World'),
-          )
+        ? Scaffold(
+            body: Center(
+            child: FloatingActionButton(
+              onPressed: () {
+                _startVideoPlayer(arguments['videoUrl']).then((value) {
+                  setState(() {
+                    print(
+                        'YOYOYOYOOYOYOYOYOY ==========>>>> and controller $_controller');
+                    // _controller.value.isPlaying
+                    //     ? _controller.pause()
+                    //     : _controller.play();
+                    loading = false;
+                    videoReady = true;
+                  });
+                }).then((_) {
+                  print(
+                      'CONTROLLER CONTROLLER CONTROLLER---------------------------------- $_controller');
+                  _controller.play();
+                });
+              },
+              child: Text('PRESS HERE'),
+            ),
+          ))
         : Scaffold(
             body: Center(
               child: _controller.value.initialized
