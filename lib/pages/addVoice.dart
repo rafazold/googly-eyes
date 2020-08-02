@@ -70,6 +70,7 @@ class _AddVoiceState extends State<AddVoice> {
         //     {print("FFmpeg process exited with rc $rc and saved as $videoUrl")})
         // .then((res) => _file.videoPathToFile(videoUrl))
         .then((rc) {
+      // print('probably didnt work with rc: $rc');
       setState(() {
         videoFile = File(videoUrl);
       });
