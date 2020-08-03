@@ -16,6 +16,8 @@ class _VideoAppState extends State<VideoApp> {
   bool loading = true;
   bool videoReady = false;
   final ShareFile _file = ShareFile();
+  int width;
+  int height;
 
   @override
   void initState() {
@@ -80,6 +82,11 @@ class _VideoAppState extends State<VideoApp> {
   @override
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    width = arguments['width'];
+    height = arguments['height'];
+    final size = MediaQuery.of(context).size;
+    final deviceRatio = size.width / size.height;
+    final vidRatio = width / height;
     // _startVideoPlayer(
     //     'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4');
     // initPlayer();
@@ -241,9 +248,14 @@ class _VideoAppState extends State<VideoApp> {
             ),
             body: Center(
               child: _controller.value.initialized
-                  ? AspectRatio(
-                      aspectRatio: _controller.value.aspectRatio,
-                      child: VideoPlayer(_controller),
+                  ? OverflowBox(
+                      minWidth: 0.0,
+                      minHeight: 0.0,
+                      maxHeight: double.infinity,
+                      child: AspectRatio(
+                        aspectRatio: deviceRatio,
+                        child: VideoPlayer(_controller),
+                      ),
                     )
                   : Container(),
             ),

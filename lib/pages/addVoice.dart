@@ -152,8 +152,12 @@ class _AddVoiceState extends State<AddVoice> {
   void _renderAndShowVideo(int width, int height) {
     buildVideo(audioUrl, width, height).then((vidUrl) => {
           // print('this is the video URL: $vidUrl')
-          Navigator.pushNamed(context, '/fbshare',
-              arguments: {'videoUrl': vidUrl, 'videoFile': videoFile})
+          Navigator.pushNamed(context, '/fbshare', arguments: {
+            'videoUrl': vidUrl,
+            'videoFile': videoFile,
+            'width': width,
+            'height': height
+          })
         });
   }
 
@@ -242,9 +246,8 @@ class _AddVoiceState extends State<AddVoice> {
           RawMaterialButton(
             onPressed: () {
               getImgDetails(imageFile);
-              print(
-                  'this is the imageFile file width: ${assetDetails.width} and height: ${assetDetails.height}');
-              print('trying the function ${makeIntEven(15)}');
+              // print(
+              //     'this is the imageFile file width: ${assetDetails.width} and height: ${assetDetails.height}');
               isAudioAnimated
                   ? _renderAndShowVideo(assetDetails.width, assetDetails.height)
                   : _clipAlert(context);
