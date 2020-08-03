@@ -22,8 +22,8 @@ class _MakeImageState extends State<MakeImage> {
   double eyesPosX = 200.0;
   double eyesPosy = 200.0;
   String eyesImg = 'assets/eyes/initial/group_84.png';
-  double eyesScale = 1.6;
-  double eyesBaseSize = 1.6;
+  double eyesScale = 1.0;
+  double eyesBaseSize = 1.0;
   double eyesLastSize;
   bool showEyes = false;
   File _imageFile;
@@ -72,7 +72,7 @@ class _MakeImageState extends State<MakeImage> {
   Future<File> setStaticImage() {
     _imageFile = null;
     return screenshotController
-        .capture(delay: Duration(milliseconds: 10))
+        .capture(delay: Duration(milliseconds: 10), pixelRatio: 3)
         .then((File image) {
       print('Capture Done: ${image.path}');
       setState(() {
@@ -238,7 +238,7 @@ class _MakeImageState extends State<MakeImage> {
                                 // height: 38,
                                 // width: 80,
                                 child: Draggable<String>(
-                                  onDragStarted: () => print("DRAG START!"),
+                                  onDragStarted: () => ("DRAG START!"),
                                   onDragCompleted: () =>
                                       print("DRAG COMPLETED!"),
                                   onDragEnd: (details) {

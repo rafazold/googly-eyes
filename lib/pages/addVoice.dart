@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
@@ -8,6 +9,7 @@ import 'package:wc_flutter_share/wc_flutter_share.dart';
 import 'package:flutter/services.dart';
 import 'package:googly_eyes/utilities/recordSound.dart';
 import 'package:googly_eyes/utilities/shareFiles.dart';
+import 'package:googly_eyes/utilities/handleFile.dart';
 
 class AddVoice extends StatefulWidget {
   @override
@@ -15,6 +17,7 @@ class AddVoice extends StatefulWidget {
 }
 
 class _AddVoiceState extends State<AddVoice> {
+  AssetDetails assetDetails;
   String audioUrl;
   Directory tempDir;
   bool isAudioAnimated = false;
@@ -41,7 +44,15 @@ class _AddVoiceState extends State<AddVoice> {
     }
   }
 
-  Future buildVideo(String audioUrl) async {
+  int makeIntEven(int number) {
+    if (number.isEven) {
+      return number;
+    } else {
+      return number - 1;
+    }
+  }
+
+  Future buildVideo(String audioUrl, int width, int height) async {
     tempDir = await getTemporaryDirectory();
     String timeStamp = (new DateTime.now().millisecondsSinceEpoch).toString();
     setState(() {
@@ -61,8 +72,20 @@ class _AddVoiceState extends State<AddVoice> {
       "15",
       "-pix_fmt",
       "yuv420p",
+      // "-profile:v",
+      // "high",
+      // "-qscale:v",
+      // "1",
+      // "-qmin",
+      // "1",
+      // "-qmax",
+      // "1",
+      // "-frames:v",
+      // "1",
       "-vf",
-      "scale=320:-1",
+      "scale=${makeIntEven(width)}:${makeIntEven(height)}",
+      // "-q:v",
+      // "35",
       "$videoUrl"
     ];
 
@@ -126,18 +149,35 @@ class _AddVoiceState extends State<AddVoice> {
     });
   }
 
-  void _renderAndShowVideo() {
-    buildVideo(audioUrl).then((vidUrl) => {
+  void _renderAndShowVideo(int width, int height) {
+    buildVideo(audioUrl, width, height).then((vidUrl) => {
           // print('this is the video URL: $vidUrl')
           Navigator.pushNamed(context, '/fbshare',
               arguments: {'videoUrl': vidUrl, 'videoFile': videoFile})
         });
   }
 
+  Future<void> getImgDetails(_file) {
+    decodeImageFromList(_file.readAsBytesSync()).then((asset) {
+      var details = AssetDetails(_file, asset.width, asset.height);
+      setState(() {
+        assetDetails = details;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     imageFile = arguments['imgFile'];
+    // getImgDetails(imageFile);
+    // getImgDetails(_file);
+    // imageFile = arguments['imgFile'];
+
+    // final imageFile = getImageDetails(
+    //   arguments['imgFile'],
+    // );
+
     print(arguments);
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -170,43 +210,9 @@ class _AddVoiceState extends State<AddVoice> {
           // Container(),
           SizedBox(width: 20),
           RawMaterialButton(
-            // onPressed: () { // for SAVE
-            //   print('save pressed');
-            //   _imageFile = null;
-            //   screenshotController
-            //       .capture(delay: Duration(milliseconds: 10))
-            //       .then((File image) async {
-            //     print('Capture Done: ${image.path}');
-            //     setState(() {
-            //       _imageFile = image;
-            //     });
-            //     final result =
-            //         await GallerySaver.saveImage(image.path).then((path) {
-            //       print("File Saved to Gallery: $path");
-            //     });
-            //   }).catchError((onError) {
-            //     print(onError);
-            //   });
-            // },
             onPressed: () {
               print('share pressed');
-              shareFile(arguments['imgFile'], 'image/png', 'png');
-              // _imageFile = null;
-              // screenshotController
-              //     .capture(delay: Duration(milliseconds: 10))
-              //     .then((File image) async {
-              //   print('Capture Done: ${image.path}');
-              //   setState(() {
-              //     _imageFile = image;
-              //   });
-              //   final result =
-              //       await GallerySaver.saveImage(image.path).then((path) {
-              //     print("File Saved to Gallery: $path");
-              //     _shareImage(image.path);
-              //   });
-              // }).catchError((onError) {
-              //   print(onError);
-              // });
+              shareFile(imageFile, 'image/png', 'png');
             },
             child: Container(
               width: 80,
@@ -235,8 +241,13 @@ class _AddVoiceState extends State<AddVoice> {
           SizedBox(width: 2),
           RawMaterialButton(
             onPressed: () {
-              _recordSound.currentState.dispose();
-              isAudioAnimated ? _renderAndShowVideo() : _clipAlert(context);
+              getImgDetails(imageFile);
+              print(
+                  'this is the imageFile file width: ${assetDetails.width} and height: ${assetDetails.height}');
+              print('trying the function ${makeIntEven(15)}');
+              isAudioAnimated
+                  ? _renderAndShowVideo(assetDetails.width, assetDetails.height)
+                  : _clipAlert(context);
               print('Clip pressed: $audioUrl');
             },
             child: Container(

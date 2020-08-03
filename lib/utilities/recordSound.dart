@@ -21,6 +21,9 @@ class _RecordSoundState extends State<RecordSound> {
   Directory tempDir;
   bool recording = false;
   File outputFile;
+
+  // final GlobalKey _recordSound = GlobalKey();
+
   @override
   void initState() {
     checkPermissions();
