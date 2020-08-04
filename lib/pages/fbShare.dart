@@ -248,12 +248,10 @@ class _VideoAppState extends State<VideoApp> {
             ),
             body: Center(
               child: _controller.value.initialized
-                  ? OverflowBox(
-                      minWidth: 0.0,
-                      minHeight: 0.0,
-                      maxHeight: double.infinity,
+                  ? Transform.scale(
+                      scale: _controller.value.aspectRatio / deviceRatio,
                       child: AspectRatio(
-                        aspectRatio: deviceRatio,
+                        aspectRatio: vidRatio,
                         child: VideoPlayer(_controller),
                       ),
                     )
@@ -275,7 +273,8 @@ class _VideoAppState extends State<VideoApp> {
                     });
                   });
                 } else {
-                  print('VIDEO READY???????????????????????');
+                  print(
+                      'VIDEO READY??????????????????????? position:  ${_controller.value.position} lengthL ${_controller.value.duration}');
                   setState(() {
                     _controller.value.isPlaying
                         ? _controller.pause()
