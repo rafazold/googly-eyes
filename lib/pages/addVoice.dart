@@ -161,20 +161,23 @@ class _AddVoiceState extends State<AddVoice> {
         });
   }
 
-  Future<void> getImgDetails(_file) {
-    decodeImageFromList(_file.readAsBytesSync()).then((asset) {
-      var details = AssetDetails(_file, asset.width, asset.height);
-      setState(() {
-        assetDetails = details;
+  // ignore: missing_return
+  Future getImgDetails(_file) {
+    if (assetDetails == null) {
+      decodeImageFromList(_file.readAsBytesSync()).then((asset) {
+        var details = AssetDetails(_file, asset.width, asset.height);
+        setState(() {
+          assetDetails = details;
+        });
       });
-    });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     imageFile = arguments['imgFile'];
-    // getImgDetails(imageFile);
+    getImgDetails(imageFile);
     // getImgDetails(_file);
     // imageFile = arguments['imgFile'];
 
@@ -245,7 +248,9 @@ class _AddVoiceState extends State<AddVoice> {
           SizedBox(width: 2),
           RawMaterialButton(
             onPressed: () {
+              print('pressed');
               getImgDetails(imageFile);
+              print('got details');
               // print(
               //     'this is the imageFile file width: ${assetDetails.width} and height: ${assetDetails.height}');
               isAudioAnimated
