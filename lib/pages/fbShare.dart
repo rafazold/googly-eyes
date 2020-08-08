@@ -247,15 +247,19 @@ class _VideoAppState extends State<VideoApp> {
               ],
             ),
             body: Center(
-              child: _controller.value.initialized
-                  ? Transform.scale(
-                      scale: _controller.value.aspectRatio / deviceRatio,
-                      child: AspectRatio(
-                        aspectRatio: vidRatio,
-                        child: VideoPlayer(_controller),
-                      ),
-                    )
-                  : Container(),
+              child: Container(
+                width: size.width.toDouble(),
+                height: height.toDouble(),
+                child: _controller.value.initialized
+                    ? Transform.scale(
+                        scale: 0.95,
+                        child: AspectRatio(
+                          aspectRatio: deviceRatio,
+                          child: VideoPlayer(_controller),
+                        ),
+                      )
+                    : Container(),
+              ),
             ),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
