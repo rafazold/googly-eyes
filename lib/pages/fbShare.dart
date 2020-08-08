@@ -166,6 +166,7 @@ class _VideoAppState extends State<VideoApp> {
                   onPressed: () {
                     print('share pressed');
                     _file.shareFile(arguments['videoFile'], 'video/mp4', 'mp4');
+
                     // _imageFile = null;
                     // screenshotController
                     //     .capture(delay: Duration(milliseconds: 10))
@@ -213,11 +214,14 @@ class _VideoAppState extends State<VideoApp> {
                     // for SAVE
                     print('Save pressed: ${arguments['videoUrl']}');
 
-                    GallerySaver.saveVideo(arguments['videoUrl']).then((path) {
-                      print("File Saved to Gallery: $path");
-                    }).catchError((onError) {
-                      print(onError);
-                    });
+                    GallerySaver.saveVideo(arguments['videoUrl'])
+                        .then((path) {
+                          print("File Saved to Gallery: $path");
+                        })
+                        .then((_) => {_file.alert(context, 'Clip Saved')})
+                        .catchError((onError) {
+                          print(onError);
+                        });
                   },
                   child: Container(
                     width: 80,
@@ -246,20 +250,23 @@ class _VideoAppState extends State<VideoApp> {
                 SizedBox(width: 10),
               ],
             ),
-            body: Center(
-              child: Container(
-                width: size.width.toDouble(),
-                height: height.toDouble(),
-                child: _controller.value.initialized
-                    ? Transform.scale(
-                        scale: 0.95,
-                        child: AspectRatio(
-                          aspectRatio: deviceRatio,
-                          child: VideoPlayer(_controller),
-                        ),
-                      )
-                    : Container(),
-              ),
+            body: Column(
+              children: <Widget>[
+                Center(
+                  child: _controller.value.initialized
+                      ? Transform.scale(
+                          scale: 0.95,
+                          child: AspectRatio(
+                            aspectRatio: deviceRatio,
+                            child: VideoPlayer(_controller),
+                          ),
+                        )
+                      : Container(),
+                ),
+                // SizedBox(
+                //   height: 50,
+                // )
+              ],
             ),
             floatingActionButton: FloatingActionButton(
               onPressed: () {

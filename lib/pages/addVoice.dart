@@ -84,6 +84,7 @@ class _AddVoiceState extends State<AddVoice> {
       // "1",
       "-vf",
       "scale=${makeIntEven(width)}:${makeIntEven(height)}",
+      // "scale=${makeIntEven(width)}:-1",
       // "-q:v",
       // "35",
       "$videoUrl"
@@ -255,7 +256,8 @@ class _AddVoiceState extends State<AddVoice> {
               //     'this is the imageFile file width: ${assetDetails.width} and height: ${assetDetails.height}');
               isAudioAnimated
                   ? _renderAndShowVideo(assetDetails.width, assetDetails.height)
-                  : _clipAlert(context);
+                  : _file.alert(
+                      context, 'Please add some audio to make a clip');
               print('Clip pressed: $audioUrl');
             },
             child: Container(

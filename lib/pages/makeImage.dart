@@ -26,13 +26,14 @@ class _MakeImageState extends State<MakeImage> {
   double eyesBaseSize = 1.0;
   double eyesLastSize;
   bool showEyes = false;
+  bool loading = false;
   File _imageFile;
   // Map droppedEyes = {
   //   'xPos': 0,
   //   'yPos': 0,
   //   'img': 'assets/eyes/initial/group_84.png',
   // };
-  List someImages;
+  List someImages = [];
   @override
   void initState() {
     getEyes().then((path) => setState(() {
@@ -57,6 +58,7 @@ class _MakeImageState extends State<MakeImage> {
 
     setState(() {
       someImages = imagePaths;
+      loading = false;
     });
   }
 
@@ -103,228 +105,236 @@ class _MakeImageState extends State<MakeImage> {
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        // centerTitle: true,
-        title: RawMaterialButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Stack(
-            alignment: AlignmentDirectional.center,
-            children: <Widget>[
-              Opacity(
-                opacity: 0.25999999046325684,
-                child: Container(
-                    width: 67.0,
-                    height: 30.0,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(21))),
+    return loading
+        ? Container()
+        : Scaffold(
+            extendBodyBehindAppBar: true,
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+              // centerTitle: true,
+              title: RawMaterialButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Stack(
+                  alignment: AlignmentDirectional.center,
+                  children: <Widget>[
+                    Opacity(
+                      opacity: 0.25999999046325684,
+                      child: Container(
+                          width: 67.0,
+                          height: 30.0,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(21))),
+                    ),
+                    Text('Back'),
+                  ],
+                ),
               ),
-              Text('Back'),
-            ],
-          ),
-        ),
-        actions: <Widget>[
-          SizedBox(width: 20),
-          RawMaterialButton(
-            onPressed: () {
-              print('done pressed');
-              setStaticImage().then((imgFile) => {
-                    Navigator.pushNamed(context, '/voice',
-                        arguments: {'imgFile': imgFile})
-                  });
-            },
-            // onPressed: () {
-            //   print('done pressed');
-            //   _imageFile = null;
-            //   screenshotController
-            //       .capture(delay: Duration(milliseconds: 10))
-            //       .then((File image) async {
-            //     print('Capture Done: ${image.path}');
-            //     setState(() {
-            //       _imageFile = image;
-            //     });
-            //     Navigator.pushNamed(context, '/voice',
-            //         arguments: {'imgFile': image});
-            //   }).catchError((onError) {
-            //     print(onError);
-            //   });
-            // },
-            child: Container(
-              width: 89,
-              height: 30,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(21),
-                  gradient: LinearGradient(
-                    colors: [Color(0xffff0775), Color(0xfffc6c4e)],
-                    stops: [0, 1],
-                    begin: Alignment(-0.98, 0.19),
-                    end: Alignment(0.98, -0.19),
-                    // angle: 79,
-                    // scale: undefined,
-                  )),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              actions: <Widget>[
+                SizedBox(width: 20),
+                RawMaterialButton(
+                  onPressed: () {
+                    print('done pressed');
+                    setStaticImage().then((imgFile) => {
+                          Navigator.pushNamed(context, '/voice',
+                              arguments: {'imgFile': imgFile})
+                        });
+                  },
+                  // onPressed: () {
+                  //   print('done pressed');
+                  //   _imageFile = null;
+                  //   screenshotController
+                  //       .capture(delay: Duration(milliseconds: 10))
+                  //       .then((File image) async {
+                  //     print('Capture Done: ${image.path}');
+                  //     setState(() {
+                  //       _imageFile = image;
+                  //     });
+                  //     Navigator.pushNamed(context, '/voice',
+                  //         arguments: {'imgFile': image});
+                  //   }).catchError((onError) {
+                  //     print(onError);
+                  //   });
+                  // },
+                  child: Container(
+                    width: 89,
+                    height: 30,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(21),
+                        gradient: LinearGradient(
+                          colors: [Color(0xffff0775), Color(0xfffc6c4e)],
+                          stops: [0, 1],
+                          begin: Alignment(-0.98, 0.19),
+                          end: Alignment(0.98, -0.19),
+                          // angle: 79,
+                          // scale: undefined,
+                        )),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        // SizedBox(width: 20),
+                        Icon(Icons.done),
+                        Text('Done'),
+                        // SizedBox(width: 20),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+              ],
+            ),
+            body: Container(
+              child: Column(
                 children: <Widget>[
-                  // SizedBox(width: 20),
-                  Icon(Icons.done),
-                  Text('Done'),
-                  // SizedBox(width: 20),
+                  Expanded(
+                    flex: 7,
+                    child: Container(
+                      child: GestureDetector(
+                          onScaleStart: (details) {
+                            print('scale details::::: ----- $details');
+                          },
+                          onScaleUpdate: (details) {
+                            double scaleValue =
+                                num.parse(details.scale.toStringAsFixed(2));
+                            int rounded = (scaleValue * 100).toInt();
+
+                            if (rounded.isEven) {
+                              // print('UPDATE!!!! $scaleValue}');
+                              setState(() {
+                                eyesScale =
+                                    (eyesBaseSize * scaleValue).clamp(0.3, 5);
+                              });
+                            }
+                          },
+                          onScaleEnd: (details) {
+                            print('FINISHED!!! ------->>>> $details');
+                            eyesBaseSize = eyesScale;
+                          },
+                          child: DragTarget<String>(
+                            onWillAccept: (d) {
+                              print("on will accept");
+                              return true;
+                            },
+                            onAccept: (d) {
+                              setState(() {
+                                showEyes = true;
+                                eyesImg = d;
+                              });
+                              print("ACCEPT 2!: $d");
+                              print(arguments['imgFile'].path);
+                            },
+                            onLeave: (d) {
+                              print("LEAVE 2!");
+                            },
+                            builder: (context, list, list2) {
+                              return Screenshot(
+                                controller: screenshotController,
+                                child: Stack(children: [
+                                  arguments['imgFile'] != null
+                                      ? Center(
+                                          child: OverflowBox(
+                                              minWidth: 0.0,
+                                              minHeight: 0.0,
+                                              maxHeight: double.infinity,
+                                              child: Image.file(File(
+                                                  arguments['imgFile'].path))))
+                                      : Text('No image selected'),
+                                  !showEyes
+                                      ? Text('')
+                                      : Positioned(
+                                          top: eyesPosy,
+                                          left: eyesPosX,
+
+                                          // height: 38,
+                                          // width: 80,
+                                          child: Draggable<String>(
+                                            onDragStarted: () =>
+                                                ("DRAG START!"),
+                                            onDragCompleted: () =>
+                                                print("DRAG COMPLETED!"),
+                                            onDragEnd: (details) {
+                                              setState(() {
+                                                eyesPosX = details.offset
+                                                    .dx; //.clamp(-30, 300);
+                                                eyesPosy = details.offset
+                                                    .dy; //.clamp(-30, 700);
+                                              });
+                                              print(
+                                                  'details::::::::::::::::::::::::::::::::   ${details.offset} - direction: ${details.offset.direction} - x: ${details.offset.dx} - y: ${details.offset.dy} POSx: $eyesPosX POSy: $eyesPosy');
+                                            },
+                                            feedback: Transform(
+                                                transform: Matrix4.diagonal3(
+                                                    vector.Vector3(eyesScale,
+                                                        eyesScale, eyesScale)),
+                                                alignment:
+                                                    FractionalOffset.center,
+                                                child: Image.asset(
+                                                  eyesImg,
+                                                  width: 200,
+                                                )),
+                                            // Image.asset(eyesImg, scale: eyesScale),
+                                            // child: ZoomableImage(AssetImage(eyesImg)),
+                                            child: Transform(
+                                                transform: Matrix4.diagonal3(
+                                                    vector.Vector3(eyesScale,
+                                                        eyesScale, eyesScale)),
+                                                alignment:
+                                                    FractionalOffset.center,
+                                                child: Image.asset(
+                                                  eyesImg,
+                                                  width: 200,
+                                                )),
+                                            data: eyesImg,
+                                            childWhenDragging: Container(),
+                                          ),
+                                        )
+                                ]),
+                              );
+                            },
+                            // onAccept: (data) => print('data'),
+                          )),
+                    ),
+                  ),
+                  Expanded(
+                    child: DragTarget(
+                      builder: (context, list, list2) {
+                        return Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Color(0xffff0077), Color(0xffff724e)],
+                                stops: [0, 1],
+                                begin: Alignment(-0.93, 0.36),
+                                end: Alignment(0.93, -0.36),
+                                // angle: 69,
+                                // scale: undefined,
+                              ),
+                            ),
+                            child: ListView.builder(
+                              physics:
+                                  const AlwaysScrollableScrollPhysics(), // new
+                              controller: _controller,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: someImages.length,
+                              itemBuilder: (context, index) {
+                                return EyesCard(
+                                  index: index,
+                                  onPress: () {},
+                                  imagePath: someImages[index],
+                                  eyesPossition: _setInitialEyesPosition,
+                                );
+                              },
+                            ));
+                      },
+                    ),
+                    flex: 1,
+                  )
                 ],
               ),
             ),
-          ),
-          SizedBox(width: 10),
-        ],
-      ),
-      body: Container(
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: DragTarget<String>(
-                onWillAccept: (d) {
-                  print("on will accept");
-                  return true;
-                },
-                onAccept: (d) {
-                  setState(() {
-                    showEyes = true;
-                    eyesImg = d;
-                  });
-                  print("ACCEPT 2!: $d");
-                  print(arguments['imgFile'].path);
-                },
-                onLeave: (d) {
-                  print("LEAVE 2!");
-                },
-                builder: (context, list, list2) {
-                  return GestureDetector(
-                    onScaleStart: (details) {
-                      print('scale details::::: ----- $details');
-                    },
-                    onScaleUpdate: (details) {
-                      double scaleValue =
-                          num.parse(details.scale.toStringAsFixed(2));
-                      int rounded = (scaleValue * 100).toInt();
-
-                      if (rounded.isEven) {
-                        // print('UPDATE!!!! $scaleValue}');
-                        setState(() {
-                          eyesScale = (eyesBaseSize * scaleValue).clamp(0.3, 5);
-                        });
-                      }
-                    },
-                    onScaleEnd: (details) {
-                      print('FINISHED!!! ------->>>> $details');
-                      eyesBaseSize = eyesScale;
-                    },
-                    child: Screenshot(
-                      controller: screenshotController,
-                      child: Stack(children: [
-                        arguments['imgFile'] != null
-                            ? Center(
-                                child: OverflowBox(
-                                    minWidth: 0.0,
-                                    minHeight: 0.0,
-                                    maxHeight: double.infinity,
-                                    child: Image.file(
-                                        File(arguments['imgFile'].path))))
-                            : Text('No image selected'),
-                        !showEyes
-                            ? Text('')
-                            : Positioned(
-                                top: eyesPosy,
-                                left: eyesPosX,
-
-                                // height: 38,
-                                // width: 80,
-                                child: Draggable<String>(
-                                  onDragStarted: () => ("DRAG START!"),
-                                  onDragCompleted: () =>
-                                      print("DRAG COMPLETED!"),
-                                  onDragEnd: (details) {
-                                    setState(() {
-                                      eyesPosX =
-                                          details.offset.dx; //.clamp(-30, 300);
-                                      eyesPosy =
-                                          details.offset.dy; //.clamp(-30, 700);
-                                    });
-                                    print(
-                                        'details::::::::::::::::::::::::::::::::   ${details.offset} - direction: ${details.offset.direction} - x: ${details.offset.dx} - y: ${details.offset.dy} POSx: $eyesPosX POSy: $eyesPosy');
-                                  },
-                                  feedback: Transform(
-                                      transform: Matrix4.diagonal3(
-                                          vector.Vector3(
-                                              eyesScale, eyesScale, eyesScale)),
-                                      alignment: FractionalOffset.center,
-                                      child: Image.asset(
-                                        eyesImg,
-                                        width: 200,
-                                      )),
-                                  // Image.asset(eyesImg, scale: eyesScale),
-                                  // child: ZoomableImage(AssetImage(eyesImg)),
-                                  child: Transform(
-                                      transform: Matrix4.diagonal3(
-                                          vector.Vector3(
-                                              eyesScale, eyesScale, eyesScale)),
-                                      alignment: FractionalOffset.center,
-                                      child: Image.asset(
-                                        eyesImg,
-                                        width: 200,
-                                      )),
-                                  data: eyesImg,
-                                  childWhenDragging: Container(),
-                                ),
-                              )
-                      ]),
-                    ),
-                  );
-                },
-                // onAccept: (data) => print('data'),
-              ),
-              flex: 7,
-            ),
-            Expanded(
-              child: DragTarget(
-                builder: (context, list, list2) {
-                  return Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Color(0xffff0077), Color(0xffff724e)],
-                          stops: [0, 1],
-                          begin: Alignment(-0.93, 0.36),
-                          end: Alignment(0.93, -0.36),
-                          // angle: 69,
-                          // scale: undefined,
-                        ),
-                      ),
-                      child: ListView.builder(
-                        physics: const AlwaysScrollableScrollPhysics(), // new
-                        controller: _controller,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: someImages.length,
-                        itemBuilder: (context, index) {
-                          return EyesCard(
-                            index: index,
-                            onPress: () {},
-                            imagePath: someImages[index],
-                            eyesPossition: _setInitialEyesPosition,
-                          );
-                        },
-                      ));
-                },
-              ),
-              flex: 1,
-            )
-          ],
-        ),
-      ),
-    );
+          );
   }
 }
