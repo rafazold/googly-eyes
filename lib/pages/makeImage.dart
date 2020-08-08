@@ -8,8 +8,8 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:screenshot/screenshot.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
-// import ‘package:vector_math/vector_math_64.dart’ as vector;
 
+// import ‘package:vector_math/vector_math_64.dart’ as vector;
 class MakeImage extends StatefulWidget {
   @override
   _MakeImageState createState() => _MakeImageState();
@@ -90,6 +90,12 @@ class _MakeImageState extends State<MakeImage> {
     setState(() {
       eyesPosX = eyesPosition['offsetX'];
       eyesPosy = eyesPosition['offsetY'];
+    });
+  }
+
+  void _resetEyes() {
+    setState(() {
+      showEyes = false;
     });
   }
 
@@ -235,6 +241,7 @@ class _MakeImageState extends State<MakeImage> {
                             : Positioned(
                                 top: eyesPosy,
                                 left: eyesPosX,
+
                                 // height: 38,
                                 // width: 80,
                                 child: Draggable<String>(
@@ -244,9 +251,9 @@ class _MakeImageState extends State<MakeImage> {
                                   onDragEnd: (details) {
                                     setState(() {
                                       eyesPosX =
-                                          details.offset.dx.clamp(-30, 300);
+                                          details.offset.dx; //.clamp(-30, 300);
                                       eyesPosy =
-                                          details.offset.dy.clamp(-30, 700);
+                                          details.offset.dy; //.clamp(-30, 700);
                                     });
                                     print(
                                         'details::::::::::::::::::::::::::::::::   ${details.offset} - direction: ${details.offset.direction} - x: ${details.offset.dx} - y: ${details.offset.dy} POSx: $eyesPosX POSy: $eyesPosy');
@@ -256,7 +263,10 @@ class _MakeImageState extends State<MakeImage> {
                                           vector.Vector3(
                                               eyesScale, eyesScale, eyesScale)),
                                       alignment: FractionalOffset.center,
-                                      child: Image.asset(eyesImg)),
+                                      child: Image.asset(
+                                        eyesImg,
+                                        width: 200,
+                                      )),
                                   // Image.asset(eyesImg, scale: eyesScale),
                                   // child: ZoomableImage(AssetImage(eyesImg)),
                                   child: Transform(
@@ -264,7 +274,10 @@ class _MakeImageState extends State<MakeImage> {
                                           vector.Vector3(
                                               eyesScale, eyesScale, eyesScale)),
                                       alignment: FractionalOffset.center,
-                                      child: Image.asset(eyesImg)),
+                                      child: Image.asset(
+                                        eyesImg,
+                                        width: 200,
+                                      )),
                                   data: eyesImg,
                                   childWhenDragging: Container(),
                                 ),
@@ -278,31 +291,35 @@ class _MakeImageState extends State<MakeImage> {
               flex: 7,
             ),
             Expanded(
-              child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xffff0077), Color(0xffff724e)],
-                      stops: [0, 1],
-                      begin: Alignment(-0.93, 0.36),
-                      end: Alignment(0.93, -0.36),
-                      // angle: 69,
-                      // scale: undefined,
-                    ),
-                  ),
-                  child: ListView.builder(
-                    physics: const AlwaysScrollableScrollPhysics(), // new
-                    controller: _controller,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: someImages.length,
-                    itemBuilder: (context, index) {
-                      return EyesCard(
-                        index: index,
-                        onPress: () {},
-                        imagePath: someImages[index],
-                        eyesPossition: _setInitialEyesPosition,
-                      );
-                    },
-                  )),
+              child: DragTarget(
+                builder: (context, list, list2) {
+                  return Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Color(0xffff0077), Color(0xffff724e)],
+                          stops: [0, 1],
+                          begin: Alignment(-0.93, 0.36),
+                          end: Alignment(0.93, -0.36),
+                          // angle: 69,
+                          // scale: undefined,
+                        ),
+                      ),
+                      child: ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(), // new
+                        controller: _controller,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: someImages.length,
+                        itemBuilder: (context, index) {
+                          return EyesCard(
+                            index: index,
+                            onPress: () {},
+                            imagePath: someImages[index],
+                            eyesPossition: _setInitialEyesPosition,
+                          );
+                        },
+                      ));
+                },
+              ),
               flex: 1,
             )
           ],

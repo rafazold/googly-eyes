@@ -57,8 +57,14 @@ class _EyesCardState extends State<EyesCard> {
                           'details::::::::::::::::::::::::::::::::   ${details.offset}');
                     },
                     data: widget.imagePath,
-                    child: Image.asset(widget.imagePath),
-                    feedback: Image.asset(widget.imagePath)),
+                    child: Image.asset(
+                      widget.imagePath,
+                      width: 200,
+                    ),
+                    feedback: Image.asset(
+                      widget.imagePath,
+                      width: 200,
+                    )),
                 fit: BoxFit.scaleDown),
           ),
         ),
