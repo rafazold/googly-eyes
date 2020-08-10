@@ -82,12 +82,20 @@ class _RecordSoundState extends State<RecordSound> {
   Widget build(BuildContext context) {
     return GestureDetector(
       // iconSize: 53,
-      child: ColorFiltered(
-        colorFilter: ColorFilter.mode(
-            recording ? Colors.blueGrey : Colors.transparent, BlendMode.color),
-        child: Image.asset(
-          'assets/record_icon.png',
-          height: 53,
+      child: ClipOval(
+        child: ColorFiltered(
+          colorFilter: ColorFilter.mode(
+              recording ? Colors.blueGrey[300] : Colors.transparent,
+              BlendMode.color),
+          child: recording
+              ? Icon(
+                  Icons.stop,
+                  size: 53,
+                )
+              : Image.asset(
+                  'assets/record_icon.png',
+                  height: 53,
+                ),
         ),
       ),
       onLongPress: () {
@@ -95,6 +103,8 @@ class _RecordSoundState extends State<RecordSound> {
         print('should record: status: ');
       },
       onLongPressUp: endRecording,
+
+      onTap: recording ? endRecording : startRecording,
     );
   }
 }
