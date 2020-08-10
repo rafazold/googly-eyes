@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:googly_eyes/utilities/recordSound.dart';
 import 'package:googly_eyes/utilities/shareFiles.dart';
 import 'package:googly_eyes/utilities/handleFile.dart';
+import 'package:googly_eyes/utilities/popupAlert.dart';
 
 class AddVoice extends StatefulWidget {
   @override
@@ -24,10 +25,12 @@ class _AddVoiceState extends State<AddVoice> {
   String videoUrl;
   File videoFile;
   File imageFile;
+  bool isRecording = false;
 
   final ShareFile _file = ShareFile();
   final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
   final GlobalKey _recordSound = GlobalKey();
+  final PopupAlert _alert = PopupAlert();
 
   void shareFile(file, String mimeType, String ext) async {
     try {
@@ -150,6 +153,14 @@ class _AddVoiceState extends State<AddVoice> {
     });
   }
 
+  void _updateRecordingState(recordingState) {
+    setState(() {
+      print(
+          '----------------------------------------------------------------reeeec');
+      isRecording = recordingState;
+    });
+  }
+
   void _renderAndShowVideo(int width, int height) {
     buildVideo(audioUrl, width, height).then((vidUrl) => {
           // print('this is the video URL: $vidUrl')
@@ -256,7 +267,7 @@ class _AddVoiceState extends State<AddVoice> {
               //     'this is the imageFile file width: ${assetDetails.width} and height: ${assetDetails.height}');
               isAudioAnimated
                   ? _renderAndShowVideo(assetDetails.width, assetDetails.height)
-                  : _file.alert(
+                  : _alert.textAlert(
                       context, 'Please add some audio to make a clip');
               print('Clip pressed: $audioUrl');
             },
@@ -294,12 +305,17 @@ class _AddVoiceState extends State<AddVoice> {
           children: <Widget>[
             Expanded(
               child: arguments['imgFile'] != null
-                  ? Center(
-                      child: OverflowBox(
-                          minWidth: 0.0,
-                          minHeight: 0.0,
-                          maxHeight: double.infinity,
-                          child: Image.file(arguments['imgFile'])))
+                  ? Stack(
+                      alignment: AlignmentDirectional.center,
+                      children: <Widget>[
+                        Center(
+                            child: OverflowBox(
+                                minWidth: 0.0,
+                                minHeight: 0.0,
+                                maxHeight: double.infinity,
+                                child: Image.file(arguments['imgFile'])))
+                      ],
+                    )
                   : Text('No image selected'),
               flex: 5,
             ),
@@ -323,7 +339,9 @@ class _AddVoiceState extends State<AddVoice> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         RecordSound(
-                            pathCallback: _updateAudioPath, key: _recordSound),
+                            pathCallback: _updateAudioPath,
+                            startRecordingCallback: _updateRecordingState,
+                            key: _recordSound),
                         Text('Record a short message',
                             style: TextStyle(
                               fontFamily: 'HelveticaNeue',
