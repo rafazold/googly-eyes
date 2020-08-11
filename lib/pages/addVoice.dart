@@ -175,7 +175,7 @@ class _AddVoiceState extends State<AddVoice> {
           Navigator.pushNamed(context, '/fbshare', arguments: {
             'videoUrl': vidUrl,
             'videoFile': videoFile,
-            'width': width,
+            'width': makeMax(makeIntEven(width)),
             'height': height
           })
         });

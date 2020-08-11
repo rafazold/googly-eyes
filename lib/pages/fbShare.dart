@@ -36,9 +36,7 @@ class _VideoAppState extends State<VideoApp> {
       ..initialize().then((_) {
         setState(() {
           videoReady = true;
-          // _controller = _controller;
         });
-        //do what you want.
       });
   }
 
@@ -257,7 +255,7 @@ class _VideoAppState extends State<VideoApp> {
                       ? Transform.scale(
                           scale: 0.95,
                           child: AspectRatio(
-                            aspectRatio: deviceRatio,
+                            aspectRatio: vidRatio,
                             child: VideoPlayer(_controller),
                           ),
                         )
