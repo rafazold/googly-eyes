@@ -2,11 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-// class MyTimer extends AnimatedWidget {
-//   const MyTimer({Key key, AnimationController controller}) : super(key: key, listenable: controller);
-
-// }
-
 class CountDownTimer extends StatefulWidget {
   @override
   _CountDownTimerState createState() => _CountDownTimerState();
@@ -26,9 +21,17 @@ class _CountDownTimerState extends State<CountDownTimer>
     super.initState();
     controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 3900),
-    );
+      duration: Duration(milliseconds: 3100),
+    )..addStatusListener((state) {
+        print(state);
+      });
     controller.reverse(from: controller.value == 0.0 ? 1.0 : controller.value);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -84,26 +87,6 @@ class _CountDownTimerState extends State<CountDownTimer>
                           ),
                         ),
                       ),
-                      // AnimatedBuilder(
-                      //     animation: controller,
-                      //     builder: (context, child) {
-                      //       return FloatingActionButton.extended(
-                      //           onPressed: () {
-                      //             if (controller.isAnimating)
-                      //               controller.stop();
-                      //             else {
-                      //               controller.reverse(
-                      //                   from: controller.value == 0.0
-                      //                       ? 1.0
-                      //                       : controller.value);
-                      //             }
-                      //           },
-                      //           icon: Icon(controller.isAnimating
-                      //               ? Icons.pause
-                      //               : Icons.play_arrow),
-                      //           label: Text(
-                      //               controller.isAnimating ? "Pause" : "Play"));
-                      //     }),
                     ],
                   ),
                 ),

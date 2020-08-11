@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:googly_eyes/utilities/countdownTimer.dart';
 
 class Splash extends StatelessWidget {
   const Splash({Key key, @required this.pageTitle, this.pressFunction})
@@ -35,14 +36,19 @@ class Splash extends StatelessWidget {
                   ),
                   textAlign: TextAlign.left,
                 ),
-                Center(
-                  child: Image.asset(
-                    'assets/eye_icon.png',
-                    width: 200,
+                AnimatedContainer(
+                  curve: Curves.fastOutSlowIn,
+                  duration: Duration(seconds: 10),
+                  child: Center(
+                    child: Image.asset(
+                      'assets/eye_icon.png',
+                      width: 200,
+                    ),
                   ),
                 ),
                 SizedBox(
-                  height: 140,
+                  height: 180,
+                  // child: CountDownTimer(),
                 ),
                 Text(pageTitle,
                     // Text('Click anywhere to begin!',
