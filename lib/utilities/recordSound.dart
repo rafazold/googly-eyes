@@ -3,11 +3,15 @@ import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:googly_eyes/utilities/popupAlert.dart';
 
 class RecordSound extends StatefulWidget {
   // final CallbackImage callbackImage;
-  const RecordSound({Key key, @required this.pathCallback}) : super(key: key);
+  const RecordSound(
+      {Key key, @required this.pathCallback, this.startRecordingCallback})
+      : super(key: key);
   final ValueChanged<String> pathCallback;
+  final ValueChanged startRecordingCallback;
 
   @override
   _RecordSoundState createState() => _RecordSoundState();
@@ -21,6 +25,9 @@ class _RecordSoundState extends State<RecordSound> {
   Directory tempDir;
   bool recording = false;
   File outputFile;
+  bool readyToRecord = false;
+
+  final PopupAlert alert = PopupAlert();
 
   // final GlobalKey _recordSound = GlobalKey();
 
@@ -41,18 +48,23 @@ class _RecordSoundState extends State<RecordSound> {
   }
 
   void checkPermissions() async {
+    // print('checking P E R M I S S I O N S');
     audioRecorder = await FlutterSoundRecorder().openAudioSession();
     status = await Permission.microphone.request();
     tempDir = await getTemporaryDirectory();
     outputFile = File('${tempDir.path}/goggly_sound-tmp.aac');
     if (status == PermissionStatus.granted && tempDir != null) {
-      print('all ready');
+      setState(() {
+        readyToRecord = true;
+      });
+      print('++++++++++++++++++++++++++all ready');
     } else {
       print('somethings wrong here!');
     }
   }
 
   void startRecording() async {
+    // alert.childAlert(context);
     if (audioRecorder.isInited.toString() == 'Initialized.notInitialized') {
       audioRecorder = await FlutterSoundRecorder().openAudioSession();
       print('audio session inited');
@@ -60,10 +72,21 @@ class _RecordSoundState extends State<RecordSound> {
     if (status != PermissionStatus.granted)
       throw RecordingPermissionException("Microphone permission not granted");
     await audioRecorder.startRecorder(toFile: outputFile.path);
+    // .then((out) {
+    //   if (readyToRecord) {
+    //     alert.closeModal(context);
+    //   }
+    // });
     setState(() {
       recording = true;
       audioPath = outputFile.path;
     });
+    print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
+    // alert.closeModal(context);
+    // Navigator.of(context, rootNavigator: true).pop();
+    // TODO: maybe try with global keys?
+    widget.startRecordingCallback(true);
+    // Navigator.of(context, rootNavigator: true).pop();
   }
 
   void endRecording() async {
@@ -74,9 +97,8 @@ class _RecordSoundState extends State<RecordSound> {
     print('recorded to: $audioPath');
     audioRecorder.closeAudioSession();
     widget.pathCallback(audioPath);
+    widget.startRecordingCallback(false);
   }
-
-  void playRecording() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -99,12 +121,24 @@ class _RecordSoundState extends State<RecordSound> {
         ),
       ),
       onLongPress: () {
+        widget.startRecordingCallback(true);
         startRecording();
         print('should record: status: ');
       },
       onLongPressUp: endRecording,
 
-      onTap: recording ? endRecording : startRecording,
+      // onTap: recording ? endRecording : startRecording,
+      onTap: () {
+        // alert.textAlert(context, 'Please add some audio to make a clip');
+
+        recording
+            ? endRecording()
+            :
+            // : (_) => {
+            startRecording();
+        // alert.childAlert(context);
+        // };
+      },
     );
   }
 }

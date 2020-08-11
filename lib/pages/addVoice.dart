@@ -55,6 +55,14 @@ class _AddVoiceState extends State<AddVoice> {
     }
   }
 
+  int makeMax(int number) {
+    if (number <= 1226) {
+      return number;
+    } else {
+      return 1226;
+    }
+  }
+
   Future buildVideo(String audioUrl, int width, int height) async {
     tempDir = await getTemporaryDirectory();
     String timeStamp = (new DateTime.now().millisecondsSinceEpoch).toString();
@@ -86,8 +94,8 @@ class _AddVoiceState extends State<AddVoice> {
       // "-frames:v",
       // "1",
       "-vf",
-      "scale=${makeIntEven(width)}:${makeIntEven(height)}",
-      // "scale=${makeIntEven(width)}:-1",
+      // "scale=1226:-2",
+      "scale=${makeMax(makeIntEven(width))}:-2",
       // "-q:v",
       // "35",
       "$videoUrl"
