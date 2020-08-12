@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:googly_eyes/pages/splash.dart';
@@ -90,11 +88,6 @@ class _VideoAppState extends State<VideoApp> {
     void goToVideo() {
       _startVideoPlayer(arguments['videoUrl']).then((value) {
         setState(() {
-          print(
-              'YOYOYOYOOYOYOYOYOY ==========>>>> and controller $_controller');
-          // _controller.value.isPlaying
-          //     ? _controller.pause()
-          //     : _controller.play();
           loading = false;
           videoReady = true;
         });
@@ -258,7 +251,7 @@ class _VideoAppState extends State<VideoApp> {
                 Center(
                   child: _controller.value.initialized
                       ? Transform.scale(
-                          scale: 0.95,
+                          scale: 1,
                           child: AspectRatio(
                             aspectRatio: vidRatio,
                             child: VideoPlayer(_controller),
