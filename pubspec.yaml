@@ -60,6 +60,7 @@ flutter:
     - assets/eyes/initial/eyes/
     - assets/eyes/initial/mouth/
     - assets/eyes/initial/face/
+    - assets/eyes/initial/animation/
     - assets/audio/
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
