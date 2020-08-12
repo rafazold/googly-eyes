@@ -1,3 +1,4 @@
+import 'package:audioplayers/audio_cache.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'dart:io';
@@ -6,7 +7,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:googly_eyes/utilities/popupAlert.dart';
 
 class RecordSound extends StatefulWidget {
-  // final CallbackImage callbackImage;
   const RecordSound(
       {Key key, @required this.pathCallback, this.startRecordingCallback})
       : super(key: key);
@@ -20,7 +20,6 @@ class RecordSound extends StatefulWidget {
 class _RecordSoundState extends State<RecordSound> {
   String audioPath;
   FlutterSoundRecorder audioRecorder;
-  FlutterSoundRecorder audioPlayer;
   PermissionStatus status;
   Directory tempDir;
   bool recording = false;
@@ -28,8 +27,7 @@ class _RecordSoundState extends State<RecordSound> {
   bool readyToRecord = false;
 
   final PopupAlert alert = PopupAlert();
-
-  // final GlobalKey _recordSound = GlobalKey();
+  AudioCache player = AudioCache(prefix: 'audio/');
 
   @override
   void initState() {
@@ -48,11 +46,11 @@ class _RecordSoundState extends State<RecordSound> {
   }
 
   void checkPermissions() async {
-    // print('checking P E R M I S S I O N S');
     audioRecorder = await FlutterSoundRecorder().openAudioSession();
     status = await Permission.microphone.request();
     tempDir = await getTemporaryDirectory();
     outputFile = File('${tempDir.path}/goggly_sound-tmp.aac');
+    // get assets folder
     if (status == PermissionStatus.granted && tempDir != null) {
       setState(() {
         readyToRecord = true;
@@ -64,7 +62,6 @@ class _RecordSoundState extends State<RecordSound> {
   }
 
   void startRecording() async {
-    // alert.childAlert(context);
     if (audioRecorder.isInited.toString() == 'Initialized.notInitialized') {
       audioRecorder = await FlutterSoundRecorder().openAudioSession();
       print('audio session inited');
@@ -72,25 +69,21 @@ class _RecordSoundState extends State<RecordSound> {
     if (status != PermissionStatus.granted)
       throw RecordingPermissionException("Microphone permission not granted");
     await audioRecorder.startRecorder(toFile: outputFile.path);
-    // .then((out) {
-    //   if (readyToRecord) {
-    //     alert.closeModal(context);
-    //   }
-    // });
     setState(() {
       recording = true;
       audioPath = outputFile.path;
     });
-    print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
-    // alert.closeModal(context);
-    // Navigator.of(context, rootNavigator: true).pop();
-    // TODO: maybe try with global keys?
     widget.startRecordingCallback(true);
-    // Navigator.of(context, rootNavigator: true).pop();
+    player
+        .play('start-recording.mp3')
+        .catchError((e) => print('ERROR in player: $e'));
   }
 
   void endRecording() async {
     await audioRecorder.stopRecorder();
+    player
+        .play('end-recording.mp3')
+        .catchError((e) => print('ERROR in player: $e'));
     setState(() {
       recording = false;
     });
@@ -103,7 +96,6 @@ class _RecordSoundState extends State<RecordSound> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      // iconSize: 53,
       child: ClipOval(
         child: ColorFiltered(
           colorFilter: ColorFilter.mode(
@@ -126,18 +118,8 @@ class _RecordSoundState extends State<RecordSound> {
         print('should record: status: ');
       },
       onLongPressUp: endRecording,
-
-      // onTap: recording ? endRecording : startRecording,
       onTap: () {
-        // alert.textAlert(context, 'Please add some audio to make a clip');
-
-        recording
-            ? endRecording()
-            :
-            // : (_) => {
-            startRecording();
-        // alert.childAlert(context);
-        // };
+        recording ? endRecording() : startRecording();
       },
     );
   }
