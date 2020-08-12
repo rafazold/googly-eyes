@@ -113,7 +113,7 @@ class _VideoAppState extends State<VideoApp> {
             body: Center(
             child: Splash(
               pressFunction: goToVideo,
-              pageTitle: 'PRESS HERE',
+              pageTitle: 'Click to play video',
               useContext: false,
             ),
           ))
