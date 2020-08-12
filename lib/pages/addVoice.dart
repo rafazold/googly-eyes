@@ -8,7 +8,7 @@ import 'dart:io';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 import 'package:flutter/services.dart';
 import 'package:googly_eyes/utilities/recordSound.dart';
-import 'package:googly_eyes/utilities/shareFiles.dart';
+// import 'package:googly_eyes/utilities/shareFiles.dart';
 import 'package:googly_eyes/utilities/handleFile.dart';
 import 'package:googly_eyes/utilities/popupAlert.dart';
 
@@ -27,7 +27,7 @@ class _AddVoiceState extends State<AddVoice> {
   File imageFile;
   bool isRecording = false;
 
-  final ShareFile _file = ShareFile();
+  // final ShareFile _file = ShareFile();
   final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
   final GlobalKey _recordSound = GlobalKey();
   final PopupAlert _alert = PopupAlert();
@@ -101,27 +101,27 @@ class _AddVoiceState extends State<AddVoice> {
     return videoData;
   }
 
-  void _clipAlert(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          content: const Text('Please add some audio to make a clip'),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Ok'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // void _clipAlert(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(8.0),
+  //         ),
+  //         content: const Text('Please add some audio to make a clip'),
+  //         actions: <Widget>[
+  //           FlatButton(
+  //             child: Text('Ok'),
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   void _updateAudioPath(String path) {
     setState(() {
@@ -141,7 +141,7 @@ class _AddVoiceState extends State<AddVoice> {
   void _renderAndShowVideo(int width, int height) {
     buildVideo(audioUrl, width, height).then((vidUrl) => {
           // print('this is the video URL: $vidUrl')
-          Navigator.pushNamed(context, '/fbshare', arguments: {
+          Navigator.pushNamed(context, '/video', arguments: {
             'videoUrl': vidUrl,
             'videoFile': videoFile,
             'width': makeMax(makeIntEven(width)),
@@ -165,7 +165,7 @@ class _AddVoiceState extends State<AddVoice> {
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     imageFile = arguments['imgFile'];
-    getImgDetails(imageFile);
+    getImgDetails(imageFile); // TODO: find a better way for this function
     print(arguments);
     return Scaffold(
       extendBodyBehindAppBar: true,

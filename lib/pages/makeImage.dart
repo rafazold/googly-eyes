@@ -25,7 +25,7 @@ class _MakeImageState extends State<MakeImage> {
   bool showEyes = false;
   bool loading = false;
   List someImages = [];
-  List imagesLists = ['eyes', 'mouth', 'face'];
+  List imagesLists = ['eyes', 'mouth', 'face', 'animation'];
   int currentList = 0;
   @override
   void initState() {
@@ -39,10 +39,8 @@ class _MakeImageState extends State<MakeImage> {
 
     final Map<String, dynamic> manifestMap = json.decode(manifestContent);
 
-    final keysList = manifestMap.keys
-        .where((String key) => key.contains('eyes/initial/$batch'));
-    print(
-        '=> => => => => => => => => => => => $keysList => => => => => => => => => => => => ');
+    // final keysList = manifestMap.keys
+    //     .where((String key) => key.contains('eyes/initial/$batch'));
 
     final imagePaths = manifestMap.keys
         .where((String key) => key.contains('eyes/initial/$batch'))
@@ -83,11 +81,11 @@ class _MakeImageState extends State<MakeImage> {
     });
   }
 
-  void _resetEyes() {
-    setState(() {
-      showEyes = false;
-    });
-  }
+  // void _resetEyes() {
+  //   setState(() {
+  //     showEyes = false;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -211,7 +209,8 @@ class _MakeImageState extends State<MakeImage> {
                                       : Text('No image selected'),
                                   !showEyes
                                       ? Text('')
-                                      // TODO: to add more eyes, instead of this child it
+                                      // TODO: to add more eyes, instead of this child it needs to be a Stack with childred [positioned, positioned, positioned]
+                                      //TODO: pass details to children including passback (like EyesCard: [line 7])
                                       : Positioned(
                                           top: eyesPosy,
                                           left: eyesPosX,
@@ -300,7 +299,6 @@ class _MakeImageState extends State<MakeImage> {
                                       setState(() {
                                         eyesImg = someImages[index];
                                       });
-                                      // print(someImages[index]);
                                     },
                                     imagePath: someImages[index],
                                     eyesPossition: _setInitialEyesPosition,
