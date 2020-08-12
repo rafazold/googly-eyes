@@ -25,22 +25,27 @@ class _MakeImageState extends State<MakeImage> {
   bool showEyes = false;
   bool loading = false;
   List someImages = [];
+  List imagesLists = ['eyes', 'mouth', 'face'];
+  int currentList = 0;
   @override
   void initState() {
-    _initImages('initial');
+    _initImages(imagesLists[currentList]);
     super.initState();
   }
 
   Future _initImages(String batch) async {
-    // >> To get paths you need these 2 lines
     final manifestContent =
         await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
 
     final Map<String, dynamic> manifestMap = json.decode(manifestContent);
-    // >> To get paths you need these 2 lines
+
+    final keysList = manifestMap.keys
+        .where((String key) => key.contains('eyes/initial/$batch'));
+    print(
+        '=> => => => => => => => => => => => $keysList => => => => => => => => => => => => ');
 
     final imagePaths = manifestMap.keys
-        .where((String key) => key.contains('eyes/$batch'))
+        .where((String key) => key.contains('eyes/initial/$batch'))
         .where((String key) => key.contains('.png') || key.contains('.gif'))
         .toList();
 
@@ -96,7 +101,6 @@ class _MakeImageState extends State<MakeImage> {
               automaticallyImplyLeading: false,
               backgroundColor: Colors.transparent,
               elevation: 0.0,
-              // centerTitle: true,
               title: RawMaterialButton(
                 onPressed: () {
                   Navigator.pop(context);
@@ -256,33 +260,54 @@ class _MakeImageState extends State<MakeImage> {
                     ),
                   ),
                   Expanded(
-                    child: DragTarget(
-                      builder: (context, list, list2) {
-                        return Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [Color(0xffff0077), Color(0xffff724e)],
-                                stops: [0, 1],
-                                begin: Alignment(-0.93, 0.36),
-                                end: Alignment(0.93, -0.36),
-                              ),
-                            ),
-                            child: ListView.builder(
-                              physics:
-                                  const AlwaysScrollableScrollPhysics(), // new
-                              controller: _controller,
-                              scrollDirection: Axis.horizontal,
-                              itemCount: someImages.length,
-                              itemBuilder: (context, index) {
-                                return EyesCard(
-                                  index: index,
-                                  onPress: () {},
-                                  imagePath: someImages[index],
-                                  eyesPossition: _setInitialEyesPosition,
-                                );
-                              },
-                            ));
+                    child: GestureDetector(
+                      onVerticalDragEnd: (details) {
+                        if (details.primaryVelocity > 0 &&
+                            currentList - 1 >= 0) {
+                          setState(() {
+                            currentList--;
+                          });
+                        } else if (details.primaryVelocity < 0 &&
+                            currentList + 1 < imagesLists.length) {
+                          setState(() {
+                            currentList++;
+                          });
+                        }
+                        _initImages(imagesLists[currentList]);
+
+                        print(
+                            '${details.primaryVelocity}, - {direction(details.primaryVelocity)} $currentList');
                       },
+                      child: DragTarget(
+                        builder: (context, list, list2) {
+                          return Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color(0xffff0077),
+                                    Color(0xffff724e)
+                                  ],
+                                  stops: [0, 1],
+                                  begin: Alignment(-0.93, 0.36),
+                                  end: Alignment(0.93, -0.36),
+                                ),
+                              ),
+                              child: ListView.builder(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                controller: _controller,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: someImages.length,
+                                itemBuilder: (context, index) {
+                                  return EyesCard(
+                                    index: index,
+                                    onPress: () {},
+                                    imagePath: someImages[index],
+                                    eyesPossition: _setInitialEyesPosition,
+                                  );
+                                },
+                              ));
+                        },
+                      ),
                     ),
                     flex: 1,
                   )
