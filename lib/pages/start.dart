@@ -7,11 +7,13 @@ class Start extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Splash(
-          pageTitle: 'Click to begin',
-          pressFunction: () {
-            print('working');
-          }),
-    );
+        child: Splash(
+      pageTitle: 'Click to begin',
+      pressFunction: (context) {
+        print('starting');
+        Navigator.pushNamed(context, '/home');
+      },
+      useContext: true,
+    ));
   }
 }

@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:googly_eyes/utilities/countdownTimer.dart';
 
 class Splash extends StatelessWidget {
-  const Splash({Key key, @required this.pageTitle, this.pressFunction})
+  const Splash(
+      {Key key, @required this.pageTitle, this.pressFunction, this.useContext})
       : super(key: key);
   final String pageTitle;
-  final void pressFunction;
+  final Function pressFunction;
+  final bool useContext;
   @override
   Widget build(BuildContext context) {
     print(pageTitle);
     return Scaffold(
         backgroundColor: const Color(0xffffffff),
         body: RawMaterialButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/home');
-          },
+          onPressed: useContext ? () => pressFunction(context) : pressFunction,
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(

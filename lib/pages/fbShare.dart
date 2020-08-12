@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'package:googly_eyes/pages/splash.dart';
 import 'package:googly_eyes/utilities/shareFiles.dart';
 import 'package:video_player/video_player.dart';
 
@@ -85,31 +86,35 @@ class _VideoAppState extends State<VideoApp> {
     final size = MediaQuery.of(context).size;
     final deviceRatio = size.width / size.height;
     final vidRatio = width / height;
+
+    void goToVideo() {
+      _startVideoPlayer(arguments['videoUrl']).then((value) {
+        setState(() {
+          print(
+              'YOYOYOYOOYOYOYOYOY ==========>>>> and controller $_controller');
+          // _controller.value.isPlaying
+          //     ? _controller.pause()
+          //     : _controller.play();
+          loading = false;
+          videoReady = true;
+        });
+      }).then((_) {
+        print(
+            'CONTROLLER CONTROLLER CONTROLLER---------------------------------- $_controller');
+        _controller.play();
+      });
+    }
+
     // _startVideoPlayer(
     //     'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4');
     // initPlayer();
     return loading
         ? Scaffold(
             body: Center(
-            child: FloatingActionButton(
-              onPressed: () {
-                _startVideoPlayer(arguments['videoUrl']).then((value) {
-                  setState(() {
-                    print(
-                        'YOYOYOYOOYOYOYOYOY ==========>>>> and controller $_controller');
-                    // _controller.value.isPlaying
-                    //     ? _controller.pause()
-                    //     : _controller.play();
-                    loading = false;
-                    videoReady = true;
-                  });
-                }).then((_) {
-                  print(
-                      'CONTROLLER CONTROLLER CONTROLLER---------------------------------- $_controller');
-                  _controller.play();
-                });
-              },
-              child: Text('PRESS HERE'),
+            child: Splash(
+              pressFunction: goToVideo,
+              pageTitle: 'PRESS HERE',
+              useContext: false,
             ),
           ))
         : Scaffold(
