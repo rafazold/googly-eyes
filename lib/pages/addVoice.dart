@@ -67,7 +67,6 @@ class _AddVoiceState extends State<AddVoice> {
     tempDir = await getTemporaryDirectory();
     String timeStamp = (new DateTime.now().millisecondsSinceEpoch).toString();
     setState(() {
-      // videoUrl = '${tempDir.path}/googly_video-$timeStamp.mp4';
       videoUrl = '${tempDir.path}/googly_video-$timeStamp.mp4';
     });
     List<String> arguments = [
@@ -83,48 +82,19 @@ class _AddVoiceState extends State<AddVoice> {
       "15",
       "-pix_fmt",
       "yuv420p",
-      // "-profile:v",
-      // "high",
-      // "-qscale:v",
-      // "1",
-      // "-qmin",
-      // "1",
-      // "-qmax",
-      // "1",
-      // "-frames:v",
-      // "1",
       "-vf",
-      // "scale=1226:-2",
       "scale=${makeMax(makeIntEven(width))}:-2",
-      // "-q:v",
-      // "35",
       "$videoUrl"
     ];
 
-    final encoded = await _flutterFFmpeg.executeWithArguments(arguments)
-        // .then((rc) =>
-        //     {print("FFmpeg process exited with rc $rc and saved as $videoUrl")})
-        // .then((res) => _file.videoPathToFile(videoUrl))
-        .then((rc) {
-      // print('probably didnt work with rc: $rc');
+    final encoded =
+        await _flutterFFmpeg.executeWithArguments(arguments).then((rc) {
       setState(() {
         videoFile = File(videoUrl);
       });
     });
-
     return videoUrl;
-
-    //         // .then((res) => videoToFile(videoUrl)
-    //         .then((file) => shareFile(File(videoUrl), 'video/mp4', 'mp4'))
-    //     // .then((value) => print('seems done'))
-    //     )
-    // .catchError((e) => print(e));
   }
-
-  // Future<Uint8List> videoPathToBytes(String path) async {
-  //   Uint8List assetByteData = await File(path).readAsBytes();
-  //   return assetByteData;
-  // }
 
   Future<ByteData> videoToFile(String path) async {
     final videoData = await rootBundle.load(path);
@@ -139,7 +109,6 @@ class _AddVoiceState extends State<AddVoice> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
           ),
-          // title: Text('Not in stock'),
           content: const Text('Please add some audio to make a clip'),
           actions: <Widget>[
             FlatButton(
@@ -181,7 +150,6 @@ class _AddVoiceState extends State<AddVoice> {
         });
   }
 
-  // ignore: missing_return
   Future getImgDetails(_file) {
     if (assetDetails == null) {
       decodeImageFromList(_file.readAsBytesSync()).then((asset) {
@@ -198,13 +166,6 @@ class _AddVoiceState extends State<AddVoice> {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     imageFile = arguments['imgFile'];
     getImgDetails(imageFile);
-    // getImgDetails(_file);
-    // imageFile = arguments['imgFile'];
-
-    // final imageFile = getImageDetails(
-    //   arguments['imgFile'],
-    // );
-
     print(arguments);
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -212,7 +173,6 @@ class _AddVoiceState extends State<AddVoice> {
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         elevation: 0.0,
-        // centerTitle: true,
         title: RawMaterialButton(
           onPressed: () {
             Navigator.pop(context);
@@ -234,7 +194,6 @@ class _AddVoiceState extends State<AddVoice> {
           ),
         ),
         actions: <Widget>[
-          // Container(),
           SizedBox(width: 20),
           RawMaterialButton(
             onPressed: () {
@@ -251,16 +210,12 @@ class _AddVoiceState extends State<AddVoice> {
                     stops: [0, 1],
                     begin: Alignment(-0.98, 0.19),
                     end: Alignment(0.98, -0.19),
-                    // angle: 79,
-                    // scale: undefined,
                   )),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  // SizedBox(width: 20),
                   Icon(Icons.share),
                   Text(' Image'),
-                  // SizedBox(width: 20),
                 ],
               ),
             ),
@@ -271,8 +226,6 @@ class _AddVoiceState extends State<AddVoice> {
               print('pressed');
               getImgDetails(imageFile);
               print('got details');
-              // print(
-              //     'this is the imageFile file width: ${assetDetails.width} and height: ${assetDetails.height}');
               isAudioAnimated
                   ? _renderAndShowVideo(assetDetails.width, assetDetails.height)
                   : _alert.textAlert(
@@ -291,16 +244,12 @@ class _AddVoiceState extends State<AddVoice> {
                     stops: [0, 1],
                     begin: Alignment(-0.98, 0.19),
                     end: Alignment(0.98, -0.19),
-                    // angle: 79,
-                    // scale: undefined,
                   )),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  // SizedBox(width: 20),
                   Icon(Icons.music_video),
                   Text(' Clip'),
-                  // SizedBox(width: 20),
                 ],
               ),
             ),
@@ -329,15 +278,12 @@ class _AddVoiceState extends State<AddVoice> {
             ),
             Expanded(
               child: Container(
-                // height: 120,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Color(0xffff0077), Color(0xffff724e)],
                     stops: [0, 1],
                     begin: Alignment(-0.93, 0.36),
                     end: Alignment(0.93, -0.36),
-                    // angle: 69,
-                    // scale: undefined,
                   ),
                 ),
                 child: Row(

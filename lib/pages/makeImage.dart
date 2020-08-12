@@ -1,5 +1,3 @@
-// import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:googly_eyes/utilities/eyesCard.dart';
 import 'dart:io';
@@ -9,7 +7,6 @@ import 'dart:async';
 import 'package:screenshot/screenshot.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 
-// import ‘package:vector_math/vector_math_64.dart’ as vector;
 class MakeImage extends StatefulWidget {
   @override
   _MakeImageState createState() => _MakeImageState();
@@ -18,7 +15,7 @@ class MakeImage extends StatefulWidget {
 class _MakeImageState extends State<MakeImage> {
   ScrollController _controller = new ScrollController();
   ScreenshotController screenshotController = ScreenshotController();
-  String _assetsPath;
+
   double eyesPosX = 200.0;
   double eyesPosy = 200.0;
   String eyesImg = 'assets/eyes/initial/group_84.png';
@@ -27,18 +24,9 @@ class _MakeImageState extends State<MakeImage> {
   double eyesLastSize;
   bool showEyes = false;
   bool loading = false;
-  File _imageFile;
-  // Map droppedEyes = {
-  //   'xPos': 0,
-  //   'yPos': 0,
-  //   'img': 'assets/eyes/initial/group_84.png',
-  // };
   List someImages = [];
   @override
   void initState() {
-    getEyes().then((path) => setState(() {
-          _assetsPath = path;
-        }));
     _initImages('initial');
     super.initState();
   }
@@ -72,21 +60,16 @@ class _MakeImageState extends State<MakeImage> {
   }
 
   Future<File> setStaticImage() {
-    _imageFile = null;
     return screenshotController
         .capture(delay: Duration(milliseconds: 10), pixelRatio: 3)
         .then((File image) {
       print('Capture Done: ${image.path}');
-      setState(() {
-        _imageFile = image;
-      });
+      setState(() {});
       return image;
     }).catchError((onError) {
       print(onError);
     });
   }
-
-  Future<File> setAnimatedImage() {}
 
   void _setInitialEyesPosition(Map eyesPosition) {
     setState(() {
@@ -144,22 +127,6 @@ class _MakeImageState extends State<MakeImage> {
                               arguments: {'imgFile': imgFile})
                         });
                   },
-                  // onPressed: () {
-                  //   print('done pressed');
-                  //   _imageFile = null;
-                  //   screenshotController
-                  //       .capture(delay: Duration(milliseconds: 10))
-                  //       .then((File image) async {
-                  //     print('Capture Done: ${image.path}');
-                  //     setState(() {
-                  //       _imageFile = image;
-                  //     });
-                  //     Navigator.pushNamed(context, '/voice',
-                  //         arguments: {'imgFile': image});
-                  //   }).catchError((onError) {
-                  //     print(onError);
-                  //   });
-                  // },
                   child: Container(
                     width: 89,
                     height: 30,
@@ -170,16 +137,12 @@ class _MakeImageState extends State<MakeImage> {
                           stops: [0, 1],
                           begin: Alignment(-0.98, 0.19),
                           end: Alignment(0.98, -0.19),
-                          // angle: 79,
-                          // scale: undefined,
                         )),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        // SizedBox(width: 20),
                         Icon(Icons.done),
                         Text('Done'),
-                        // SizedBox(width: 20),
                       ],
                     ),
                   ),
@@ -203,7 +166,6 @@ class _MakeImageState extends State<MakeImage> {
                             int rounded = (scaleValue * 100).toInt();
 
                             if (rounded.isEven) {
-                              // print('UPDATE!!!! $scaleValue}');
                               setState(() {
                                 eyesScale =
                                     (eyesBaseSize * scaleValue).clamp(0.3, 5);
@@ -248,9 +210,6 @@ class _MakeImageState extends State<MakeImage> {
                                       : Positioned(
                                           top: eyesPosy,
                                           left: eyesPosX,
-
-                                          // height: 38,
-                                          // width: 80,
                                           child: Draggable<String>(
                                             onDragStarted: () =>
                                                 ("DRAG START!"),
@@ -276,8 +235,6 @@ class _MakeImageState extends State<MakeImage> {
                                                   eyesImg,
                                                   width: 200,
                                                 )),
-                                            // Image.asset(eyesImg, scale: eyesScale),
-                                            // child: ZoomableImage(AssetImage(eyesImg)),
                                             child: Transform(
                                                 transform: Matrix4.diagonal3(
                                                     vector.Vector3(eyesScale,
@@ -295,7 +252,6 @@ class _MakeImageState extends State<MakeImage> {
                                 ]),
                               );
                             },
-                            // onAccept: (data) => print('data'),
                           )),
                     ),
                   ),
@@ -309,8 +265,6 @@ class _MakeImageState extends State<MakeImage> {
                                 stops: [0, 1],
                                 begin: Alignment(-0.93, 0.36),
                                 end: Alignment(0.93, -0.36),
-                                // angle: 69,
-                                // scale: undefined,
                               ),
                             ),
                             child: ListView.builder(
