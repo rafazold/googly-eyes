@@ -211,14 +211,11 @@ class _MakeImageState extends State<MakeImage> {
                                       : Text('No image selected'),
                                   !showEyes
                                       ? Text('')
+                                      // TODO: to add more eyes, instead of this child it
                                       : Positioned(
                                           top: eyesPosy,
                                           left: eyesPosX,
                                           child: Draggable<String>(
-                                            onDragStarted: () =>
-                                                ("DRAG START!"),
-                                            onDragCompleted: () =>
-                                                print("DRAG COMPLETED!"),
                                             onDragEnd: (details) {
                                               setState(() {
                                                 eyesPosX = details.offset
@@ -226,8 +223,6 @@ class _MakeImageState extends State<MakeImage> {
                                                 eyesPosy = details.offset
                                                     .dy; //.clamp(-30, 700);
                                               });
-                                              print(
-                                                  'details::::::::::::::::::::::::::::::::   ${details.offset} - direction: ${details.offset.direction} - x: ${details.offset.dx} - y: ${details.offset.dy} POSx: $eyesPosX POSy: $eyesPosy');
                                             },
                                             feedback: Transform(
                                                 transform: Matrix4.diagonal3(
@@ -292,6 +287,7 @@ class _MakeImageState extends State<MakeImage> {
                                   end: Alignment(0.93, -0.36),
                                 ),
                               ),
+                              // TODO: try with Silverlist or SilverGrid to use one big list
                               child: ListView.builder(
                                 physics: const AlwaysScrollableScrollPhysics(),
                                 controller: _controller,
@@ -300,7 +296,12 @@ class _MakeImageState extends State<MakeImage> {
                                 itemBuilder: (context, index) {
                                   return EyesCard(
                                     index: index,
-                                    onPress: () {},
+                                    onPress: () {
+                                      setState(() {
+                                        eyesImg = someImages[index];
+                                      });
+                                      // print(someImages[index]);
+                                    },
                                     imagePath: someImages[index],
                                     eyesPossition: _setInitialEyesPosition,
                                   );

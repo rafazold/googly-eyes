@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'dart:async';
 
 class EyesCard extends StatefulWidget {
   EyesCard(
@@ -12,15 +11,13 @@ class EyesCard extends StatefulWidget {
   final ValueChanged<Map> eyesPossition;
   final index;
   final Function onPress;
-  final imagePath; //TODO: make eyesImage as map and pass position
+  final imagePath;
 
   @override
   _EyesCardState createState() => _EyesCardState();
 }
 
 class _EyesCardState extends State<EyesCard> {
-  // StreamController<double> controller = StreamController<double>();
-
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -28,44 +25,49 @@ class _EyesCardState extends State<EyesCard> {
       elevation: 0,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-        child: Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(26),
-            boxShadow: [
-              BoxShadow(
-                  color: Color(0x21000000),
-                  offset: Offset(0, 1),
-                  blurRadius: 12,
-                  spreadRadius: 0)
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: FittedBox(
-                child: LongPressDraggable<String>(
-                    onDragStarted: () => print("DRAG START!"),
-                    onDragCompleted: () => print("DRAG COMPLETED!"),
-                    onDragEnd: (details) {
-                      widget.eyesPossition({
-                        'offsetX': details.offset.dx,
-                        'offsetY': details.offset.dy
-                      });
-                      print(
-                          'details::::::::::::::::::::::::::::::::   ${details.offset}');
-                    },
-                    data: widget.imagePath,
-                    child: Image.asset(
-                      widget.imagePath,
-                      width: 200,
-                    ),
-                    feedback: Image.asset(
-                      widget.imagePath,
-                      width: 200,
-                    )),
-                fit: BoxFit.scaleDown),
+        child: RawMaterialButton(
+          onPressed: () {
+            widget.onPress();
+          },
+          child: Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(26),
+              boxShadow: [
+                BoxShadow(
+                    color: Color(0x21000000),
+                    offset: Offset(0, 1),
+                    blurRadius: 12,
+                    spreadRadius: 0)
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: FittedBox(
+                  child: LongPressDraggable<String>(
+                      onDragStarted: () => print("DRAG START!"),
+                      onDragCompleted: () => print("DRAG COMPLETED!"),
+                      onDragEnd: (details) {
+                        widget.eyesPossition({
+                          'offsetX': details.offset.dx,
+                          'offsetY': details.offset.dy
+                        });
+                        print(
+                            'details::::::::::::::::::::::::::::::::   ${details.offset}');
+                      },
+                      data: widget.imagePath,
+                      child: Image.asset(
+                        widget.imagePath,
+                        height: 200,
+                      ),
+                      feedback: Image.asset(
+                        widget.imagePath,
+                        height: 200,
+                      )),
+                  fit: BoxFit.scaleDown),
+            ),
           ),
         ),
       ),
