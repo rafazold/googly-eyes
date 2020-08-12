@@ -4,13 +4,6 @@ import 'package:googly_eyes/utilities/getImage.dart';
 class Home extends StatelessWidget {
   final SelectImage _image = SelectImage();
 
-  // void pickImage(String type) async {
-  //   return type == 'gallery' ? _image.getImage() :
-  //   _image.takePicture();
-  // }
-
-  // This widget is the root of your application.
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffffffff),
@@ -44,7 +37,6 @@ class Home extends StatelessWidget {
                 ),
                 elevation: 0.0,
                 backgroundColor: Colors.white,
-                // brightness: Brightness.light,
               ),
             ),
           ],
@@ -61,7 +53,6 @@ class Home extends StatelessWidget {
         ),
         child: Column(
           children: <Widget>[
-            // SizedBox(height: 225),
             Expanded(child: Container(), flex: 2),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -69,12 +60,10 @@ class Home extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: Container(
-                    // color: Colors.amber,
                     height: 100,
                   ),
                 ),
                 Container(
-                  // width: 190,
                   height: 200,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -105,12 +94,10 @@ class Home extends StatelessWidget {
                 Expanded(
                   flex: 3,
                   child: Container(
-                    // color: Colors.amber,
                     height: 100,
                   ),
                 ),
                 Container(
-                  // width: 190,
                   height: 200,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -142,7 +129,6 @@ class Home extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: Container(
-                    // color: Colors.amber,
                     height: 100,
                   ),
                 ),
@@ -151,7 +137,6 @@ class Home extends StatelessWidget {
             Expanded(
               flex: 2,
               child: Container(
-                // color: Colors.amber,
                 height: 100,
               ),
             ),
@@ -161,22 +146,9 @@ class Home extends StatelessWidget {
                     color: Colors.white,
                     fontFamily: 'HelveticaNeue',
                     fontWeight: FontWeight.w100)),
-            // FlatButton(
-            //   onPressed: () {
-            //     print('pick your choice presed');
-            //   },
-            //   color: Colors.transparent,
-            //   child: Text('Pick your choice',
-            //       style: TextStyle(
-            //           fontSize: 24,
-            //           color: Colors.white,
-            //           fontFamily: 'HelveticaNeue',
-            //           fontWeight: FontWeight.w100)),
-            // ),
             Expanded(
               flex: 1,
               child: Container(
-                // color: Colors.amber,
                 height: 100,
               ),
             ),
