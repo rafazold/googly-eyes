@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:googly_eyes/widgets/eyesCard.dart';
 import 'package:googly_eyes/widgets/eyesToolbar.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -40,9 +39,6 @@ class _MakeImageState extends State<MakeImage> {
 
     final Map<String, dynamic> manifestMap = json.decode(manifestContent);
 
-    // final keysList = manifestMap.keys
-    //     .where((String key) => key.contains('eyes/initial/$batch'));
-
     final imagePaths = manifestMap.keys
         .where((String key) => key.contains('eyes/initial/$batch'))
         .where((String key) => key.contains('.png') || key.contains('.gif'))
@@ -55,11 +51,8 @@ class _MakeImageState extends State<MakeImage> {
   }
 
   Future<String> getEyes() async {
-    print('#############################################');
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;
-
-    print('yoooooo: $appDocPath');
     return appDocPath;
   }
 
@@ -211,7 +204,6 @@ class _MakeImageState extends State<MakeImage> {
                                   !showEyes
                                       ? Text('')
                                       // TODO: to add more eyes, instead of this child it needs to be a Stack with childred [positioned, positioned, positioned]
-                                      //TODO: pass details to children including passback (like EyesCard: [line 7])
                                       : Positioned(
                                           top: eyesPosy,
                                           left: eyesPosX,
