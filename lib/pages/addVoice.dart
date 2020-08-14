@@ -7,10 +7,10 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 import 'package:flutter/services.dart';
-import 'package:googly_eyes/utilities/recordSound.dart';
+import 'package:googly_eyes/widgets/recordSound.dart';
 // import 'package:googly_eyes/utilities/shareFiles.dart';
 import 'package:googly_eyes/utilities/handleFile.dart';
-import 'package:googly_eyes/utilities/popupAlert.dart';
+import 'package:googly_eyes/widgets/popupAlert.dart';
 
 class AddVoice extends StatefulWidget {
   @override
