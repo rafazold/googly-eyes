@@ -1,7 +1,7 @@
 // import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:googly_eyes/utilities/countdownTimer.dart';
+import 'package:googly_eyes/widgets/countdownTimer.dart';
 
 class PopupAlert {
   void textAlert(BuildContext context, message) {
@@ -43,8 +43,6 @@ class PopupAlert {
   }
 
   void closeModal(context) {
-    print('waka waka');
-    // Navigator.of(context, rootNavigator: true).pop();
-    print('waka waka222222222222222');
+    Navigator.of(context, rootNavigator: true).pop();
   }
 }
