@@ -1,9 +1,7 @@
-import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:googly_eyes/utilities/handleImage.dart';
 import 'package:googly_eyes/widgets/eyesToolbar.dart';
 import 'package:googly_eyes/widgets/recordToolbar.dart';
-import 'package:image/image.dart' as decodeImage;
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
@@ -100,38 +98,6 @@ class _MakeImageState extends State<MakeImage> {
     });
   }
 
-  // Future<List> setAnimatedImage() async {
-  //   FutureGroup screenImages = FutureGroup();
-  //   int counter = 0;
-
-  //   Timer.periodic(Duration(milliseconds: 40), (timer) {
-  //     // print('loop #: $counter');
-  //     if (counter >= 75) {
-  //       timer.cancel();
-  //       screenImages.close();
-  //     } else {
-  //       screenImages.add(screenshotController
-  //           .capture(
-  //               delay: Duration(milliseconds: 1),
-  //               pixelRatio: 1,
-  //               path:
-  //                   '$tempDirPath/anim-${counter.toString().padLeft(3, '0')}.png')
-  //           //   .then((File image) {
-  //           // print('Capture Done: ${image.path}');
-  //           // return image.path;
-  //           // })
-  //           .catchError((onError) {
-  //         print(onError);
-  //       }));
-  //     }
-  //     counter++;
-  //   });
-  //   // print(await frames);
-  //   return screenImages.future.then((value) => value).catchError((e) {
-  //     print('error on future: $e');
-  //   });
-  // }
-
   void _setInitialEyesPosition(Map eyesPosition) {
     setState(() {
       eyesPosX = eyesPosition['offsetX'];
@@ -159,25 +125,6 @@ class _MakeImageState extends State<MakeImage> {
     return File(fullTemporaryPath)
         .writeAsBytes(byteList, mode: FileMode.writeOnly, flush: true);
   }
-
-  // Future<String> copyAnimationFromAssetsToTemp(
-  //     String assetName, String outputName) async {
-  //   final ByteData assetByteData = await rootBundle.load(assetName);
-  //   print('asset $assetName');
-  //   final String fullTemporaryPath = tempDirPath + outputName;
-  //   setState(() {
-  //     tempAnimatedImgOut = fullTemporaryPath;
-  //   });
-  //   print('copyAnimationFromAssetsToTemp');
-  //   List<int> bytes = assetByteData.buffer
-  //       .asUint8List(assetByteData.offsetInBytes, assetByteData.lengthInBytes);
-  //   // List<int> bytes = File(assetName).readAsBytesSync();
-  //   print('copyAnimationFromAssetsToTemp');
-  //   var anim = decodeImage.decodeAnimation(bytes);
-  //   var png = decodeImage.encodeGifAnimation(anim);
-  //   File(tempAnimatedImgOut)..writeAsBytesSync(png);
-  //   return tempAnimatedImgOut;
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -252,18 +199,6 @@ class _MakeImageState extends State<MakeImage> {
                       SizedBox(width: 10),
                       FlatButton(
                           onPressed: () {
-                            // setAnimatedImage().then((vidFiles) {
-                            //   Iterable vidPaths =
-                            //       vidFiles.map((file) => file.path);
-                            //   print(
-                            //       'PATHSSSSSSSSSSSSSS ============================ $vidPaths ==========================');
-                            //   Navigator.pushNamed(context, '/voice',
-                            //       arguments: {
-                            //         'imgFile': vidFiles[0],
-                            //         'vidFiles': vidFiles,
-                            //         'vidPaths': vidPaths
-                            //       });
-                            // });
                             RenderBox box =
                                 imageKey.currentContext.findRenderObject();
                             Offset position = box.localToGlobal(Offset.zero);
@@ -315,7 +250,7 @@ class _MakeImageState extends State<MakeImage> {
               child: Column(
                 children: <Widget>[
                   Expanded(
-                    flex: 7,
+                    flex: 64,
                     child: Container(
                       child: GestureDetector(
                           onScaleStart: (details) {
@@ -421,7 +356,7 @@ class _MakeImageState extends State<MakeImage> {
                         : EyesToolbar(
                             eyesPossition: _setInitialEyesPosition,
                             updateEyesImg: _updateEyesImg),
-                    flex: 1,
+                    flex: 10,
                   )
                 ],
               ),

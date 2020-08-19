@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:googly_eyes/widgets/eyesCard.dart';
 import 'package:path_provider/path_provider.dart';
@@ -95,21 +94,38 @@ class _EyesToolbarState extends State<EyesToolbar> {
                 ),
               ),
               // TODO: try with Silverlist or SilverGrid to use one big list
-              child: ListView.builder(
-                physics: const AlwaysScrollableScrollPhysics(),
-                controller: _controller,
-                scrollDirection: Axis.horizontal,
-                itemCount: someImages.length,
-                itemBuilder: (context, index) {
-                  return EyesCard(
-                    index: index,
-                    onPress: () {
-                      widget.updateEyesImg(someImages[index]);
-                    },
-                    imagePath: someImages[index],
-                    eyesPossition: widget.eyesPossition,
-                  );
-                },
+              child: Column(
+                children: [
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(0),
+                      child: Icon(
+                        Icons.keyboard_arrow_up,
+                        color: Colors.white,
+                        // size: 20,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    height: 90,
+                    child: ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      controller: _controller,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: someImages.length,
+                      itemBuilder: (context, index) {
+                        return EyesCard(
+                          index: index,
+                          onPress: () {
+                            widget.updateEyesImg(someImages[index]);
+                          },
+                          imagePath: someImages[index],
+                          eyesPossition: widget.eyesPossition,
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ));
         },
       ),
