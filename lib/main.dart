@@ -8,9 +8,9 @@ import 'package:googly_eyes/pages/start.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setEnabledSystemUIOverlays([]);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
-    print('hello');
     runApp(MaterialApp(initialRoute: '/start', routes: {
       '/start': (context) => Start(),
       '/home': (context) => Home(),
