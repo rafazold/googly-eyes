@@ -1,11 +1,19 @@
+import 'package:async/async.dart';
 import 'package:flutter/material.dart';
+import 'package:googly_eyes/utilities/handleImage.dart';
 import 'package:googly_eyes/widgets/eyesToolbar.dart';
+import 'package:googly_eyes/widgets/recordToolbar.dart';
+import 'package:image/image.dart' as decodeImage;
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:screenshot/screenshot.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
+import 'package:flutter/services.dart';
+// import 'package:googly_eyes/';
+
+// import 'package:path/path.dart';
 
 class MakeImage extends StatefulWidget {
   @override
@@ -13,8 +21,10 @@ class MakeImage extends StatefulWidget {
 }
 
 class _MakeImageState extends State<MakeImage> {
-  ScrollController _controller = new ScrollController();
+  // ScrollController _controller = new ScrollController();
   ScreenshotController screenshotController = ScreenshotController();
+  GlobalKey imageKey = GlobalKey();
+  GlobalKey eyes1 = GlobalKey();
 
   double eyesPosX = 200.0;
   double eyesPosy = 200.0;
@@ -27,10 +37,29 @@ class _MakeImageState extends State<MakeImage> {
   List someImages = [];
   List imagesLists = ['eyes', 'mouth', 'face', 'animation'];
   int currentList = 0;
+  bool isAnimated = false;
+  String tempDirPath;
+  bool hideAppBar = false;
+  bool showVideoToolbar = false;
+  String assetsDirectory;
+  String tempAnimatedImgOut;
+
+  final HandleImage handleImages = HandleImage();
+
   @override
   void initState() {
     _initImages(imagesLists[currentList]);
+    _getTempDirPath();
+    getAssetsDir();
     super.initState();
+  }
+
+  void _getTempDirPath() async {
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+    setState(() {
+      tempDirPath = tempPath;
+    });
   }
 
   Future _initImages(String batch) async {
@@ -50,10 +79,13 @@ class _MakeImageState extends State<MakeImage> {
     });
   }
 
-  Future<String> getEyes() async {
+  void getAssetsDir() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;
-    return appDocPath;
+    print('paaaaaath' + appDocPath);
+    setState(() {
+      assetsDirectory = appDocPath;
+    });
   }
 
   Future<File> setStaticImage() {
@@ -64,9 +96,41 @@ class _MakeImageState extends State<MakeImage> {
       setState(() {});
       return image;
     }).catchError((onError) {
-      print(onError);
+      print('onError');
     });
   }
+
+  // Future<List> setAnimatedImage() async {
+  //   FutureGroup screenImages = FutureGroup();
+  //   int counter = 0;
+
+  //   Timer.periodic(Duration(milliseconds: 40), (timer) {
+  //     // print('loop #: $counter');
+  //     if (counter >= 75) {
+  //       timer.cancel();
+  //       screenImages.close();
+  //     } else {
+  //       screenImages.add(screenshotController
+  //           .capture(
+  //               delay: Duration(milliseconds: 1),
+  //               pixelRatio: 1,
+  //               path:
+  //                   '$tempDirPath/anim-${counter.toString().padLeft(3, '0')}.png')
+  //           //   .then((File image) {
+  //           // print('Capture Done: ${image.path}');
+  //           // return image.path;
+  //           // })
+  //           .catchError((onError) {
+  //         print(onError);
+  //       }));
+  //     }
+  //     counter++;
+  //   });
+  //   // print(await frames);
+  //   return screenImages.future.then((value) => value).catchError((e) {
+  //     print('error on future: $e');
+  //   });
+  // }
 
   void _setInitialEyesPosition(Map eyesPosition) {
     setState(() {
@@ -81,6 +145,40 @@ class _MakeImageState extends State<MakeImage> {
     });
   }
 
+  // assetsDirectory/$eyesImg
+  Future<File> copyFileAssets(String assetName, String localName) async {
+    final ByteData assetByteData = await rootBundle.load(assetName);
+
+    final List<int> byteList = assetByteData.buffer
+        .asUint8List(assetByteData.offsetInBytes, assetByteData.lengthInBytes);
+
+    final String fullTemporaryPath = tempDirPath + localName;
+    setState(() {
+      tempAnimatedImgOut = fullTemporaryPath;
+    });
+    return File(fullTemporaryPath)
+        .writeAsBytes(byteList, mode: FileMode.writeOnly, flush: true);
+  }
+
+  // Future<String> copyAnimationFromAssetsToTemp(
+  //     String assetName, String outputName) async {
+  //   final ByteData assetByteData = await rootBundle.load(assetName);
+  //   print('asset $assetName');
+  //   final String fullTemporaryPath = tempDirPath + outputName;
+  //   setState(() {
+  //     tempAnimatedImgOut = fullTemporaryPath;
+  //   });
+  //   print('copyAnimationFromAssetsToTemp');
+  //   List<int> bytes = assetByteData.buffer
+  //       .asUint8List(assetByteData.offsetInBytes, assetByteData.lengthInBytes);
+  //   // List<int> bytes = File(assetName).readAsBytesSync();
+  //   print('copyAnimationFromAssetsToTemp');
+  //   var anim = decodeImage.decodeAnimation(bytes);
+  //   var png = decodeImage.encodeGifAnimation(anim);
+  //   File(tempAnimatedImgOut)..writeAsBytesSync(png);
+  //   return tempAnimatedImgOut;
+  // }
+
   @override
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
@@ -89,63 +187,130 @@ class _MakeImageState extends State<MakeImage> {
         ? Container()
         : Scaffold(
             extendBodyBehindAppBar: true,
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              backgroundColor: Colors.transparent,
-              elevation: 0.0,
-              title: RawMaterialButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Stack(
-                  alignment: AlignmentDirectional.center,
-                  children: <Widget>[
-                    Opacity(
-                      opacity: 0.25999999046325684,
-                      child: Container(
-                          width: 67.0,
-                          height: 30.0,
+            appBar: hideAppBar
+                ? null
+                : AppBar(
+                    automaticallyImplyLeading: false,
+                    backgroundColor: Colors.transparent,
+                    elevation: 0.0,
+                    title: RawMaterialButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Stack(
+                        alignment: AlignmentDirectional.center,
+                        children: <Widget>[
+                          Opacity(
+                            opacity: 0.25999999046325684,
+                            child: Container(
+                                width: 67.0,
+                                height: 30.0,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(21))),
+                          ),
+                          Text('Back'),
+                        ],
+                      ),
+                    ),
+                    actions: <Widget>[
+                      SizedBox(width: 20),
+                      RawMaterialButton(
+                        onPressed: () {
+                          setStaticImage().then((imgFile) => {
+                                Navigator.pushNamed(context, '/voice',
+                                    arguments: {
+                                      'imgFile': imgFile,
+                                      'vidFiles': [],
+                                      'eyesPosX': eyesPosX,
+                                      'eyesPosY': eyesPosy,
+                                      'bgPath': arguments['imgFile'].path,
+                                      'eyesPath': eyesImg
+                                    })
+                              });
+                        },
+                        child: Container(
+                          width: 89,
+                          height: 30,
                           decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(21))),
-                    ),
-                    Text('Back'),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                SizedBox(width: 20),
-                RawMaterialButton(
-                  onPressed: () {
-                    print('done pressed');
-                    setStaticImage().then((imgFile) => {
-                          Navigator.pushNamed(context, '/voice',
-                              arguments: {'imgFile': imgFile})
-                        });
-                  },
-                  child: Container(
-                    width: 89,
-                    height: 30,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(21),
-                        gradient: LinearGradient(
-                          colors: [Color(0xffff0775), Color(0xfffc6c4e)],
-                          stops: [0, 1],
-                          begin: Alignment(-0.98, 0.19),
-                          end: Alignment(0.98, -0.19),
-                        )),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(Icons.done),
-                        Text('Done'),
-                      ],
-                    ),
+                              borderRadius: BorderRadius.circular(21),
+                              gradient: LinearGradient(
+                                colors: [Color(0xffff0775), Color(0xfffc6c4e)],
+                                stops: [0, 1],
+                                begin: Alignment(-0.98, 0.19),
+                                end: Alignment(0.98, -0.19),
+                              )),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(Icons.done),
+                              Text('Done'),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      FlatButton(
+                          onPressed: () {
+                            // setAnimatedImage().then((vidFiles) {
+                            //   Iterable vidPaths =
+                            //       vidFiles.map((file) => file.path);
+                            //   print(
+                            //       'PATHSSSSSSSSSSSSSS ============================ $vidPaths ==========================');
+                            //   Navigator.pushNamed(context, '/voice',
+                            //       arguments: {
+                            //         'imgFile': vidFiles[0],
+                            //         'vidFiles': vidFiles,
+                            //         'vidPaths': vidPaths
+                            //       });
+                            // });
+                            RenderBox box =
+                                imageKey.currentContext.findRenderObject();
+                            Offset position = box.localToGlobal(Offset.zero);
+                            double xOffset = position.dx;
+                            double yOffset = position.dy;
+                            double width = box.size.width;
+                            double height = box.size.height;
+                            RenderBox eyes =
+                                eyes1.currentContext.findRenderObject();
+                            Offset pos = eyes.localToGlobal(Offset.zero);
+                            double xOff = pos.dx;
+                            double yOff = pos.dy;
+                            double wid = eyes.size.width * eyesScale;
+                            double hei = eyes.size.height * eyesScale;
+                            print(
+                                'x: $xOffset - y: $yOffset - width: $width - height: $height == x: $xOff == y: $yOff == w: $wid == h: $hei == scale: $eyesScale');
+                            print('$assetsDirectory/$eyesImg');
+                            // copyFileAssets(
+                            //     arguments['imgFile'].path, '/animated.gif');
+                            handleImages
+                                .copyAnimationFromAssetsToTemp(
+                                    eyesImg, '/animated.png')
+                                .then((animatedEyesPath) {
+                              setStaticImage().then((imgFile) => {
+                                    Navigator.pushNamed(context, '/voice',
+                                        arguments: {
+                                          'imgFile': imgFile,
+                                          'eyesPosX': xOff,
+                                          'eyesPosY': yOff,
+                                          'eyesPath': animatedEyesPath,
+                                          'bgPosX': xOffset,
+                                          'bgPosY': yOffset,
+                                          'bgPath': arguments['imgFile'].path,
+                                          'bgW': width,
+                                          'bgH': height,
+                                          'eyW': wid,
+                                          'eyH': hei,
+                                          'vidFiles': [eyesImg],
+                                          'xOff': xOff - xOffset,
+                                          'yOff': yOff - yOffset
+                                        })
+                                  });
+                            });
+                          },
+                          child: Text('try me'))
+                    ],
                   ),
-                ),
-                SizedBox(width: 10),
-              ],
-            ),
             body: Container(
               child: Column(
                 children: <Widget>[
@@ -198,8 +363,11 @@ class _MakeImageState extends State<MakeImage> {
                                               minWidth: 0.0,
                                               minHeight: 0.0,
                                               maxHeight: double.infinity,
-                                              child: Image.file(File(
-                                                  arguments['imgFile'].path))))
+                                              child: Container(
+                                                key: imageKey,
+                                                child: Image.file(File(
+                                                    arguments['imgFile'].path)),
+                                              )))
                                       : Text('No image selected'),
                                   !showEyes
                                       ? Text('')
@@ -235,6 +403,7 @@ class _MakeImageState extends State<MakeImage> {
                                                 child: Image.asset(
                                                   eyesImg,
                                                   width: 200,
+                                                  key: eyes1,
                                                 )),
                                             data: eyesImg,
                                             childWhenDragging: Container(),
@@ -247,9 +416,11 @@ class _MakeImageState extends State<MakeImage> {
                     ),
                   ),
                   Expanded(
-                    child: EyesToolbar(
-                        eyesPossition: _setInitialEyesPosition,
-                        updateEyesImg: _updateEyesImg),
+                    child: showVideoToolbar
+                        ? RecordToolbar()
+                        : EyesToolbar(
+                            eyesPossition: _setInitialEyesPosition,
+                            updateEyesImg: _updateEyesImg),
                     flex: 1,
                   )
                 ],

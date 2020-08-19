@@ -26,11 +26,26 @@ class _AddVoiceState extends State<AddVoice> {
   File videoFile;
   File imageFile;
   bool isRecording = false;
+  List vidFiles;
+  String bgPath;
+  String eyesPath;
+  double bgW;
+  double bgH;
+  double eyW;
+  double eyH;
+  double xOff;
+  double yOff;
 
   // final ShareFile _file = ShareFile();
   final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
   final GlobalKey _recordSound = GlobalKey();
   final PopupAlert _alert = PopupAlert();
+
+  @override
+  void initState() {
+    print('init addVoice');
+    super.initState();
+  }
 
   void shareFile(file, String mimeType, String ext) async {
     try {
@@ -47,7 +62,11 @@ class _AddVoiceState extends State<AddVoice> {
     }
   }
 
-  int makeIntEven(int number) {
+  int makeIntEven(infOrDouble) {
+    int number = infOrDouble.toInt();
+    if (number.runtimeType == double) {
+      number.toInt();
+    }
     if (number.isEven) {
       return number;
     } else {
@@ -63,43 +82,100 @@ class _AddVoiceState extends State<AddVoice> {
     }
   }
 
+  // String vidFramesToString(list) {
+  //   List<String> pathsList = list.map((File file) => file.path);
+  //   pathsList.join('-i,');
+  // }
+
   Future buildVideo(String audioUrl, int width, int height) async {
+    List<String> arguments;
     tempDir = await getTemporaryDirectory();
     String timeStamp = (new DateTime.now().millisecondsSinceEpoch).toString();
     setState(() {
       videoUrl = '${tempDir.path}/googly_video-$timeStamp.mp4';
     });
-    List<String> arguments = [
-      "-i",
-      "${imageFile.path}",
-      "-i",
-      "$audioUrl",
-      "-loop",
-      "1",
-      "-c:v",
-      "libx264",
-      "-t",
-      "15",
-      "-pix_fmt",
-      "yuv420p",
-      "-vf",
-      "scale=${makeMax(makeIntEven(width))}:-2",
-      "$videoUrl"
-    ];
+    if (vidFiles.length == 0) {
+      print('vidfiles: ${vidFiles.length}, imgpath: ${imageFile.path}');
+      arguments = [
+        "-i",
+        "${imageFile.path}",
+        "-i",
+        "$audioUrl",
+        "-loop",
+        "1",
+        "-c:v",
+        "libx264",
+        "-t",
+        "15",
+        "-pix_fmt",
+        "yuv420p",
+        "-vf",
+        "-vsync",
+        "0",
+        "scale=${makeMax(makeIntEven(width))}:-2",
+        "$videoUrl"
+      ];
+    } else {
+      print('BUILD VIDEO!!!');
+      print('vidfiles: ${vidFiles.length}, first imgpath: ${vidFiles[0]}');
+      arguments = [
+        "-i",
+        "$bgPath",
+        // "-loop",
+        "-stream_loop",
+        // "1",
+        "-1",
+        "-r",
+        "25",
+        "-i",
+        "$eyesPath",
+        "-filter_complex",
+        "[0]transpose=dir=1:passthrough=portrait[bgTraspose], [bgTraspose]scale=w=${makeIntEven(bgW)}:h=${makeIntEven(bgH)}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(eyW)}:h=${makeIntEven(eyH)}[eyes], [bg][eyes]overlay=$xOff:$yOff",
+        // "-i",
+        // "${tempDir.path}/anim-%03d.png",
+        "-i",
+        "$audioUrl",
+        // "-loop",
+        // "1",
+        // "+global_header",
+        // "-c:a",
+        // "copy",
+        "-c:v",
+        "libx264",
+        "-t",
+        "15",
+        // "-f",
+        // "yuv4mpegpipe",
+        "-pix_fmt",
+        "yuv420p",
+        "-preset",
+        "veryslow",
+        "-crf",
+        "17",
+        // "dump_extra",
+        // "-c:a libmp3lame",
+        // "-vf",
+        // "scale=${makeMax(makeIntEven(width))}:-2",
+        "-shortest",
+        "$videoUrl"
+      ];
+    }
 
     final encoded =
         await _flutterFFmpeg.executeWithArguments(arguments).then((rc) {
       setState(() {
         videoFile = File(videoUrl);
       });
+    }).catchError((e) {
+      print(e);
     });
     return videoUrl;
   }
 
-  Future<ByteData> videoToFile(String path) async {
-    final videoData = await rootBundle.load(path);
-    return videoData;
-  }
+  // Future<ByteData> videoToFile(String path) async {
+  //   final videoData = await rootBundle.load(path);
+  //   return videoData;
+  // }
 
   // void _clipAlert(BuildContext context) {
   //   showDialog(
@@ -139,18 +215,18 @@ class _AddVoiceState extends State<AddVoice> {
   }
 
   void _renderAndShowVideo(int width, int height) {
-    buildVideo(audioUrl, width, height).then((vidUrl) => {
-          // print('this is the video URL: $vidUrl')
-          Navigator.pushNamed(context, '/video', arguments: {
-            'videoUrl': vidUrl,
-            'videoFile': videoFile,
-            'width': makeMax(makeIntEven(width)),
-            'height': height
-          })
-        });
+    buildVideo(audioUrl, width, height).then((vidUrl) {
+      print('this is the video URL: $vidUrl');
+      Navigator.pushNamed(context, '/video', arguments: {
+        'videoUrl': vidUrl,
+        'videoFile': videoFile,
+        'width': makeMax(makeIntEven(width)),
+        'height': height
+      });
+    });
   }
 
-  Future getImgDetails(_file) {
+  void getImgDetails(_file) {
     if (assetDetails == null) {
       decodeImageFromList(_file.readAsBytesSync()).then((asset) {
         var details = AssetDetails(_file, asset.width, asset.height);
@@ -165,8 +241,17 @@ class _AddVoiceState extends State<AddVoice> {
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     imageFile = arguments['imgFile'];
+    vidFiles = arguments['vidFiles'];
+    bgPath = arguments['bgPath'];
+    bgW = arguments['bgW'];
+    bgH = arguments['bgH'];
+    eyW = arguments['eyW'];
+    eyH = arguments['eyH'];
+    xOff = arguments['xOff'];
+    yOff = arguments['yOff'];
+    eyesPath = arguments['eyesPath'];
     getImgDetails(imageFile); // TODO: find a better way for this function
-    print(arguments);
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -223,11 +308,14 @@ class _AddVoiceState extends State<AddVoice> {
           SizedBox(width: 2),
           RawMaterialButton(
             onPressed: () {
-              print('pressed');
+              print(
+                  'pressed with assetDetails: ${assetDetails.width} - ${assetDetails.height}');
               getImgDetails(imageFile);
               print('got details');
+              print(
+                  'pressed with N E W assetDetails: ${assetDetails.width} - ${assetDetails.height}');
               isAudioAnimated
-                  ? _renderAndShowVideo(assetDetails.width, assetDetails.height)
+                  ? _renderAndShowVideo(bgW.toInt(), bgH.toInt())
                   : _alert.textAlert(
                       context, 'Please add some audio to make a clip');
               print('Clip pressed: $audioUrl');
@@ -274,7 +362,7 @@ class _AddVoiceState extends State<AddVoice> {
                       ],
                     )
                   : Text('No image selected'),
-              flex: 5,
+              flex: 7,
             ),
             Expanded(
               child: Container(

@@ -31,15 +31,24 @@ class _EyesToolbarState extends State<EyesToolbar> {
   }
 
   Future _initImages(String batch) async {
+    List imagePaths = [];
+
     final manifestContent =
         await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
 
     final Map<String, dynamic> manifestMap = json.decode(manifestContent);
 
-    final imagePaths = manifestMap.keys
-        .where((String key) => key.contains('eyes/initial/$batch'))
-        .where((String key) => key.contains('.png') || key.contains('.gif'))
-        .toList();
+    if (batch == 'animation') {
+      imagePaths = manifestMap.keys
+          .where((String key) => key.contains('eyes/initial/$batch'))
+          .where((String key) => key.contains('.gif'))
+          .toList();
+    } else {
+      imagePaths = manifestMap.keys
+          .where((String key) => key.contains('eyes/initial/$batch'))
+          .where((String key) => key.contains('.png'))
+          .toList();
+    }
 
     setState(() {
       someImages = imagePaths;
