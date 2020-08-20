@@ -93,7 +93,6 @@ class _EyesToolbarState extends State<EyesToolbar> {
                   end: Alignment(0.93, -0.36),
                 ),
               ),
-              // TODO: try with Silverlist or SilverGrid to use one big list
               child: Column(
                 children: [
                   Center(
