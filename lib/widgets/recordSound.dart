@@ -73,7 +73,7 @@ class _RecordSoundState extends State<RecordSound> {
       recording = true;
       audioPath = outputFile.path;
     });
-    widget.startRecordingCallback(true);
+    // widget.startRecordingCallback(true);
     player
         .play('start-recording.mp3')
         .catchError((e) => print('ERROR in player: $e'));
@@ -90,7 +90,7 @@ class _RecordSoundState extends State<RecordSound> {
     print('recorded to: $audioPath');
     audioRecorder.closeAudioSession();
     widget.pathCallback(audioPath);
-    widget.startRecordingCallback(false);
+    // widget.startRecordingCallback(false);
   }
 
   @override
@@ -113,7 +113,7 @@ class _RecordSoundState extends State<RecordSound> {
         ),
       ),
       onLongPress: () {
-        widget.startRecordingCallback(true);
+        // widget.startRecordingCallback(true);
         startRecording();
         print('should record: status: ');
       },

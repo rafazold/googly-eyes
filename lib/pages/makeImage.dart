@@ -240,7 +240,9 @@ class _MakeImageState extends State<MakeImage> {
                       SizedBox(width: 10),
                       FlatButton(
                           onPressed: () {
-                            renderAnimation(bgFile.path);
+                            setState(() {
+                              showVideoToolbar = !showVideoToolbar;
+                            });
                           },
                           child: Text('try me'))
                     ],
