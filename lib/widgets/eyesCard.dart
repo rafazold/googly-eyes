@@ -24,7 +24,7 @@ class _EyesCardState extends State<EyesCard> {
       color: Colors.transparent,
       elevation: 0,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+        padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
         child: RawMaterialButton(
           onPressed: () {
             widget.onPress();
