@@ -63,24 +63,45 @@ class _EyesToolbarState extends State<EyesToolbar> {
     return appDocPath;
   }
 
+  void handleNextList() {
+    print('doing next');
+    if (currentList + 1 < imagesLists.length) {
+      print('ifed');
+      setState(() {
+        currentList++;
+      });
+      print(currentList);
+    } else {
+      print('elsed');
+      setState(() {
+        currentList = 0;
+      });
+    }
+    _initImages(imagesLists[currentList]);
+  }
+
+  void handlePrevList() {
+    if (currentList - 1 >= 0) {
+      setState(() {
+        currentList--;
+      });
+    } else {
+      setState(() {
+        currentList = imagesLists.length - 1;
+      });
+    }
+    _initImages(imagesLists[currentList]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onVerticalDragEnd: (details) {
-        if (details.primaryVelocity > 0 && currentList - 1 >= 0) {
-          setState(() {
-            currentList--;
-          });
-        } else if (details.primaryVelocity < 0 &&
-            currentList + 1 < imagesLists.length) {
-          setState(() {
-            currentList++;
-          });
+        if (details.primaryVelocity > 0) {
+          handlePrevList();
+        } else if (details.primaryVelocity < 0) {
+          handleNextList();
         }
-        _initImages(imagesLists[currentList]);
-
-        print(
-            '${details.primaryVelocity}, - {direction(details.primaryVelocity)} $currentList');
       },
       child: DragTarget(
         builder: (context, list, list2) {
@@ -94,14 +115,29 @@ class _EyesToolbarState extends State<EyesToolbar> {
                 ),
               ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(0),
-                      child: Icon(
-                        Icons.keyboard_arrow_up,
-                        color: Colors.white,
-                        // size: 20,
+                  Container(
+                    child: ButtonTheme(
+                      height: 22,
+                      child: RaisedButton(
+                        color: Colors.transparent,
+                        elevation: 0,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        // padding: EdgeInsets.all(7),
+                        onPressed: handleNextList,
+                        child: Center(
+                          child: Container(
+                            child: SizedBox(
+                              // height: 20,
+                              child: Icon(
+                                Icons.keyboard_arrow_up,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
