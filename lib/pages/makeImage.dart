@@ -30,17 +30,19 @@ class _MakeImageState extends State<MakeImage> {
   double eyesScale = 1.0;
   double eyesBaseSize = 1.0;
   double eyesLastSize;
-  bool showEyes = false;
-  bool loading = false;
   // List cardsImages = [];
   List imagesLists = ['eyes', 'mouth', 'face', 'animation'];
   int currentList = 0;
-  bool isAnimated = false;
   String tempDirPath;
-  bool hideAppBar = false;
-  bool showRecordToolbar = false;
   String assetsDirectory;
   String tempAnimatedImgOut;
+  bool showEyes = false;
+  bool loading = false;
+  bool hideAppBar = false;
+  bool isAnimated = false;
+  bool editing = true;
+  bool showRecordToolbar = false;
+  bool isAudioAnimated = false;
 
   final HandleImage handleImages = HandleImage();
 
@@ -115,16 +117,17 @@ class _MakeImageState extends State<MakeImage> {
   }
 
   void renderStatic(String bgPath) {
-    takeScreenshot().then((imgFile) => {
-          Navigator.pushNamed(context, '/voice', arguments: {
-            'imgFile': imgFile,
-            'vidFiles': [],
-            'eyesPosX': eyesPosX,
-            'eyesPosY': eyesPosy,
-            'bgPath': bgPath,
-            'eyesPath': eyesImg
-          })
-        });
+    takeScreenshot().then((imgFile) {
+      print('renderedStatic');
+      // Navigator.pushNamed(context, '/voice', arguments: {
+      //   'imgFile': imgFile,
+      //   'vidFiles': [],
+      //   'eyesPosX': eyesPosX,
+      //   'eyesPosY': eyesPosy,
+      //   'bgPath': bgPath,
+      //   'eyesPath': eyesImg
+      // })
+    });
   }
 
   void renderAnimation(String bgPath) {
@@ -146,6 +149,7 @@ class _MakeImageState extends State<MakeImage> {
     print('$assetsDirectory/$eyesImg');
     // copyFileAssets(
     //     arguments['imgFile'].path, '/animated.gif');
+    //TODO: check if image is rendered in the session and if so pass the path tather than prepare the assets again.
     handleImages
         .copyAnimationFromAssetsToTemp(eyesImg, '/animated.png')
         .then((animatedEyesPath) {
@@ -153,27 +157,35 @@ class _MakeImageState extends State<MakeImage> {
       takeScreenshot().then((imgFile) {
         // copyFileAssets(assetName, localName).then((imgFile) {
         print('S T E P ================      3');
-        Navigator.pushNamed(context, '/voice', arguments: {
-          'imgFile': imgFile,
-          'eyesPosX': xOff,
-          'eyesPosY': yOff,
-          'eyesPath': animatedEyesPath,
-          'bgPosX': xOffset,
-          'bgPosY': yOffset,
-          'bgPath': bgPath,
-          'bgW': width,
-          'bgH': height,
-          'eyW': wid,
-          'eyH': hei,
-          'vidFiles': [eyesImg],
-          'xOff': xOff - xOffset,
-          'yOff': yOff - yOffset
-        });
+
+        // Navigator.pushNamed(context, '/voice', arguments: {
+        //   'imgFile': imgFile,
+        //   'eyesPosX': xOff,
+        //   'eyesPosY': yOff,
+        //   'eyesPath': animatedEyesPath,
+        //   'bgPosX': xOffset,
+        //   'bgPosY': yOffset,
+        //   'bgPath': bgPath,
+        //   'bgW': width,
+        //   'bgH': height,
+        //   'eyW': wid,
+        //   'eyH': hei,
+        //   'vidFiles': [eyesImg],
+        //   'xOff': xOff - xOffset,
+        //   'yOff': yOff - yOffset
+        // });
       });
     });
   }
 
   void handleDone(String bgPath, String overPath) {
+    if (!editing) {
+      return;
+    }
+    setState(() {
+      editing = false;
+      showRecordToolbar = true;
+    });
     if (overPath.contains('animation')) {
       print('rendering A N I M A T E D: $overPath');
       renderAnimation(bgPath);
@@ -184,9 +196,15 @@ class _MakeImageState extends State<MakeImage> {
   }
 
   void handleEdit() {
+    print('edit');
     setState(() {
-      showRecordToolbar = !showRecordToolbar;
+      editing = true;
+      showRecordToolbar = false;
     });
+  }
+
+  void handleFinish() {
+    print('FINISH');
   }
 
   @override
@@ -206,19 +224,28 @@ class _MakeImageState extends State<MakeImage> {
                     title: PrevButton(),
                     actions: <Widget>[
                       SizedBox(width: 20),
-                      PinkButton(
-                        buttonText: ' Done',
-                        icon: Icons.done,
-                        callback: () {
-                          handleDone(bgFile.path, eyesImg);
-                        },
-                      ),
+                      editing
+                          ? PinkButton(
+                              buttonText: ' Done',
+                              icon: Icons.done,
+                              callback: () {
+                                handleDone(bgFile.path, eyesImg);
+                              },
+                            )
+                          : PinkButton(
+                              buttonText: ' Finish',
+                              icon: Icons.done,
+                              callback: () {
+                                handleFinish();
+                              }),
                       SizedBox(width: 10),
-                      PinkButton(
-                        buttonText: ' Edit',
-                        icon: Icons.edit,
-                        callback: handleEdit,
-                      ),
+                      editing
+                          ? Container()
+                          : PinkButton(
+                              buttonText: ' Edit',
+                              icon: Icons.edit,
+                              callback: handleEdit,
+                            ),
                     ],
                   ),
             body: Container(
@@ -277,7 +304,7 @@ class _MakeImageState extends State<MakeImage> {
                                       : Text('No image selected'),
                                   !showEyes
                                       ? Text('')
-                                      // TODO: to add more eyes, instead of this child it needs to be a Stack with childred [positioned, positioned, positioned], each with its own key
+                                      // TODO: to add more eyes, instead of this child it needs to be a Stack with childred [positioned, positioned, positioned], each with its own key. The handle add (also called in Done) is a button and when added then instance is made and added to a list.
                                       : Positioned(
                                           top: eyesPosy,
                                           left: eyesPosX,
