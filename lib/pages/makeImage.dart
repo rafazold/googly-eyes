@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:googly_eyes/utilities/handleImage.dart';
 import 'package:googly_eyes/widgets/eyesToolbar.dart';
+import 'package:googly_eyes/widgets/pinkButton.dart';
+import 'package:googly_eyes/widgets/prevButton.dart';
 import 'package:googly_eyes/widgets/recordToolbar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -36,7 +38,7 @@ class _MakeImageState extends State<MakeImage> {
   bool isAnimated = false;
   String tempDirPath;
   bool hideAppBar = false;
-  bool showVideoToolbar = false;
+  bool showRecordToolbar = false;
   String assetsDirectory;
   String tempAnimatedImgOut;
 
@@ -171,6 +173,22 @@ class _MakeImageState extends State<MakeImage> {
     });
   }
 
+  void handleDone(String bgPath, String overPath) {
+    if (overPath.contains('animation')) {
+      print('rendering A N I M A T E D: $overPath');
+      renderAnimation(bgPath);
+    } else {
+      print('rendering S T A T I C: $overPath');
+      renderStatic(bgPath);
+    }
+  }
+
+  void handleEdit() {
+    setState(() {
+      showRecordToolbar = !showRecordToolbar;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
@@ -185,66 +203,22 @@ class _MakeImageState extends State<MakeImage> {
                     automaticallyImplyLeading: false,
                     backgroundColor: Colors.transparent,
                     elevation: 0.0,
-                    title: RawMaterialButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Stack(
-                        alignment: AlignmentDirectional.center,
-                        children: <Widget>[
-                          Opacity(
-                            opacity: 0.25999999046325684,
-                            child: Container(
-                                width: 67.0,
-                                height: 30.0,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(21))),
-                          ),
-                          Text('Back'),
-                        ],
-                      ),
-                    ),
+                    title: PrevButton(),
                     actions: <Widget>[
                       SizedBox(width: 20),
-                      RawMaterialButton(
-                        onPressed: () {
-                          if (eyesImg.contains('animation')) {
-                            print('rendering A N I M A T E D: $eyesImg');
-                            renderAnimation(bgFile.path);
-                          } else {
-                            print('rendering S T A T I C: $eyesImg');
-                            renderStatic(bgFile.path);
-                          }
+                      PinkButton(
+                        buttonText: ' Done',
+                        icon: Icons.done,
+                        callback: () {
+                          handleDone(bgFile.path, eyesImg);
                         },
-                        child: Container(
-                          width: 89,
-                          height: 30,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(21),
-                              gradient: LinearGradient(
-                                colors: [Color(0xffff0775), Color(0xfffc6c4e)],
-                                stops: [0, 1],
-                                begin: Alignment(-0.98, 0.19),
-                                end: Alignment(0.98, -0.19),
-                              )),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(Icons.done),
-                              Text('Done'),
-                            ],
-                          ),
-                        ),
                       ),
                       SizedBox(width: 10),
-                      FlatButton(
-                          onPressed: () {
-                            setState(() {
-                              showVideoToolbar = !showVideoToolbar;
-                            });
-                          },
-                          child: Text('try me'))
+                      PinkButton(
+                        buttonText: ' Edit',
+                        icon: Icons.edit,
+                        callback: handleEdit,
+                      ),
                     ],
                   ),
             body: Container(
@@ -348,7 +322,7 @@ class _MakeImageState extends State<MakeImage> {
                     ),
                   ),
                   Expanded(
-                    child: showVideoToolbar
+                    child: showRecordToolbar
                         ? RecordToolbar()
                         : EyesToolbar(
                             eyesPossition: _setInitialEyesPosition,
