@@ -17,7 +17,7 @@ class EyesToolbar extends StatefulWidget {
 
 class _EyesToolbarState extends State<EyesToolbar> {
   ScrollController _controller = new ScrollController();
-  List someImages = [];
+  List draggableImages = [];
   List imagesLists = ['eyes', 'mouth', 'face', 'animation'];
   int currentList = 0;
   String eyesImg = 'assets/eyes/initial/group_84.png';
@@ -50,7 +50,7 @@ class _EyesToolbarState extends State<EyesToolbar> {
     }
 
     setState(() {
-      someImages = imagePaths;
+      draggableImages = imagePaths;
     });
   }
 
@@ -111,14 +111,14 @@ class _EyesToolbarState extends State<EyesToolbar> {
                       physics: const AlwaysScrollableScrollPhysics(),
                       controller: _controller,
                       scrollDirection: Axis.horizontal,
-                      itemCount: someImages.length,
+                      itemCount: draggableImages.length,
                       itemBuilder: (context, index) {
                         return EyesCard(
-                          index: index,
+                          index: currentList + index,
                           onPress: () {
-                            widget.updateEyesImg(someImages[index]);
+                            widget.updateEyesImg(draggableImages[index]);
                           },
-                          imagePath: someImages[index],
+                          imagePath: draggableImages[index],
                           eyesPossition: widget.eyesPossition,
                         );
                       },
