@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
+import 'package:googly_eyes/utilities/handleFile.dart';
 import 'package:googly_eyes/utilities/handleImage.dart';
 import 'package:googly_eyes/widgets/eyesToolbar.dart';
 import 'package:googly_eyes/widgets/pinkButton.dart';
@@ -19,8 +21,8 @@ class MakeImage extends StatefulWidget {
 }
 
 class _MakeImageState extends State<MakeImage> {
-  // ScrollController _controller = new ScrollController();
   ScreenshotController screenshotController = ScreenshotController();
+  final FlutterFFmpeg _flutterFFmpeg = FlutterFFmpeg();
   GlobalKey imageKey = GlobalKey();
   GlobalKey eyes1 = GlobalKey();
 
@@ -30,19 +32,21 @@ class _MakeImageState extends State<MakeImage> {
   double eyesScale = 1.0;
   double eyesBaseSize = 1.0;
   double eyesLastSize;
-  // List cardsImages = [];
   List imagesLists = ['eyes', 'mouth', 'face', 'animation'];
   int currentList = 0;
   String tempDirPath;
   String assetsDirectory;
-  String tempAnimatedImgOut;
+  // String tempAnimatedImgOut;
+  String audioPath;
   bool showEyes = false;
   bool loading = false;
   bool hideAppBar = false;
-  bool isAnimated = false;
+  bool isVideoAnimated = false;
+  bool isAudioAnimated = false;
   bool editing = true;
   bool showRecordToolbar = false;
-  bool isAudioAnimated = false;
+  Map finalDetails;
+  String finalUrl;
 
   final HandleImage handleImages = HandleImage();
 
@@ -100,25 +104,51 @@ class _MakeImageState extends State<MakeImage> {
     });
   }
 
-  // assetsDirectory/$eyesImg
-  ////TODO: pass to external class (currently not used)
-  Future<File> copyFileAssets(String assetName, String localName) async {
-    final ByteData assetByteData = await rootBundle.load(assetName);
-
-    final List<int> byteList = assetByteData.buffer
-        .asUint8List(assetByteData.offsetInBytes, assetByteData.lengthInBytes);
-
-    final String fullTemporaryPath = tempDirPath + localName;
+  void _updateAudioPath(String path) {
     setState(() {
-      tempAnimatedImgOut = fullTemporaryPath;
+      audioPath = path;
+      isAudioAnimated = true;
     });
-    return File(fullTemporaryPath)
-        .writeAsBytes(byteList, mode: FileMode.writeOnly, flush: true);
   }
 
+  // assetsDirectory/$eyesImg
+  ////TODO: pass to external class (currently not used)
+  // Future<File> copyFileAssets(String assetName, String localName) async {
+  //   final ByteData assetByteData = await rootBundle.load(assetName);
+
+  //   final List<int> byteList = assetByteData.buffer
+  //       .asUint8List(assetByteData.offsetInBytes, assetByteData.lengthInBytes);
+
+  //   final String fullTemporaryPath = tempDirPath + localName;
+  //   setState(() {
+  //     tempAnimatedImgOut = fullTemporaryPath;
+  //   });
+  //   return File(fullTemporaryPath)
+  //       .writeAsBytes(byteList, mode: FileMode.writeOnly, flush: true);
+  // }
+
   void renderStatic(String bgPath) {
+    // RenderBox box = imageKey.currentContext.findRenderObject();
     takeScreenshot().then((imgFile) {
-      print('renderedStatic');
+      decodeImageFromList(imgFile.readAsBytesSync()).then((asset) {
+        print('renderedStatic');
+        //TODO: set in state an instance of Googlyfied (type: audio/video/both/static, + details below)
+        setState(() {
+          finalDetails = {
+            'type': 'static',
+            'imgFile': imgFile,
+            'vidFiles': [],
+            'eyesPosX': eyesPosX,
+            'eyesPosY': eyesPosy,
+            'bgPath': bgPath,
+            'eyesPath': eyesImg,
+            'bgW': asset.width,
+            'bgH': asset.height
+          };
+        });
+      }).then((_) {
+        print('static rendered with details: $finalDetails');
+      });
       // Navigator.pushNamed(context, '/voice', arguments: {
       //   'imgFile': imgFile,
       //   'vidFiles': [],
@@ -149,7 +179,7 @@ class _MakeImageState extends State<MakeImage> {
     print('$assetsDirectory/$eyesImg');
     // copyFileAssets(
     //     arguments['imgFile'].path, '/animated.gif');
-    //TODO: check if image is rendered in the session and if so pass the path tather than prepare the assets again.
+    //TODO: check if image is rendered in the session and if so pass the path rather than prepare the assets again.
     handleImages
         .copyAnimationFromAssetsToTemp(eyesImg, '/animated.png')
         .then((animatedEyesPath) {
@@ -157,7 +187,26 @@ class _MakeImageState extends State<MakeImage> {
       takeScreenshot().then((imgFile) {
         // copyFileAssets(assetName, localName).then((imgFile) {
         print('S T E P ================      3');
-
+        //TODO: set in state an instance of Googlyfied (type: audio/video/both/static, + details below)
+        setState(() {
+          finalDetails = {
+            'type': 'animated',
+            'imgFile': imgFile,
+            'eyesPosX': xOff,
+            'eyesPosY': yOff,
+            'eyesPath': animatedEyesPath,
+            'bgPosX': xOffset,
+            'bgPosY': yOffset,
+            'bgPath': bgPath,
+            'bgW': width,
+            'bgH': height,
+            'eyW': wid,
+            'eyH': hei,
+            'vidFiles': [eyesImg],
+            'xOff': xOff - xOffset,
+            'yOff': yOff - yOffset
+          };
+        });
         // Navigator.pushNamed(context, '/voice', arguments: {
         //   'imgFile': imgFile,
         //   'eyesPosX': xOff,
@@ -178,7 +227,7 @@ class _MakeImageState extends State<MakeImage> {
     });
   }
 
-  void handleDone(String bgPath, String overPath) {
+  void handleDone(String bgPath, String overlayPath) {
     if (!editing) {
       return;
     }
@@ -186,11 +235,17 @@ class _MakeImageState extends State<MakeImage> {
       editing = false;
       showRecordToolbar = true;
     });
-    if (overPath.contains('animation')) {
-      print('rendering A N I M A T E D: $overPath');
+    if (overlayPath.contains('animation')) {
+      setState(() {
+        isVideoAnimated = true;
+      });
+      print('rendering A N I M A T E D: $overlayPath');
       renderAnimation(bgPath);
     } else {
-      print('rendering S T A T I C: $overPath');
+      setState(() {
+        isVideoAnimated = false;
+      });
+      print('rendering S T A T I C: $overlayPath');
       renderStatic(bgPath);
     }
   }
@@ -203,8 +258,175 @@ class _MakeImageState extends State<MakeImage> {
     });
   }
 
+  // TODO: move to another class
+  int makeIntEven(intOrDouble) {
+    int number = intOrDouble.toInt();
+    if (number.runtimeType == double) {
+      number.toInt();
+    }
+    if (number.isEven) {
+      return number;
+    } else {
+      return number - 1;
+    }
+  }
+
+  // TODO: move to another class
+  int makeMax(int number) {
+    if (number <= 1226) {
+      return number;
+    } else {
+      return 1226;
+    }
+  }
+
+  Future<int> renderFinal(String type) async {
+    List<String> arguments;
+    String timeStamp = (new DateTime.now().millisecondsSinceEpoch).toString();
+    String videoUrl = '$tempDirPath/googly_video-$timeStamp.mp4';
+    String gifUrl = '$tempDirPath/googly_video-$timeStamp.gif';
+    print('will make $type and details: $finalDetails');
+    if (type == 'static') {
+      setState(() {
+        finalUrl = finalDetails['imgFile'].path;
+      });
+      return 0;
+    } else if (type == 'audioStatic') {
+      arguments = [
+        "-i",
+        "${finalDetails['imgFile'].path}",
+        "-i",
+        "$audioPath",
+        "-loop",
+        "1",
+        "-c:v",
+        "libx264",
+        "-t",
+        "15",
+        "-pix_fmt",
+        "yuv420p",
+        "-vf",
+        // "-vsync 0",
+        "scale=${makeMax(makeIntEven(finalDetails['bgW']))}:-2",
+        "$videoUrl"
+      ];
+      // TODO: fix scale & quality, compare with old addVoice
+      setState(() {
+        finalUrl = videoUrl;
+      });
+    } else if (type == 'animated') {
+      arguments = [
+        "-i",
+        "${finalDetails['imgFile'].path}",
+        "-stream_loop",
+        "-1",
+        "-r",
+        "25",
+        "-i",
+        "${finalDetails['eyesPath']}",
+        "-filter_complex",
+        "[0]scale=w=${makeIntEven(finalDetails['bgW'])}:h=${makeIntEven(finalDetails['bgH'])}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(finalDetails['eyW'])}:h=${makeIntEven(finalDetails['eyH'])}[scaled],[scaled]palettegen[palettegen], [palettegen]paletteuse[eyes], [bg][eyes]overlay=${finalDetails['xOff']}:${finalDetails['yOff']}",
+        // TODO: if landscape does not solve it (need to implement yet), try passing if portrait or landscape and according to that transpose.
+        // "[0]transpose=dir=1:passthrough=portrait[bgTranspose], [bgTranspose]scale=w=${makeIntEven(bgW)}:h=${makeIntEven(bgH)}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(eyW)}:h=${makeIntEven(eyH)}[eyes], [bg][eyes]overlay=$xOff:$yOff",
+        // "-c:v",
+        // "libx264",
+        "-t",
+        "5",
+        // "-pix_fmt",
+        // "yuv420p",
+        // "-preset",
+        // "veryslow",
+        // "-crf",
+        // "17",
+        // "-shortest",
+        "$gifUrl"
+      ];
+      setState(() {
+        finalUrl = gifUrl;
+      });
+    } else {
+      arguments = [
+        "-i",
+        "${finalDetails['imgFile'].path}",
+        "-stream_loop",
+        "-1",
+        "-r",
+        "25",
+        "-i",
+        "${finalDetails['eyesPath']}",
+        "-filter_complex",
+        "[0]scale=w=${makeIntEven(finalDetails['bgW'])}:h=${makeIntEven(finalDetails['bgH'])}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(finalDetails['eyW'])}:h=${makeIntEven(finalDetails['eyH'])}[eyes], [bg][eyes]overlay=${finalDetails['xOff']}:${finalDetails['yOff']}",
+        // TODO: if landscape does not solve it (need to implement yet), try passing if portrait or landscape and according to that transpose.
+        // "[0]transpose=dir=1:passthrough=portrait[bgTranspose], [bgTranspose]scale=w=${makeIntEven(bgW)}:h=${makeIntEven(bgH)}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(eyW)}:h=${makeIntEven(eyH)}[eyes], [bg][eyes]overlay=$xOff:$yOff",
+        "-i",
+        "$audioPath",
+        "-c:v",
+        "libx264",
+        "-t",
+        "15",
+        "-pix_fmt",
+        "yuv420p",
+        "-preset",
+        "veryslow",
+        "-crf",
+        "17",
+        "-shortest",
+        "$videoUrl"
+      ];
+      setState(() {
+        finalUrl = videoUrl;
+      });
+    }
+    print('arguments: $arguments');
+    int render =
+        await _flutterFFmpeg.executeWithArguments(arguments).then((rc) {
+      print('ffmpeg completed with response :::::::::::: $rc');
+      return rc;
+    }).catchError((e) {
+      print('E R R O R :     $e');
+    });
+    return render;
+  }
+
   void handleFinish() {
-    print('FINISH');
+    if (!isVideoAnimated && !isAudioAnimated) {
+      print('finished with type static');
+      renderFinal('static').then((_) {
+        Navigator.pushNamed(context, '/result',
+            arguments: {'resultUrl': finalUrl, 'isVideo': false});
+      });
+    } else if (!isVideoAnimated && isAudioAnimated) {
+      renderFinal('audioStatic').then((res) {
+        print('finished with type audiostatic: res: $res');
+        if (res == 0) {
+          Navigator.pushNamed(context, '/result', arguments: {
+            'resultUrl': finalUrl,
+            'isVideo': true,
+            'videoUrl': finalUrl,
+            'videoFile': File(finalUrl),
+            'width': makeMax(makeIntEven(finalDetails['bgW'])),
+            'height': makeIntEven(finalDetails['bgH'])
+          });
+        }
+      });
+    } else if (isVideoAnimated && !isAudioAnimated) {
+      renderFinal('animated').then((_) {
+        print('finished with type animated');
+      });
+      // Navigator.pushNamed(context, '/result',
+      //     arguments: {'resultUrl': finalUrl, 'isVideo': false});
+    } else if (isVideoAnimated && isAudioAnimated) {
+      renderFinal('audioAnimated').then((_) {
+        print('finished with type audioAnimated');
+      });
+      // Navigator.pushNamed(context, '/result',
+      //     arguments: {'resultUrl': finalUrl, 'isVideo': true});
+    }
+
+    // Navigator.pushNamed(context, '/share', arguments: passArguments);
+
+    print('FINISH: audioUrl: $audioPath, overlayUrl: $eyesImg');
+    // TODO: make ffmpeg magic, pass to new page for sending
   }
 
   @override
@@ -235,9 +457,7 @@ class _MakeImageState extends State<MakeImage> {
                           : PinkButton(
                               buttonText: ' Finish',
                               icon: Icons.done,
-                              callback: () {
-                                handleFinish();
-                              }),
+                              callback: handleFinish),
                       SizedBox(width: 10),
                       editing
                           ? Container()
@@ -303,7 +523,7 @@ class _MakeImageState extends State<MakeImage> {
                                               )))
                                       : Text('No image selected'),
                                   !showEyes
-                                      ? Text('')
+                                      ? Container()
                                       // TODO: to add more eyes, instead of this child it needs to be a Stack with childred [positioned, positioned, positioned], each with its own key. The handle add (also called in Done) is a button and when added then instance is made and added to a list.
                                       : Positioned(
                                           top: eyesPosy,
@@ -350,7 +570,9 @@ class _MakeImageState extends State<MakeImage> {
                   ),
                   Expanded(
                     child: showRecordToolbar
-                        ? RecordToolbar()
+                        ? RecordToolbar(
+                            audioPathCallbach: _updateAudioPath,
+                          )
                         : EyesToolbar(
                             eyesPossition: _setInitialEyesPosition,
                             updateEyesImg: _updateEyesImg),
