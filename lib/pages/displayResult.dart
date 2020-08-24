@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:googly_eyes/pages/playVideo.dart';
+import 'package:googly_eyes/widgets/prevButton.dart';
 import 'package:googly_eyes/widgets/shareToolbar.dart';
 
 class DisplayResult extends StatefulWidget {
@@ -20,6 +21,12 @@ class _DisplayResultState extends State<DisplayResult> {
     final String fileExtension = arguments['fileExtension'];
     print('resultUrl: $resultUrl');
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          title: PrevButton()),
       body: Column(
         children: <Widget>[
           Expanded(
