@@ -393,8 +393,13 @@ class _MakeImageState extends State<MakeImage> {
     if (!isVideoAnimated && !isAudioAnimated) {
       print('finished with type static');
       renderFinal('static').then((_) {
-        Navigator.pushNamed(context, '/result',
-            arguments: {'resultUrl': finalUrl, 'isVideo': false});
+        Navigator.pushNamed(context, '/result', arguments: {
+          'resultUrl': finalUrl,
+          'isVideo': false,
+          'videoFile': File(finalUrl),
+          'mimeType': 'image/png',
+          'fileExtension': 'png'
+        });
       });
     } else if (!isVideoAnimated && isAudioAnimated) {
       renderFinal('audioStatic').then((rc) {
@@ -407,7 +412,9 @@ class _MakeImageState extends State<MakeImage> {
             'videoUrl': finalUrl,
             'videoFile': File(finalUrl),
             'bgW': makeIntEven(finalDetails['bgW']),
-            'bgH': makeIntEven(finalDetails['bgH'])
+            'bgH': makeIntEven(finalDetails['bgH']),
+            'mimeType': 'image/gif',
+            'fileExtension': 'gif'
           });
         }
       });
@@ -423,7 +430,9 @@ class _MakeImageState extends State<MakeImage> {
             'videoUrl': finalUrl,
             'videoFile': File(finalUrl),
             'bgW': makeIntEven(finalDetails['bgW']),
-            'bgH': makeIntEven(finalDetails['bgH'])
+            'bgH': makeIntEven(finalDetails['bgH']),
+            'mimeType': 'video/mp4',
+            'fileExtension': 'mp4'
           });
         }
       });
@@ -441,7 +450,9 @@ class _MakeImageState extends State<MakeImage> {
             'videoUrl': finalUrl,
             'videoFile': File(finalUrl),
             'bgW': makeIntEven(finalDetails['bgW']),
-            'bgH': makeIntEven(finalDetails['bgH'])
+            'bgH': makeIntEven(finalDetails['bgH']),
+            'mimeType': 'video/mp4',
+            'fileExtension': 'mp4'
           });
         }
       });
