@@ -19,8 +19,8 @@ class AddVoice extends StatefulWidget {
 
 class _AddVoiceState extends State<AddVoice> {
   AssetDetails assetDetails;
-  String audioUrl;
   Directory tempDir;
+  String audioUrl;
   bool isAudioAnimated = false;
   String videoUrl;
   File videoFile;
@@ -110,9 +110,9 @@ class _AddVoiceState extends State<AddVoice> {
         "-pix_fmt",
         "yuv420p",
         "-vf",
-        "-vsync",
-        "0",
-        "scale=${makeMax(makeIntEven(width))}:-2",
+        // "-vsync",
+        // "0",
+        "scale=w=${makeMax(makeIntEven(width))}:h=-2",
         "$videoUrl"
       ];
     } else {
@@ -129,6 +129,7 @@ class _AddVoiceState extends State<AddVoice> {
         "$eyesPath",
         "-filter_complex",
         "[0]scale=w=${makeIntEven(bgW)}:h=${makeIntEven(bgH)}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(eyW)}:h=${makeIntEven(eyH)}[eyes], [bg][eyes]overlay=$xOff:$yOff",
+        // TODO: if landscape does not solve it (need to implement yet), try passing if portrait or landscape and according to that transpose.
         // "[0]transpose=dir=1:passthrough=portrait[bgTranspose], [bgTranspose]scale=w=${makeIntEven(bgW)}:h=${makeIntEven(bgH)}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(eyW)}:h=${makeIntEven(eyH)}[eyes], [bg][eyes]overlay=$xOff:$yOff",
         "-i",
         "$audioUrl",

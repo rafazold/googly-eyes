@@ -96,6 +96,8 @@ class _PlayVideoState extends State<PlayVideo> {
         backgroundColor:
             _controller.value.isPlaying ? Color(0xffff724e) : Color(0xffff0077),
         onPressed: () {
+          print(
+              'position: ${_controller.value.position}, : ${_controller.value.duration}');
           if (!videoReady) {
             print(
                 '======>>>>>>>=========>>>>>>==========>>>>>> ${widget.videoUrl}');
@@ -105,7 +107,12 @@ class _PlayVideoState extends State<PlayVideo> {
                     'YOYOYOYOOYOYOYOYOY ==========>>>> and controller $_controller');
                 _controller.value.isPlaying
                     ? _controller.pause()
-                    : _controller.play();
+                    : _controller.value.position != _controller.value.duration
+                        ? _controller.play()
+                        : _controller.seekTo(Duration.zero);
+                setState(() {
+                  _controller.play();
+                });
                 videoReady = true;
               });
             });
@@ -115,13 +122,22 @@ class _PlayVideoState extends State<PlayVideo> {
             setState(() {
               _controller.value.isPlaying
                   ? _controller.pause()
-                  : _controller.play();
+                  : _controller.value.position != _controller.value.duration
+                      ? _controller.play()
+                      : _controller.seekTo(Duration.zero);
+              setState(() {
+                _controller.play();
+              });
               videoReady = true;
             });
           }
         },
         child: Icon(
-          _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+          _controller.value.isPlaying
+              ? Icons.pause
+              : _controller.value.position != _controller.value.duration
+                  ? Icons.play_arrow
+                  : Icons.refresh,
         ),
       ),
     );
