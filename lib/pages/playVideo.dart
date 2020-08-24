@@ -38,6 +38,7 @@ class _PlayVideoState extends State<PlayVideo> {
           videoReady = true;
         });
       });
+    _controller.setLooping(true);
   }
 
   Future<void> _startVideoPlayer(String videoLink) async {
