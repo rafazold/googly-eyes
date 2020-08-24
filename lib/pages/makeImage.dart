@@ -273,10 +273,10 @@ class _MakeImageState extends State<MakeImage> {
 
   // TODO: move to another class
   int makeMax(int number) {
-    if (number <= 1226) {
+    if (number <= 1200) {
       return number;
     } else {
-      return 1226;
+      return 1200;
     }
   }
 
@@ -306,8 +306,9 @@ class _MakeImageState extends State<MakeImage> {
         "-pix_fmt",
         "yuv420p",
         "-vf",
-        // "-vsync 0",
-        "scale=${makeMax(makeIntEven(finalDetails['bgW']))}:-2",
+        // "-vsync",
+        // "0",
+        "scale=${makeMax(finalDetails['bgW'])}:-2",
         "$videoUrl"
       ];
       // TODO: fix scale & quality, compare with old addVoice
@@ -347,7 +348,7 @@ class _MakeImageState extends State<MakeImage> {
     } else {
       arguments = [
         "-i",
-        "${finalDetails['imgFile'].path}",
+        "${finalDetails['bgPath']}",
         "-stream_loop",
         "-1",
         "-r",
@@ -355,7 +356,7 @@ class _MakeImageState extends State<MakeImage> {
         "-i",
         "${finalDetails['eyesPath']}",
         "-filter_complex",
-        "[0]scale=w=${makeIntEven(finalDetails['bgW'])}:h=${makeIntEven(finalDetails['bgH'])}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(finalDetails['eyW'])}:h=${makeIntEven(finalDetails['eyH'])}[eyes], [bg][eyes]overlay=${finalDetails['xOff']}:${finalDetails['yOff']}",
+        "[0]transpose=dir=1:passthrough=portrait[bgTranspose], [bgTranspose]scale=w=${makeIntEven(finalDetails['bgW'])}:h=${makeIntEven(finalDetails['bgH'])}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(finalDetails['eyW'])}:h=${makeIntEven(finalDetails['eyH'])}[eyes], [bg][eyes]overlay=${finalDetails['xOff']}:${finalDetails['yOff']}",
         // TODO: if landscape does not solve it (need to implement yet), try passing if portrait or landscape and according to that transpose.
         // "[0]transpose=dir=1:passthrough=portrait[bgTranspose], [bgTranspose]scale=w=${makeIntEven(bgW)}:h=${makeIntEven(bgH)}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(eyW)}:h=${makeIntEven(eyH)}[eyes], [bg][eyes]overlay=$xOff:$yOff",
         "-i",
@@ -396,28 +397,53 @@ class _MakeImageState extends State<MakeImage> {
             arguments: {'resultUrl': finalUrl, 'isVideo': false});
       });
     } else if (!isVideoAnimated && isAudioAnimated) {
-      renderFinal('audioStatic').then((res) {
-        print('finished with type audiostatic: res: $res');
-        if (res == 0) {
+      renderFinal('audioStatic').then((rc) {
+        print(
+            'finished with type audiostatic: res: $rc &&&&&& ${finalDetails['bgW']}');
+        if (rc == 0) {
           Navigator.pushNamed(context, '/result', arguments: {
             'resultUrl': finalUrl,
             'isVideo': true,
             'videoUrl': finalUrl,
             'videoFile': File(finalUrl),
-            'width': makeMax(makeIntEven(finalDetails['bgW'])),
-            'height': makeIntEven(finalDetails['bgH'])
+            'bgW': makeIntEven(finalDetails['bgW']),
+            'bgH': makeIntEven(finalDetails['bgH'])
           });
         }
       });
     } else if (isVideoAnimated && !isAudioAnimated) {
-      renderFinal('animated').then((_) {
+      renderFinal('animated').then((rc) {
+        print('rc is $rc before');
         print('finished with type animated');
+        if (rc == 0) {
+          print('rc is $rc after ifed');
+          Navigator.pushNamed(context, '/result', arguments: {
+            'resultUrl': finalUrl,
+            'isVideo': true,
+            'videoUrl': finalUrl,
+            'videoFile': File(finalUrl),
+            'bgW': makeIntEven(finalDetails['bgW']),
+            'bgH': makeIntEven(finalDetails['bgH'])
+          });
+        }
       });
       // Navigator.pushNamed(context, '/result',
       //     arguments: {'resultUrl': finalUrl, 'isVideo': false});
     } else if (isVideoAnimated && isAudioAnimated) {
-      renderFinal('audioAnimated').then((_) {
+      renderFinal('audioAnimated').then((rc) {
         print('finished with type audioAnimated');
+        print('finished with type animated');
+        if (rc == 0) {
+          print('rc is $rc after ifed');
+          Navigator.pushNamed(context, '/result', arguments: {
+            'resultUrl': finalUrl,
+            'isVideo': true,
+            'videoUrl': finalUrl,
+            'videoFile': File(finalUrl),
+            'bgW': makeIntEven(finalDetails['bgW']),
+            'bgH': makeIntEven(finalDetails['bgH'])
+          });
+        }
       });
       // Navigator.pushNamed(context, '/result',
       //     arguments: {'resultUrl': finalUrl, 'isVideo': true});
