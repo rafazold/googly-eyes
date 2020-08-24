@@ -322,11 +322,12 @@ class _MakeImageState extends State<MakeImage> {
         "-stream_loop",
         "-1",
         "-r",
-        "25",
+        "15",
         "-i",
         "${finalDetails['eyesPath']}",
         "-filter_complex",
-        "[0]scale=w=${makeIntEven(finalDetails['bgW'])}:h=${makeIntEven(finalDetails['bgH'])}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(finalDetails['eyW'])}:h=${makeIntEven(finalDetails['eyH'])}[scaled],[scaled]palettegen[palettegen], [palettegen]paletteuse[eyes], [bg][eyes]overlay=${finalDetails['xOff']}:${finalDetails['yOff']}",
+        "[0]scale=w=${makeIntEven(finalDetails['bgW'])}:h=${makeIntEven(finalDetails['bgH'])}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(finalDetails['eyW'])}:h=${makeIntEven(finalDetails['eyH'])}[eyes], [bg][eyes]overlay=${finalDetails['xOff']}:${finalDetails['yOff']}",
+        // "[0]scale=w=${makeIntEven(finalDetails['bgW'])}:h=${makeIntEven(finalDetails['bgH'])}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(finalDetails['eyW'])}:h=${makeIntEven(finalDetails['eyH'])}[scaled],[scaled]palettegen[palettegen], [palettegen]paletteuse[eyes], [bg][eyes]overlay=${finalDetails['xOff']}:${finalDetails['yOff']}",
         // TODO: if landscape does not solve it (need to implement yet), try passing if portrait or landscape and according to that transpose.
         // "[0]transpose=dir=1:passthrough=portrait[bgTranspose], [bgTranspose]scale=w=${makeIntEven(bgW)}:h=${makeIntEven(bgH)}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(eyW)}:h=${makeIntEven(eyH)}[eyes], [bg][eyes]overlay=$xOff:$yOff",
         // "-c:v",
@@ -340,10 +341,12 @@ class _MakeImageState extends State<MakeImage> {
         // "-crf",
         // "17",
         // "-shortest",
-        "$gifUrl"
+        // "$gifUrl"
+        "$videoUrl"
       ];
       setState(() {
-        finalUrl = gifUrl;
+        // finalUrl = gifUrl;
+        finalUrl = videoUrl;
       });
     } else {
       arguments = [
@@ -413,8 +416,8 @@ class _MakeImageState extends State<MakeImage> {
             'videoFile': File(finalUrl),
             'bgW': makeIntEven(finalDetails['bgW']),
             'bgH': makeIntEven(finalDetails['bgH']),
-            'mimeType': 'image/gif',
-            'fileExtension': 'gif'
+            'mimeType': 'video/mp4',
+            'fileExtension': 'mp4'
           });
         }
       });
