@@ -356,7 +356,7 @@ class _MakeImageState extends State<MakeImage> {
         "-i",
         "${finalDetails['eyesPath']}",
         "-filter_complex",
-        "[0]transpose=dir=1:passthrough=portrait[bgTranspose], [bgTranspose]scale=w=${makeIntEven(finalDetails['bgW'])}:h=${makeIntEven(finalDetails['bgH'])}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(finalDetails['eyW'])}:h=${makeIntEven(finalDetails['eyH'])}[eyes], [bg][eyes]overlay=${finalDetails['xOff']}:${finalDetails['yOff']}",
+        "[0]${finalDetails['bgH'] >= finalDetails['bgW'] ? 'transpose=dir=1:passthrough=portrait[bgTranspose], [bgTranspose]' : ''}scale=w=${makeIntEven(finalDetails['bgW'])}:h=${makeIntEven(finalDetails['bgH'])}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(finalDetails['eyW'])}:h=${makeIntEven(finalDetails['eyH'])}[eyes], [bg][eyes]overlay=${finalDetails['xOff']}:${finalDetails['yOff']}",
         // TODO: if landscape does not solve it (need to implement yet), try passing if portrait or landscape and according to that transpose.
         // "[0]transpose=dir=1:passthrough=portrait[bgTranspose], [bgTranspose]scale=w=${makeIntEven(bgW)}:h=${makeIntEven(bgH)}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(eyW)}:h=${makeIntEven(eyH)}[eyes], [bg][eyes]overlay=$xOff:$yOff",
         "-i",
