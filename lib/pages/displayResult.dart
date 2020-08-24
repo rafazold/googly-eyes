@@ -44,7 +44,8 @@ class _DisplayResultState extends State<DisplayResult> {
                   finalUrl: resultUrl,
                   videoFile: videoFile,
                   mimeType: mimeType,
-                  fileExtension: fileExtension))
+                  fileExtension: fileExtension,
+                  isVideo: isVideo))
         ],
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:googly_eyes/utilities/shareFiles.dart';
 // import 'package:flutter_sound_lite/flutter_sound.dart';
 // import 'package:googly_eyes/widgets/recordSound.dart';
@@ -9,13 +10,15 @@ class ShareToolbar extends StatefulWidget {
       this.finalUrl,
       this.videoFile,
       this.mimeType,
-      this.fileExtension})
+      this.fileExtension,
+      this.isVideo})
       : super(key: key);
 
   final finalUrl;
   final videoFile;
   final mimeType;
   final fileExtension;
+  final isVideo;
 
   @override
   _ShareToolbarState createState() => _ShareToolbarState();
@@ -78,6 +81,10 @@ class _ShareToolbarState extends State<ShareToolbar> {
                         ),
                         iconSize: 40,
                         onPressed: () {
+                          share.save(widget.finalUrl, widget.isVideo).then((_) {
+                            share.alert(
+                                context, 'Your Looney Cam creation was Saved');
+                          });
                           print(
                               'Save presed: ${widget.finalUrl}, ${widget.mimeType}, ${widget.fileExtension}');
                         },
