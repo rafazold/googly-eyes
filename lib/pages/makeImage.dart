@@ -32,7 +32,8 @@ class _MakeImageState extends State<MakeImage> {
   double eyesScale = 1.0;
   double eyesBaseSize = 1.0;
   double eyesLastSize;
-  List imagesLists = ['eyes', 'mouth', 'face', 'animation'];
+  List imagesLists = ['eyes', 'face'];
+  // List imagesLists = ['eyes', 'mouth', 'face', 'animation'];
   int currentList = 0;
   String tempDirPath;
   String assetsDirectory;
@@ -301,8 +302,8 @@ class _MakeImageState extends State<MakeImage> {
         "1",
         "-c:v",
         "libx264",
-        "-t",
-        "15",
+        // "-t",
+        // "15",
         "-pix_fmt",
         "yuv420p",
         "-vf",
@@ -336,14 +337,46 @@ class _MakeImageState extends State<MakeImage> {
         "5",
         // "-pix_fmt",
         // "yuv420p",
-        // "-preset",
-        // "veryslow",
+        "-codec:a",
+        "copy",
+        "-preset",
+        "veryslow",
+        "-async",
+        "1",
         // "-crf",
         // "17",
         // "-shortest",
         // "$gifUrl"
         "$videoUrl"
       ];
+      // arguments = [
+      //   "-i",
+      //   "${finalDetails['imgFile'].path}",
+      //   "-stream_loop",
+      //   "-1",
+      //   "-r",
+      //   "15",
+      //   "-i",
+      //   "${finalDetails['eyesPath']}",
+      //   "-filter_complex",
+      //   "[0]scale=w=${makeIntEven(finalDetails['bgW'])}:h=${makeIntEven(finalDetails['bgH'])}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(finalDetails['eyW'])}:h=${makeIntEven(finalDetails['eyH'])}[eyes], [bg][eyes]overlay=${finalDetails['xOff']}:${finalDetails['yOff']}",
+      //   // "[0]scale=w=${makeIntEven(finalDetails['bgW'])}:h=${makeIntEven(finalDetails['bgH'])}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(finalDetails['eyW'])}:h=${makeIntEven(finalDetails['eyH'])}[scaled],[scaled]palettegen[palettegen], [palettegen]paletteuse[eyes], [bg][eyes]overlay=${finalDetails['xOff']}:${finalDetails['yOff']}",
+      //   // TODO: if landscape does not solve it (need to implement yet), try passing if portrait or landscape and according to that transpose.
+      //   // "[0]transpose=dir=1:passthrough=portrait[bgTranspose], [bgTranspose]scale=w=${makeIntEven(bgW)}:h=${makeIntEven(bgH)}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(eyW)}:h=${makeIntEven(eyH)}[eyes], [bg][eyes]overlay=$xOff:$yOff",
+      //   // "-c:v",
+      //   // "libx264",
+      //   "-t",
+      //   "5",
+      //   // "-pix_fmt",
+      //   // "yuv420p",
+      //   // "-preset",
+      //   // "veryslow",
+      //   // "-crf",
+      //   // "17",
+      //   // "-shortest",
+      //   // "$gifUrl"
+      //   "$videoUrl"
+      // ];
       setState(() {
         // finalUrl = gifUrl;
         finalUrl = videoUrl;
@@ -526,7 +559,7 @@ class _MakeImageState extends State<MakeImage> {
                             if (rounded.isEven) {
                               setState(() {
                                 eyesScale =
-                                    (eyesBaseSize * scaleValue).clamp(0.3, 5);
+                                    (eyesBaseSize * scaleValue).clamp(0.1, 5);
                               });
                             }
                           },
@@ -601,7 +634,13 @@ class _MakeImageState extends State<MakeImage> {
                                             data: eyesImg,
                                             childWhenDragging: Container(),
                                           ),
-                                        )
+                                        ),
+                                  Positioned(
+                                      // top: 200,
+                                      left: 20,
+                                      bottom: 20,
+                                      child: Image.asset('assets/watermark.png',
+                                          height: 60))
                                 ]),
                               );
                             },

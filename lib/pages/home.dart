@@ -26,7 +26,7 @@ class Home extends StatelessWidget {
                     ),
                     SizedBox(width: 14),
                     Text(
-                      'Googly Eyes',
+                      'Looney Cam',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 30,

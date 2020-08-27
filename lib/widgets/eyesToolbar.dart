@@ -18,7 +18,8 @@ class EyesToolbar extends StatefulWidget {
 class _EyesToolbarState extends State<EyesToolbar> {
   ScrollController _controller = new ScrollController();
   List draggableImages = [];
-  List imagesLists = ['eyes', 'mouth', 'face', 'animation'];
+  // List imagesLists = ['eyes', 'mouth', 'face', 'animation'];
+  List imagesLists = ['eyes', 'face'];
   int currentList = 0;
   String eyesImg = 'assets/eyes/initial/group_84.png';
 
