@@ -19,9 +19,17 @@ class _EyesToolbarState extends State<EyesToolbar> {
   ScrollController _controller = new ScrollController();
   List draggableImages = [];
   // List imagesLists = ['eyes', 'mouth', 'face', 'animation'];
-  List imagesLists = ['eyes', 'face'];
+  List imagesLists = [
+    // 'eyes/color-1',
+    'eyes/color-2',
+    'eyes/color-3',
+    'eyes/color-5',
+    'eyes/color-7',
+    'face/face-6',
+    'face/face-7'
+  ];
   int currentList = 0;
-  String eyesImg = 'assets/eyes/initial/group_84.png';
+  String eyesImg = '';
 
   @override
   void initState() {
@@ -40,12 +48,12 @@ class _EyesToolbarState extends State<EyesToolbar> {
 
     if (batch == 'animation') {
       imagePaths = manifestMap.keys
-          .where((String key) => key.contains('eyes/initial/$batch'))
+          .where((String key) => key.contains('overlays/initial/$batch'))
           .where((String key) => key.contains('.gif'))
           .toList();
     } else {
       imagePaths = manifestMap.keys
-          .where((String key) => key.contains('eyes/initial/$batch'))
+          .where((String key) => key.contains('overlays/initial/$batch'))
           .where((String key) => key.contains('.png'))
           .toList();
     }
@@ -107,62 +115,81 @@ class _EyesToolbarState extends State<EyesToolbar> {
       child: DragTarget(
         builder: (context, list, list2) {
           return Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xffff0077), Color(0xffff724e)],
-                  stops: [0, 1],
-                  begin: Alignment(-0.93, 0.36),
-                  end: Alignment(0.93, -0.36),
-                ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xffff0077), Color(0xffff724e)],
+                stops: [0, 1],
+                begin: Alignment(-0.93, 0.36),
+                end: Alignment(0.93, -0.36),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    child: ButtonTheme(
-                      height: 22,
-                      child: RaisedButton(
-                        color: Colors.transparent,
-                        elevation: 0,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        // padding: EdgeInsets.all(7),
-                        onPressed: handleNextList,
-                        child: Center(
-                          child: Container(
-                            child: SizedBox(
-                              // height: 20,
-                              child: Icon(
-                                Icons.keyboard_arrow_up,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 90,
-                    child: ListView.builder(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      controller: _controller,
-                      scrollDirection: Axis.horizontal,
-                      itemCount: draggableImages.length,
-                      itemBuilder: (context, index) {
-                        return EyesCard(
-                          index: currentList + index,
-                          onPress: () {
-                            widget.updateEyesImg(draggableImages[index]);
-                          },
-                          imagePath: draggableImages[index],
-                          eyesPossition: widget.eyesPossition,
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ));
+            ),
+            height: 90,
+            child: ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              controller: _controller,
+              scrollDirection: Axis.horizontal,
+              itemCount: draggableImages.length,
+              itemBuilder: (context, index) {
+                return EyesCard(
+                  index: currentList + index,
+                  onPress: () {
+                    widget.updateEyesImg(draggableImages[index]);
+                  },
+                  imagePath: draggableImages[index],
+                  eyesPossition: widget.eyesPossition,
+                );
+              },
+            ),
+
+            // child: Column(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Container(
+            //       child: ButtonTheme(
+            //         height: 22,
+            //         child: RaisedButton(
+            //           color: Colors.transparent,
+            //           elevation: 0,
+            //           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            //           // padding: EdgeInsets.all(7),
+            //           onPressed: handleNextList,
+            //           child: Center(
+            //             child: Container(
+            //               child: SizedBox(
+            //                 // height: 20,
+            //                 child: Icon(
+            //                   Icons.keyboard_arrow_up,
+            //                   color: Colors.white,
+            //                   size: 20,
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //     Container(
+            //       height: 90,
+            //       child: ListView.builder(
+            //         physics: const AlwaysScrollableScrollPhysics(),
+            //         controller: _controller,
+            //         scrollDirection: Axis.horizontal,
+            //         itemCount: draggableImages.length,
+            //         itemBuilder: (context, index) {
+            //           return EyesCard(
+            //             index: currentList + index,
+            //             onPress: () {
+            //               widget.updateEyesImg(draggableImages[index]);
+            //             },
+            //             imagePath: draggableImages[index],
+            //             eyesPossition: widget.eyesPossition,
+            //           );
+            //         },
+            //       ),
+            //     ),
+            //   ],
+            // )
+          );
         },
       ),
     );
