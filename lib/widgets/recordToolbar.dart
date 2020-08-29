@@ -77,20 +77,19 @@ class _RecordToolbarState extends State<RecordToolbar> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                ClipOval(
-                  child: IconButton(
-                    iconSize: 53,
-                    onPressed: () {
-                      widget.addTextcallback();
-                      widget.textFocusNode.requestFocus();
-                      print('hello now');
-                    },
-                    icon: Icon(
-                      Icons.subtitles,
-                    ),
-                    // size: 53,
-                    color: Colors.white,
+                IconButton(
+                  padding: EdgeInsets.all(0),
+                  iconSize: 53,
+                  onPressed: () {
+                    widget.addTextcallback();
+                    widget.textFocusNode.requestFocus();
+                    print('hello now');
+                  },
+                  icon: Icon(
+                    Icons.subtitles,
                   ),
+                  // size: 53,
+                  color: Colors.white,
                 ),
                 SizedBox(
                   height: 10,

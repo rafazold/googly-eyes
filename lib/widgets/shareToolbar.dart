@@ -54,6 +54,7 @@ class _ShareToolbarState extends State<ShareToolbar> {
             begin: Alignment(-0.93, 0.36),
             end: Alignment(0.93, -0.36),
           ),
+          boxShadow: kElevationToShadow[4],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -68,6 +69,7 @@ class _ShareToolbarState extends State<ShareToolbar> {
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white24,
+                    borderRadius: BorderRadius.circular(26),
                   ),
                   height: 85,
                   width: 85,
@@ -75,6 +77,7 @@ class _ShareToolbarState extends State<ShareToolbar> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       IconButton(
+                        padding: EdgeInsets.all(1),
                         icon: Icon(
                           Icons.save,
                           color: Colors.white,
@@ -97,6 +100,9 @@ class _ShareToolbarState extends State<ShareToolbar> {
                             fontFamily: 'HelveticaNeue',
                             fontSize: 20,
                             letterSpacing: 0.666),
+                      ),
+                      SizedBox(
+                        height: 4,
                       )
                     ],
                   ),
@@ -105,6 +111,7 @@ class _ShareToolbarState extends State<ShareToolbar> {
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white24,
+                    borderRadius: BorderRadius.circular(26),
                   ),
                   height: 85,
                   width: 85,
@@ -112,6 +119,7 @@ class _ShareToolbarState extends State<ShareToolbar> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       IconButton(
+                        padding: EdgeInsets.all(1),
                         icon: Icon(
                           Icons.share,
                           color: Colors.white,
@@ -131,6 +139,9 @@ class _ShareToolbarState extends State<ShareToolbar> {
                             fontFamily: 'HelveticaNeue',
                             fontSize: 20,
                             letterSpacing: 0.666),
+                      ),
+                      SizedBox(
+                        height: 4,
                       )
                     ],
                   ),
