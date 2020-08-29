@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
@@ -9,6 +12,7 @@ import 'package:googly_eyes/widgets/prevButton.dart';
 import 'package:googly_eyes/widgets/recordToolbar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'dart:ui' as ui;
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 import 'package:screenshot/screenshot.dart';
@@ -25,6 +29,8 @@ class _MakeImageState extends State<MakeImage> {
   final FlutterFFmpeg _flutterFFmpeg = FlutterFFmpeg();
   GlobalKey imageKey = GlobalKey();
   GlobalKey eyes1 = GlobalKey();
+  GlobalKey stackKey = GlobalKey();
+  final textController = TextEditingController();
 
   double eyesPosX = 200.0;
   double eyesPosy = 200.0;
@@ -39,6 +45,9 @@ class _MakeImageState extends State<MakeImage> {
   String assetsDirectory;
   // String tempAnimatedImgOut;
   String audioPath;
+  String imageText = '';
+  FocusNode textFocus;
+
   bool showEyes = false;
   bool loading = false;
   bool hideAppBar = false;
@@ -46,10 +55,19 @@ class _MakeImageState extends State<MakeImage> {
   bool isAudioAnimated = false;
   bool editing = true;
   bool showRecordToolbar = false;
+  bool showTextField = false;
   Map finalDetails;
   String finalUrl;
+  File finalFile;
 
   final HandleImage handleImages = HandleImage();
+
+  void handleAddText() {
+    setState(() {
+      showTextField = true;
+      hideAppBar = true;
+    });
+  }
 
   @override
   void initState() {
@@ -65,6 +83,14 @@ class _MakeImageState extends State<MakeImage> {
       });
     });
     super.initState();
+    textFocus = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    textFocus.dispose();
+    textController.dispose();
+    super.dispose();
   }
 
 //TODO: pass to external class
@@ -89,6 +115,20 @@ class _MakeImageState extends State<MakeImage> {
         .catchError((onError) {
       print('onError');
     });
+  }
+
+  Future<File> makeScreenShot() async {
+    RenderRepaintBoundary boundary = stackKey.currentContext.findRenderObject();
+    String timeStamp = (new DateTime.now().millisecondsSinceEpoch).toString();
+    ui.Image image = await boundary.toImage();
+    ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    Uint8List pngBytes = byteData.buffer.asUint8List();
+    File imgFile = File('$tempDirPath/looney-final_$timeStamp.png');
+    setState(() {
+      finalFile = imgFile;
+    });
+    imgFile.writeAsBytes(pngBytes);
+    return imgFile;
   }
 
   void _setInitialEyesPosition(Map eyesPosition) {
@@ -130,7 +170,9 @@ class _MakeImageState extends State<MakeImage> {
 
   void renderStatic(String bgPath) {
     // RenderBox box = imageKey.currentContext.findRenderObject();
-    takeScreenshot().then((imgFile) {
+    takeScreenshot()
+        // makeScreenShot()
+        .then((imgFile) {
       decodeImageFromList(imgFile.readAsBytesSync()).then((asset) {
         print('renderedStatic');
         //TODO: set in state an instance of Googlyfied (type: audio/video/both/static, + details below)
@@ -579,10 +621,16 @@ class _MakeImageState extends State<MakeImage> {
                               });
                               print("ACCEPT 2!: $d");
                             },
+                            // TODO: use instead of callback for offset
+                            onAcceptWithDetails: (details) {
+                              print(
+                                  'acceptWIthDetails = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ${details.offset}');
+                            },
                             builder: (context, list, list2) {
+                              // TODO retry with repaintBoundary
                               return Screenshot(
                                 controller: screenshotController,
-                                child: Stack(children: [
+                                child: Stack(key: stackKey, children: [
                                   bgFile != null
                                       ? Center(
                                           child: OverflowBox(
@@ -635,6 +683,80 @@ class _MakeImageState extends State<MakeImage> {
                                             childWhenDragging: Container(),
                                           ),
                                         ),
+                                  Visibility(
+                                    visible: showTextField,
+                                    child: Positioned(
+                                      bottom: 0,
+                                      width: 400,
+                                      height: 50,
+                                      // top: 50,
+                                      child: TextField(
+                                          controller: textController,
+                                          style: TextStyle(color: Colors.white),
+                                          focusNode: textFocus,
+                                          onChanged: (val) {
+                                            setState(() {
+                                              imageText = val;
+                                            });
+                                          },
+                                          onSubmitted: (val) {
+                                            setState(() {
+                                              imageText = val;
+                                              showTextField = false;
+                                              editing = true;
+                                              hideAppBar = false;
+                                            });
+                                          },
+                                          decoration: InputDecoration(
+                                              hintStyle: TextStyle(
+                                                  color: Colors.white),
+                                              hintText: "Write something here",
+                                              border: UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.white))
+                                              // border: OutlineInputBorder(
+                                              //   borderRadius:
+                                              //       BorderRadius.circular(25),
+                                              // )
+                                              )),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    // left: 100,
+                                    bottom: 140,
+                                    child: Container(
+                                      width: 400,
+                                      // padding:
+                                      //     EdgeInsets.symmetric(vertical: 8),
+                                      child:
+                                          // Text('yoyoyoyoyo'),
+                                          AutoSizeText(
+                                        textController.text,
+                                        textAlign: TextAlign.center,
+                                        minFontSize: 10,
+                                        stepGranularity: 5,
+                                        maxLines: 6,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 48,
+                                          shadows: <Shadow>[
+                                            Shadow(
+                                              offset: Offset(2.0, 2.0),
+                                              blurRadius: 3.0,
+                                              color: Colors.black87,
+                                            ),
+                                            Shadow(
+                                              offset: Offset(2.0, 2.0),
+                                              blurRadius: 8.0,
+                                              color: Colors.black87,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                   Positioned(
                                       // top: 200,
                                       left: 20,
@@ -650,8 +772,9 @@ class _MakeImageState extends State<MakeImage> {
                   Expanded(
                     child: showRecordToolbar
                         ? RecordToolbar(
-                            audioPathCallbach: _updateAudioPath,
-                          )
+                            audioPathCallback: _updateAudioPath,
+                            textFocusNode: textFocus,
+                            addTextcallback: handleAddText)
                         : EyesToolbar(
                             eyesPossition: _setInitialEyesPosition,
                             updateEyesImg: _updateEyesImg),

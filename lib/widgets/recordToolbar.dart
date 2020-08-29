@@ -2,11 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:googly_eyes/widgets/recordSound.dart';
 
 class RecordToolbar extends StatefulWidget {
-  RecordToolbar({Key key, this.startRecordingCallback, this.audioPathCallbach})
-      : super(key: key);
+  RecordToolbar({
+    Key key,
+    this.startRecordingCallback,
+    this.audioPathCallback,
+    this.textFocusNode,
+    this.addTextcallback,
+  }) : super(key: key);
 
   final startRecordingCallback;
-  final audioPathCallbach;
+  final audioPathCallback;
+  final textFocusNode;
+  final addTextcallback;
 
   @override
   _RecordToolbarState createState() => _RecordToolbarState();
@@ -48,16 +55,47 @@ class _RecordToolbarState extends State<RecordToolbar> {
           ),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                RecordSound(pathCallback: widget.audioPathCallbach),
+                RecordSound(pathCallback: widget.audioPathCallback),
                 SizedBox(
                   height: 10,
                 ),
-                Text('Tap to record a short message',
+                Text('Record',
+                    style: TextStyle(
+                      fontFamily: 'HelveticaNeue',
+                      color: Color(0xffffffff),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w100,
+                      fontStyle: FontStyle.normal,
+                    )),
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                ClipOval(
+                  child: IconButton(
+                    iconSize: 53,
+                    onPressed: () {
+                      widget.addTextcallback();
+                      widget.textFocusNode.requestFocus();
+                      print('hello now');
+                    },
+                    icon: Icon(
+                      Icons.subtitles,
+                    ),
+                    // size: 53,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text('Type',
                     style: TextStyle(
                       fontFamily: 'HelveticaNeue',
                       color: Color(0xffffffff),
