@@ -34,6 +34,8 @@ class _MakeImageState extends State<MakeImage> {
 
   double eyesPosX = 200.0;
   double eyesPosy = 200.0;
+  double textX = 0;
+  double textY = 200;
   String eyesImg = 'assets/eyes/initial/group_84.png';
   double eyesScale = 1.0;
   double eyesBaseSize = 1.0;
@@ -133,10 +135,12 @@ class _MakeImageState extends State<MakeImage> {
 
   void _setInitialEyesPosition(Map eyesPosition) {
     // TODO: when making multiple, instance should have key position updated with method, also when moved needs to be updated.
-    setState(() {
-      eyesPosX = eyesPosition['offsetX'];
-      eyesPosy = eyesPosition['offsetY'];
-    });
+    if (editing) {
+      setState(() {
+        eyesPosX = eyesPosition['offsetX'];
+        eyesPosy = eyesPosition['offsetY'];
+      });
+    }
   }
 
   void _updateEyesImg(String imagePath) {
@@ -205,12 +209,12 @@ class _MakeImageState extends State<MakeImage> {
 
   void renderAnimation(String bgPath) {
     print('S T E P ================      1');
-    RenderBox box = imageKey.currentContext.findRenderObject();
-    Offset position = box.localToGlobal(Offset.zero);
+    RenderBox bgContainer = imageKey.currentContext.findRenderObject();
+    Offset position = bgContainer.localToGlobal(Offset.zero);
     double xOffset = position.dx;
     double yOffset = position.dy;
-    double width = box.size.width;
-    double height = box.size.height;
+    double width = bgContainer.size.width;
+    double height = bgContainer.size.height;
     RenderBox eyes = eyes1.currentContext.findRenderObject();
     Offset pos = eyes.localToGlobal(Offset.zero);
     double xOff = pos.dx;
@@ -272,8 +276,10 @@ class _MakeImageState extends State<MakeImage> {
 
   void handleDone(String bgPath, String overlayPath) {
     if (!editing) {
+      print('not editing');
       return;
     }
+    print('handleDone after if');
     setState(() {
       editing = false;
       showRecordToolbar = true;
@@ -596,9 +602,8 @@ class _MakeImageState extends State<MakeImage> {
                           onScaleUpdate: (details) {
                             double scaleValue =
                                 num.parse(details.scale.toStringAsFixed(2));
-                            int rounded = (scaleValue * 100).toInt();
 
-                            if (rounded.isEven) {
+                            if (editing) {
                               setState(() {
                                 eyesScale =
                                     (eyesBaseSize * scaleValue).clamp(0.1, 5);
@@ -611,8 +616,8 @@ class _MakeImageState extends State<MakeImage> {
                           },
                           child: DragTarget<String>(
                             onWillAccept: (d) {
-                              print("on will accept");
-                              return true;
+                              print("on will accept: $editing");
+                              return editing;
                             },
                             onAccept: (d) {
                               setState(() {
@@ -651,23 +656,30 @@ class _MakeImageState extends State<MakeImage> {
                                           left: eyesPosX,
                                           child: Draggable<String>(
                                             onDragEnd: (details) {
-                                              setState(() {
-                                                eyesPosX = details.offset
-                                                    .dx; //.clamp(-30, 300);
-                                                eyesPosy = details.offset
-                                                    .dy; //.clamp(-30, 700);
-                                              });
+                                              if (editing) {
+                                                setState(() {
+                                                  eyesPosX = details.offset
+                                                      .dx; //.clamp(-30, 300);
+                                                  eyesPosy = details.offset
+                                                      .dy; //.clamp(-30, 700);
+                                                });
+                                              }
                                             },
-                                            feedback: Transform(
-                                                transform: Matrix4.diagonal3(
-                                                    vector.Vector3(eyesScale,
-                                                        eyesScale, eyesScale)),
-                                                alignment:
-                                                    FractionalOffset.center,
-                                                child: Image.asset(
-                                                  eyesImg,
-                                                  width: 200,
-                                                )),
+                                            feedback: !editing
+                                                ? Container()
+                                                : Transform(
+                                                    transform:
+                                                        Matrix4.diagonal3(
+                                                            vector.Vector3(
+                                                                eyesScale,
+                                                                eyesScale,
+                                                                eyesScale)),
+                                                    alignment:
+                                                        FractionalOffset.center,
+                                                    child: Image.asset(
+                                                      eyesImg,
+                                                      width: 200,
+                                                    )),
                                             child: Transform(
                                                 transform: Matrix4.diagonal3(
                                                     vector.Vector3(eyesScale,
@@ -680,7 +692,21 @@ class _MakeImageState extends State<MakeImage> {
                                                   key: eyes1,
                                                 )),
                                             data: eyesImg,
-                                            childWhenDragging: Container(),
+                                            childWhenDragging: editing
+                                                ? Container()
+                                                : Transform(
+                                                    transform:
+                                                        Matrix4.diagonal3(
+                                                            vector.Vector3(
+                                                                eyesScale,
+                                                                eyesScale,
+                                                                eyesScale)),
+                                                    alignment:
+                                                        FractionalOffset.center,
+                                                    child: Image.asset(
+                                                      eyesImg,
+                                                      width: 200,
+                                                    )),
                                           ),
                                         ),
                                   Visibility(
@@ -691,6 +717,9 @@ class _MakeImageState extends State<MakeImage> {
                                       height: 50,
                                       // top: 50,
                                       child: TextField(
+                                          onEditingComplete: () {
+                                            print('editComplete');
+                                          },
                                           controller: textController,
                                           style: TextStyle(color: Colors.white),
                                           focusNode: textFocus,
@@ -701,7 +730,6 @@ class _MakeImageState extends State<MakeImage> {
                                           },
                                           onSubmitted: (val) {
                                             setState(() {
-                                              imageText = val;
                                               showTextField = false;
                                               editing = true;
                                               hideAppBar = false;
@@ -722,37 +750,118 @@ class _MakeImageState extends State<MakeImage> {
                                     ),
                                   ),
                                   Positioned(
-                                    // left: 100,
-                                    bottom: 140,
-                                    child: Container(
-                                      width: 400,
-                                      // padding:
-                                      //     EdgeInsets.symmetric(vertical: 8),
-                                      child:
-                                          // Text('yoyoyoyoyo'),
-                                          AutoSizeText(
-                                        textController.text,
-                                        textAlign: TextAlign.center,
-                                        minFontSize: 10,
-                                        stepGranularity: 5,
-                                        maxLines: 6,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 48,
-                                          shadows: <Shadow>[
-                                            Shadow(
-                                              offset: Offset(2.0, 2.0),
-                                              blurRadius: 3.0,
-                                              color: Colors.black87,
+                                    left: textX,
+                                    top: textY,
+                                    child: Draggable(
+                                      onDragEnd: (details) {
+                                        if (editing) {
+                                          setState(() {
+                                            textX = details.offset.dx;
+                                            textY = details.offset.dy;
+                                          });
+                                        }
+                                      },
+                                      childWhenDragging: editing
+                                          ? Container()
+                                          : DefaultTextStyle(
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 38,
+                                                shadows: <Shadow>[
+                                                  Shadow(
+                                                    offset: Offset(2.0, 2.0),
+                                                    blurRadius: 3.0,
+                                                    color: Colors.black87,
+                                                  ),
+                                                  Shadow(
+                                                    offset: Offset(2.0, 2.0),
+                                                    blurRadius: 8.0,
+                                                    color: Colors.black87,
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Container(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                child: AutoSizeText(
+                                                  textController.text,
+                                                  textAlign: TextAlign.center,
+                                                  minFontSize: 10,
+                                                  stepGranularity: 5,
+                                                  maxLines: 6,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
                                             ),
-                                            Shadow(
-                                              offset: Offset(2.0, 2.0),
-                                              blurRadius: 8.0,
-                                              color: Colors.black87,
+                                      feedback: !editing
+                                          ? Container()
+                                          : DefaultTextStyle(
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 38,
+                                                shadows: <Shadow>[
+                                                  Shadow(
+                                                    offset: Offset(2.0, 2.0),
+                                                    blurRadius: 3.0,
+                                                    color: Colors.black87,
+                                                  ),
+                                                  Shadow(
+                                                    offset: Offset(2.0, 2.0),
+                                                    blurRadius: 8.0,
+                                                    color: Colors.black87,
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Container(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                child: AutoSizeText(
+                                                  textController.text,
+                                                  textAlign: TextAlign.center,
+                                                  minFontSize: 10,
+                                                  stepGranularity: 5,
+                                                  maxLines: 6,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
                                             ),
-                                          ],
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8, horizontal: 30),
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        child:
+                                            // Text('yoyoyoyoyo'),
+                                            AutoSizeText(
+                                          textController.text,
+                                          textAlign: TextAlign.center,
+                                          minFontSize: 10,
+                                          stepGranularity: 5,
+                                          maxLines: 6,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 38,
+                                            shadows: <Shadow>[
+                                              Shadow(
+                                                offset: Offset(2.0, 2.0),
+                                                blurRadius: 3.0,
+                                                color: Colors.black87,
+                                              ),
+                                              Shadow(
+                                                offset: Offset(2.0, 2.0),
+                                                blurRadius: 8.0,
+                                                color: Colors.black87,
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -762,7 +871,7 @@ class _MakeImageState extends State<MakeImage> {
                                       left: 20,
                                       bottom: 20,
                                       child: Image.asset('assets/watermark.png',
-                                          height: 60))
+                                          height: 40))
                                 ]),
                               );
                             },
