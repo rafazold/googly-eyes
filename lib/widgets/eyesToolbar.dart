@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:googly_eyes/widgets/eyesCard.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 class EyesToolbar extends StatefulWidget {
   EyesToolbar({Key key, @required this.eyesPossition, this.updateEyesImg})
@@ -16,7 +17,8 @@ class EyesToolbar extends StatefulWidget {
 }
 
 class _EyesToolbarState extends State<EyesToolbar> {
-  ScrollController _controller = new ScrollController();
+  final ScrollController _controller = new ScrollController();
+
   List draggableImages = [];
   // List imagesLists = ['eyes', 'mouth', 'face', 'animation'];
   List imagesLists = [
@@ -113,6 +115,7 @@ class _EyesToolbarState extends State<EyesToolbar> {
         }
       },
       child: DragTarget(
+        // TODO: use https://pub.dev/packages/step_progress_indicator to make vertical indicator
         builder: (context, list, list2) {
           return Container(
             decoration: BoxDecoration(
@@ -124,21 +127,42 @@ class _EyesToolbarState extends State<EyesToolbar> {
               ),
             ),
             height: 90,
-            child: ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
+            child: Scrollbar(
               controller: _controller,
-              scrollDirection: Axis.horizontal,
-              itemCount: draggableImages.length,
-              itemBuilder: (context, index) {
-                return EyesCard(
-                  index: currentList + index,
-                  onPress: () {
-                    widget.updateEyesImg(draggableImages[index]);
-                  },
-                  imagePath: draggableImages[index],
-                  eyesPossition: widget.eyesPossition,
-                );
-              },
+              isAlwaysShown: true,
+              child: Row(
+                children: [
+                  StepProgressIndicator(
+                    totalSteps: imagesLists.length,
+                    currentStep: currentList + 1,
+                    direction: Axis.vertical,
+                    selectedColor: Colors.grey[700],
+                    unselectedColor: Colors.grey,
+                    roundedEdges: Radius.circular(10),
+                    padding: 0,
+                    size: 5,
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      // TODO: make a list within the list
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      controller: _controller,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: draggableImages.length,
+                      itemBuilder: (context, index) {
+                        return EyesCard(
+                          index: currentList + index,
+                          onPress: () {
+                            widget.updateEyesImg(draggableImages[index]);
+                          },
+                          imagePath: draggableImages[index],
+                          eyesPossition: widget.eyesPossition,
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
 
             // child: Column(
