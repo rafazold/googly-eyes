@@ -27,7 +27,7 @@ class Splash extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'googly eyes',
+                  'Looney Cam',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 40,
