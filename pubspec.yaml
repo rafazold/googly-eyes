@@ -41,8 +41,16 @@ dependencies:
   async: ^2.4.2
   flutter_screen_recording: ^1.0.10
   image: ^2.1.14
+  auto_size_text: ^2.1.0
+  step_progress_indicator: ^0.2.4+7
 
-dev_dependencies: null
+dev_dependencies:
+  flutter_launcher_icons: ^0.7.5
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/googly_icon.png"
 # flutter_test:
 #   sdk: flutter
 # For information on the generic Dart part of this file, see the
@@ -58,12 +66,19 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
-    - assets/eyes/
-    - assets/eyes/initial/
-    - assets/eyes/initial/eyes/
-    - assets/eyes/initial/mouth/
-    - assets/eyes/initial/face/
-    - assets/eyes/initial/animation/
+    - assets/overlays/
+    - assets/overlays/initial/
+    - assets/overlays/initial/mouth/
+    - assets/overlays/initial/eyes/
+    - assets/overlays/initial/animation/
+    - assets/overlays/initial/eyes/color-1/
+    - assets/overlays/initial/eyes/color-2/
+    - assets/overlays/initial/eyes/color-3/
+    - assets/overlays/initial/eyes/color-5/
+    - assets/overlays/initial/eyes/color-7/
+    - assets/overlays/initial/face/
+    - assets/overlays/initial/face/face-6/
+    - assets/overlays/initial/face/face-7/
     - assets/audio/
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
