@@ -557,6 +557,7 @@ class _MakeImageState extends State<MakeImage> {
     return loading
         ? Container()
         : Scaffold(
+            resizeToAvoidBottomPadding: false,
             extendBodyBehindAppBar: true,
             appBar: hideAppBar
                 ? null
