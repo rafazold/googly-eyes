@@ -75,14 +75,14 @@ class _RecordSoundState extends State<RecordSound> {
     });
     // widget.startRecordingCallback(true);
     player
-        .play('start-recording.mp3')
+        .play('start-recording.mp3', volume: 1.0)
         .catchError((e) => print('ERROR in player: $e'));
   }
 
   void endRecording() async {
     await audioRecorder.stopRecorder();
     player
-        .play('end-recording.mp3')
+        .play('end-recording.mp3', volume: 0.5)
         .catchError((e) => print('ERROR in player: $e'));
     setState(() {
       recording = false;
