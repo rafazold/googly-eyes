@@ -45,6 +45,7 @@ app.*.map.json
 bloc/
 ios/*/
 assets/eyes/
+assets/overlays/
 android/
 ios/
 .metadata
