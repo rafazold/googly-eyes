@@ -66,11 +66,11 @@ class _EyesCardState extends State<EyesCard> {
                         data: widget.imagePath,
                         child: Image.asset(
                           widget.imagePath,
-                          height: 200,
+                          width: 200,
                         ),
                         feedback: Image.asset(
                           widget.imagePath,
-                          height: 200,
+                          width: 200,
                         )),
                     fit: BoxFit.scaleDown),
               ),

@@ -23,7 +23,7 @@ class ShareFile {
     //   print('path to bytes');
     //   await WcFlutterShare.share(
     //       sharePopupTitle: 'share',
-    //       fileName: 'googly_eyes.$ext',
+    //       fileName: 'looney_cam.$ext',
     //       mimeType: mimeType,
     //       bytesOfFile: bytes.buffer.asUint8List());
     // } catch (e) {
@@ -34,7 +34,7 @@ class ShareFile {
     print('path to bytes');
     await WcFlutterShare.share(
         sharePopupTitle: 'share',
-        fileName: 'googly_eyes.$ext',
+        fileName: 'looney_cam.$ext',
         mimeType: mimeType,
         bytesOfFile: bytes.buffer.asUint8List());
     return 'Share completed';

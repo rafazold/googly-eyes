@@ -1,7 +1,7 @@
 // import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:googly_eyes/widgets/countdownTimer.dart';
+import 'package:looney_cam/widgets/countdownTimer.dart';
 
 class PopupAlert {
   void textAlert(BuildContext context, message) {

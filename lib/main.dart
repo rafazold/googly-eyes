@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:googly_eyes/pages/addVoice.dart';
-import 'package:googly_eyes/pages/displayResult.dart';
-import 'package:googly_eyes/pages/videoApp.dart';
-import 'package:googly_eyes/pages/home.dart';
-import 'package:googly_eyes/pages/makeImage.dart';
-import 'package:googly_eyes/pages/start.dart';
+import 'package:looney_cam/pages/addVoice.dart';
+import 'package:looney_cam/pages/displayResult.dart';
+import 'package:looney_cam/pages/videoApp.dart';
+import 'package:looney_cam/pages/home.dart';
+import 'package:looney_cam/pages/makeImage.dart';
+import 'package:looney_cam/pages/start.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

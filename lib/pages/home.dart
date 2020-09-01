@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:googly_eyes/utilities/getImage.dart';
+import 'package:looney_cam/utilities/getImage.dart';
 
 class Home extends StatelessWidget {
   final SelectImage _image = SelectImage();

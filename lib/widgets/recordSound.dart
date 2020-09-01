@@ -4,7 +4,7 @@ import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:googly_eyes/widgets/popupAlert.dart';
+import 'package:looney_cam/widgets/popupAlert.dart';
 
 class RecordSound extends StatefulWidget {
   const RecordSound(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:googly_eyes/pages/splash.dart';
+import 'package:looney_cam/pages/splash.dart';
 
 class Start extends StatelessWidget {
   const Start({Key key}) : super(key: key);

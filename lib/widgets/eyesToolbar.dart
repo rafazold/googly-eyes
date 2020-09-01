@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:googly_eyes/widgets/eyesCard.dart';
+import 'package:looney_cam/widgets/eyesCard.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
@@ -22,8 +22,8 @@ class _EyesToolbarState extends State<EyesToolbar> {
   List draggableImages = [];
   // List imagesLists = ['eyes', 'mouth', 'face', 'animation'];
   List imagesLists = [
-    // 'eyes/color-1',
     'eyes/color-2',
+    'eyes/color-1',
     'eyes/color-3',
     'eyes/color-5',
     'eyes/color-7',

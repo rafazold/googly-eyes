@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
-import 'package:googly_eyes/utilities/shareFiles.dart';
+import 'package:looney_cam/utilities/shareFiles.dart';
 // import 'package:flutter_sound_lite/flutter_sound.dart';
-// import 'package:googly_eyes/widgets/recordSound.dart';
+// import 'package:looney_cam/widgets/recordSound.dart';
 
 class ShareToolbar extends StatefulWidget {
   ShareToolbar(

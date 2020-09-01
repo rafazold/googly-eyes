@@ -7,10 +7,10 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 import 'package:flutter/services.dart';
-import 'package:googly_eyes/widgets/recordSound.dart';
-// import 'package:googly_eyes/utilities/shareFiles.dart';
-import 'package:googly_eyes/utilities/handleFile.dart';
-import 'package:googly_eyes/widgets/popupAlert.dart';
+import 'package:looney_cam/widgets/recordSound.dart';
+// import 'package:looney_cam/utilities/shareFiles.dart';
+import 'package:looney_cam/utilities/handleFile.dart';
+import 'package:looney_cam/widgets/popupAlert.dart';
 
 class AddVoice extends StatefulWidget {
   @override
@@ -54,7 +54,7 @@ class _AddVoiceState extends State<AddVoice> {
       print('path to bytes');
       await WcFlutterShare.share(
           sharePopupTitle: 'share',
-          fileName: 'googly_eyes.$ext',
+          fileName: 'looney_cam.$ext',
           mimeType: mimeType,
           bytesOfFile: bytes.buffer.asUint8List());
     } catch (e) {

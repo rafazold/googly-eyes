@@ -4,12 +4,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
-import 'package:googly_eyes/utilities/handleFile.dart';
-import 'package:googly_eyes/utilities/handleImage.dart';
-import 'package:googly_eyes/widgets/eyesToolbar.dart';
-import 'package:googly_eyes/widgets/pinkButton.dart';
-import 'package:googly_eyes/widgets/prevButton.dart';
-import 'package:googly_eyes/widgets/recordToolbar.dart';
+import 'package:looney_cam/utilities/handleImage.dart';
+import 'package:looney_cam/widgets/eyesToolbar.dart';
+import 'package:looney_cam/widgets/pinkButton.dart';
+import 'package:looney_cam/widgets/prevButton.dart';
+import 'package:looney_cam/widgets/recordToolbar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -156,22 +155,6 @@ class _MakeImageState extends State<MakeImage> {
     });
   }
 
-  // assetsDirectory/$eyesImg
-  ////TODO: pass to external class (currently not used)
-  // Future<File> copyFileAssets(String assetName, String localName) async {
-  //   final ByteData assetByteData = await rootBundle.load(assetName);
-
-  //   final List<int> byteList = assetByteData.buffer
-  //       .asUint8List(assetByteData.offsetInBytes, assetByteData.lengthInBytes);
-
-  //   final String fullTemporaryPath = tempDirPath + localName;
-  //   setState(() {
-  //     tempAnimatedImgOut = fullTemporaryPath;
-  //   });
-  //   return File(fullTemporaryPath)
-  //       .writeAsBytes(byteList, mode: FileMode.writeOnly, flush: true);
-  // }
-
   void renderStatic(String bgPath) {
     // RenderBox box = imageKey.currentContext.findRenderObject();
     takeScreenshot()
@@ -196,14 +179,6 @@ class _MakeImageState extends State<MakeImage> {
       }).then((_) {
         print('static rendered with details: $finalDetails');
       });
-      // Navigator.pushNamed(context, '/voice', arguments: {
-      //   'imgFile': imgFile,
-      //   'vidFiles': [],
-      //   'eyesPosX': eyesPosX,
-      //   'eyesPosY': eyesPosy,
-      //   'bgPath': bgPath,
-      //   'eyesPath': eyesImg
-      // })
     });
   }
 
@@ -254,22 +229,6 @@ class _MakeImageState extends State<MakeImage> {
             'yOff': yOff - yOffset
           };
         });
-        // Navigator.pushNamed(context, '/voice', arguments: {
-        //   'imgFile': imgFile,
-        //   'eyesPosX': xOff,
-        //   'eyesPosY': yOff,
-        //   'eyesPath': animatedEyesPath,
-        //   'bgPosX': xOffset,
-        //   'bgPosY': yOffset,
-        //   'bgPath': bgPath,
-        //   'bgW': width,
-        //   'bgH': height,
-        //   'eyW': wid,
-        //   'eyH': hei,
-        //   'vidFiles': [eyesImg],
-        //   'xOff': xOff - xOffset,
-        //   'yOff': yOff - yOffset
-        // });
       });
     });
   }
@@ -280,10 +239,6 @@ class _MakeImageState extends State<MakeImage> {
       return;
     }
     print('handleDone after if');
-    setState(() {
-      editing = false;
-      showRecordToolbar = true;
-    });
     if (overlayPath.contains('animation')) {
       setState(() {
         isVideoAnimated = true;
@@ -297,6 +252,10 @@ class _MakeImageState extends State<MakeImage> {
       print('rendering S T A T I C: $overlayPath');
       renderStatic(bgPath);
     }
+    setState(() {
+      editing = false;
+      showRecordToolbar = true;
+    });
   }
 
   void handleEdit() {
@@ -720,6 +679,8 @@ class _MakeImageState extends State<MakeImage> {
                                       child: TextField(
                                           onEditingComplete: () {
                                             print('editComplete');
+                                            SystemChrome
+                                                .setEnabledSystemUIOverlays([]);
                                           },
                                           controller: textController,
                                           style: TextStyle(color: Colors.white),

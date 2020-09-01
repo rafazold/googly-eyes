@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:googly_eyes/pages/playVideo.dart';
-import 'package:googly_eyes/widgets/prevButton.dart';
-import 'package:googly_eyes/widgets/shareToolbar.dart';
+import 'package:looney_cam/pages/playVideo.dart';
+import 'package:looney_cam/widgets/prevButton.dart';
+import 'package:looney_cam/widgets/shareToolbar.dart';
 
 class DisplayResult extends StatefulWidget {
   @override

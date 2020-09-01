@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:googly_eyes/widgets/recordSound.dart';
+import 'package:looney_cam/widgets/recordSound.dart';
 
 class RecordToolbar extends StatefulWidget {
   RecordToolbar({
