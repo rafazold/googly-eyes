@@ -12,12 +12,15 @@ void main() {
   SystemChrome.setEnabledSystemUIOverlays([]);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
-    runApp(MaterialApp(initialRoute: '/start', routes: {
-      '/start': (context) => Start(),
-      '/home': (context) => Home(),
-      '/image': (context) => MakeImage(),
-      '/video': (context) => VideoApp(),
-      '/result': (context) => DisplayResult(),
-    }));
+    runApp(MaterialApp(
+        theme: ThemeData(highlightColor: Colors.white),
+        initialRoute: '/start',
+        routes: {
+          '/start': (context) => Start(),
+          '/home': (context) => Home(),
+          '/image': (context) => MakeImage(),
+          '/video': (context) => VideoApp(),
+          '/result': (context) => DisplayResult(),
+        }));
   });
 }
