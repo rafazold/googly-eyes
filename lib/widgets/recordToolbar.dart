@@ -27,7 +27,8 @@ class _RecordToolbarState extends State<RecordToolbar> {
   bool isAudioAnimated = false;
   bool isRecording = false;
   String runningTimer = '00.00';
-  Stopwatch _stopwatch = Stopwatch();
+  Stopwatch _stopwatch;
+  Timer _timer;
 
   @override
   void initState() {
@@ -49,20 +50,20 @@ class _RecordToolbarState extends State<RecordToolbar> {
   // }
 
   void startTimer() {
+    _stopwatch = Stopwatch();
     print(
         'timer started !!!!!!!!!!!!!! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !  !  !  !  !  !  !  !  !  !  !   !   !   !   !   !    !     !     !      !     !');
     formatTime(Duration d) => d.toString().split('.').last.padLeft(8, "0");
-    Timer _timer;
     _stopwatch.reset();
     _stopwatch.start();
     runningTimer = '00.00';
-    _timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+    _timer = Timer.periodic(Duration(milliseconds: 10), (timer) {
       if (_stopwatch.elapsedMilliseconds < 20000) {
         setState(() {
           runningTimer =
               // 11,238
-              // formatTime(_stopwatch.elapsed); 1,234
-              '${_stopwatch.elapsed.inSeconds.toString().padLeft(2)}:${(_stopwatch.elapsed.inMilliseconds).remainder(100).toString().padLeft(2, '0')}';
+              // formatTime(_stopwatch.elapsed); 1234
+              '${_stopwatch.elapsed.inSeconds.toString().padLeft(2, '0')}:${((_stopwatch.elapsed.inMilliseconds).remainder(1000) / 10).toStringAsFixed(0).padLeft(2, '0')}';
         });
       } else {
         _timer.cancel();
@@ -71,7 +72,12 @@ class _RecordToolbarState extends State<RecordToolbar> {
   }
 
   void stopTimer() {
-    _stopwatch.stop();
+    if (_stopwatch != null) {
+      _stopwatch.stop();
+    }
+    if (_timer != null) {
+      _timer.cancel();
+    }
   }
 
   void handleRecording(recording) {
