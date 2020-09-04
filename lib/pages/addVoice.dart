@@ -368,7 +368,7 @@ class _AddVoiceState extends State<AddVoice> {
                       children: <Widget>[
                         RecordSound(
                             pathCallback: _updateAudioPath,
-                            startRecordingCallback: _updateRecordingState,
+                            notifyRecordingCallback: _updateRecordingState,
                             key: _recordSound),
                         Text('Record a short message',
                             style: TextStyle(

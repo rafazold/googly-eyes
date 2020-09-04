@@ -8,10 +8,10 @@ import 'package:looney_cam/widgets/popupAlert.dart';
 
 class RecordSound extends StatefulWidget {
   const RecordSound(
-      {Key key, @required this.pathCallback, this.startRecordingCallback})
+      {Key key, @required this.pathCallback, this.notifyRecordingCallback})
       : super(key: key);
   final ValueChanged<String> pathCallback;
-  final ValueChanged startRecordingCallback;
+  final ValueChanged notifyRecordingCallback;
 
   @override
   _RecordSoundState createState() => _RecordSoundState();
@@ -73,7 +73,7 @@ class _RecordSoundState extends State<RecordSound> {
       recording = true;
       audioPath = outputFile.path;
     });
-    // widget.startRecordingCallback(true);
+    widget.notifyRecordingCallback(true);
     player
         .play('start-recording.mp3', volume: 1.0)
         .catchError((e) => print('ERROR in player: $e'));
@@ -90,7 +90,7 @@ class _RecordSoundState extends State<RecordSound> {
     print('recorded to: $audioPath');
     audioRecorder.closeAudioSession();
     widget.pathCallback(audioPath);
-    // widget.startRecordingCallback(false);
+    widget.notifyRecordingCallback(false);
   }
 
   @override
