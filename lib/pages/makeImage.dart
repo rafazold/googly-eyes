@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:looney_cam/widgets/popupAlert.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -62,6 +63,7 @@ class _MakeImageState extends State<MakeImage> {
   File finalFile;
 
   final HandleImage handleImages = HandleImage();
+  final PopupAlert alert = PopupAlert();
 
   void handleAddText() {
     setState(() {
@@ -547,6 +549,15 @@ class _MakeImageState extends State<MakeImage> {
                               icon: Icons.edit,
                               callback: handleEdit,
                             ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      IconButton(
+                          icon: Icon(Icons.help_outline, color: Colors.black),
+                          onPressed: () {
+                            print('hello');
+                            alert.childAlert(context);
+                          }),
                     ],
                   ),
             body: Container(
