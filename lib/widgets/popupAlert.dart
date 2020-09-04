@@ -4,7 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:looney_cam/widgets/countdownTimer.dart';
 
 class PopupAlert {
-  void textAlert(BuildContext context, message) {
+  void textAlert(BuildContext context,
+      {String message, List<Widget> buttons, String closeButton}) {
+    print('this is an alert');
+    List<Widget> actionButtons = buttons != null ? buttons : [];
+
+    if (closeButton != null) {
+      actionButtons.add(FlatButton(
+        child: Text(closeButton),
+        onPressed: () {
+          closeModal(context);
+        },
+      ));
+    }
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -14,14 +26,7 @@ class PopupAlert {
           ),
           // title: Text('Not in stock'),
           content: Text(message),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Ok'),
-              onPressed: () {
-                closeModal(context);
-              },
-            ),
-          ],
+          actions: actionButtons,
         );
       },
     );

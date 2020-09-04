@@ -302,8 +302,10 @@ class _AddVoiceState extends State<AddVoice> {
                   'pressed with N E W assetDetails: ${assetDetails.width} - ${assetDetails.height}');
               isAudioAnimated
                   ? _renderAndShowVideo(bgW.toInt(), bgH.toInt())
-                  : _alert.textAlert(
-                      context, 'Please add some audio to make a clip');
+                  : _alert.textAlert(context,
+                      message: 'Please add some audio to make a clip',
+                      closeButton: 'Close',
+                      buttons: []);
               print('Clip pressed: $audioUrl');
             },
             child: Container(
