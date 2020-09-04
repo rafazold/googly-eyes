@@ -1,8 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:gallery_saver/gallery_saver.dart';
-import 'package:looney_cam/pages/splash.dart';
-import 'package:looney_cam/utilities/shareFiles.dart';
 import 'package:video_player/video_player.dart';
 
 class PlayVideo extends StatefulWidget {
@@ -76,8 +73,8 @@ class _PlayVideoState extends State<PlayVideo> {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.miniCenterFloat,
+      // floatingActionButtonLocation:
+      //     FloatingActionButtonLocation.miniCenterFloat,
       body: Stack(
         children: <Widget>[
           Center(
