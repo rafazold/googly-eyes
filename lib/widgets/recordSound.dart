@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audioplayers/audio_cache.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound_lite/flutter_sound.dart';
@@ -5,6 +7,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:looney_cam/widgets/popupAlert.dart';
+import 'package:intl/intl.dart' show DateFormat;
 
 class RecordSound extends StatefulWidget {
   const RecordSound(
@@ -25,6 +28,8 @@ class _RecordSoundState extends State<RecordSound> {
   bool recording = false;
   File outputFile;
   bool readyToRecord = false;
+
+  StreamSubscription _recorderSubscription;
 
   final PopupAlert alert = PopupAlert();
   AudioCache player = AudioCache(prefix: 'audio/');
@@ -61,6 +66,13 @@ class _RecordSoundState extends State<RecordSound> {
     }
   }
 
+  void cancelRecorderSubscriptions() {
+    if (_recorderSubscription != null) {
+      _recorderSubscription.cancel();
+      _recorderSubscription = null;
+    }
+  }
+
   void startRecording() async {
     if (audioRecorder.isInited.toString() == 'Initialized.notInitialized') {
       audioRecorder = await FlutterSoundRecorder().openAudioSession();
@@ -77,6 +89,21 @@ class _RecordSoundState extends State<RecordSound> {
     player
         .play('start-recording.mp3', volume: 1.0)
         .catchError((e) => print('ERROR in player: $e'));
+
+    _recorderSubscription = audioRecorder.onProgress.listen((e) {
+      if (e != null && e.duration > Duration(seconds: 20)) {
+        print(e.duration);
+        cancelRecorderSubscriptions();
+        endRecording();
+        // if (e.duration > Duration(seconds: 1) &&
+        //     e.duration < Duration(seconds: 3)) {}
+        // DateTime date = new DateTime.fromMillisecondsSinceEpoch(
+        //     e.duration.inMilliseconds,
+        //     isUtc: true);
+        // String txt = DateFormat('mm:ss:SS', 'en_GB').format(date);
+        print('txt');
+      }
+    });
   }
 
   void endRecording() async {
@@ -89,6 +116,7 @@ class _RecordSoundState extends State<RecordSound> {
     });
     print('recorded to: $audioPath');
     audioRecorder.closeAudioSession();
+    cancelRecorderSubscriptions();
     widget.pathCallback(audioPath);
     widget.notifyRecordingCallback(false);
   }

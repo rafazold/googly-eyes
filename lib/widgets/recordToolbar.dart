@@ -35,6 +35,12 @@ class _RecordToolbarState extends State<RecordToolbar> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    stopTimer();
+    super.dispose();
+  }
+
   // void _updateAudioPath(String path) {
   //   setState(() {
   //     audioUrl = path;
@@ -43,17 +49,20 @@ class _RecordToolbarState extends State<RecordToolbar> {
   // }
 
   void startTimer() {
+    print(
+        'timer started !!!!!!!!!!!!!! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !  !  !  !  !  !  !  !  !  !  !   !   !   !   !   !    !     !     !      !     !');
     formatTime(Duration d) => d.toString().split('.').last.padLeft(8, "0");
     Timer _timer;
     _stopwatch.reset();
     _stopwatch.start();
     runningTimer = '00.00';
-    _timer = Timer.periodic(Duration(milliseconds: 30), (timer) {
+    _timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
       if (_stopwatch.elapsedMilliseconds < 20000) {
         setState(() {
           runningTimer =
+              // 11,238
               // formatTime(_stopwatch.elapsed); 1,234
-              '${_stopwatch.elapsed.inSeconds.toString().padLeft(2)}:${(_stopwatch.elapsed.inMilliseconds).remainder(1000).toString().padLeft(3, '0')}';
+              '${_stopwatch.elapsed.inSeconds.toString().padLeft(2)}:${(_stopwatch.elapsed.inMilliseconds).remainder(100).toString().padLeft(2, '0')}';
         });
       } else {
         _timer.cancel();
