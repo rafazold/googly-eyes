@@ -107,15 +107,18 @@ class _RecordSoundState extends State<RecordSound> {
   }
 
   void endRecording() async {
-    await audioRecorder.stopRecorder();
-    player
-        .play('end-recording.mp3', volume: 0.5)
-        .catchError((e) => print('ERROR in player: $e'));
+    if (audioRecorder.isInited.toString() != 'Initialized.notInitialized') {
+      print('CHECKING THIS OUT!!! ${audioRecorder.isInited}');
+      await audioRecorder.stopRecorder();
+      audioRecorder.closeAudioSession();
+      player
+          .play('end-recording.mp3', volume: 0.5)
+          .catchError((e) => print('ERROR in player: $e'));
+    }
     setState(() {
       recording = false;
     });
     print('recorded to: $audioPath');
-    audioRecorder.closeAudioSession();
     cancelRecorderSubscriptions();
     widget.pathCallback(audioPath);
     widget.notifyRecordingCallback(false);
