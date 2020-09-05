@@ -1,7 +1,7 @@
 // import 'dart:async';
 
+import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:looney_cam/widgets/countdownTimer.dart';
 
 class PopupAlert {
   void textAlert(BuildContext context,
@@ -42,7 +42,7 @@ class PopupAlert {
       builder: (BuildContext context) {
         return Dialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(20.0),
           ),
           insetPadding: EdgeInsets.fromLTRB(40, 160, 40, 160),
           // backgroundColor: Colors.transparent,
@@ -51,6 +51,10 @@ class PopupAlert {
               child: Container(
                   padding: EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.white,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
                     gradient: LinearGradient(
                       colors: [Color(0xffff0077), Color(0xffff724e)],
                       stops: [0, 1],
@@ -63,25 +67,37 @@ class PopupAlert {
                   width: width - 80,
                   child: Column(
                     children: [
+                      Text(
+                        'Looney Cam Instructions',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontFamily: 'FredokaOne',
+                        ),
+                      ),
                       SizedBox(
                         height: 20,
                       ),
                       Row(
                         children: [
-                          Icon(
-                            Icons.open_with,
-                            color: Colors.white,
+                          Transform.rotate(
+                            angle: 90 * pi / 180,
+                            child: Icon(
+                              Icons.settings_ethernet,
+                              color: Colors.white,
+                            ),
                           ),
                           SizedBox(
                             width: 8,
                           ),
                           Flexible(
                             child: Text(
-                              'Sweap to change set',
+                              'Sweap to change Looney set',
                               style: TextStyle(
                                 fontFamily: 'HelveticaNeue',
                                 color: Color(0xffffffff),
-                                fontSize: 18,
+                                fontSize: 20,
                                 fontWeight: FontWeight.w400,
                                 fontStyle: FontStyle.normal,
                               ),
@@ -107,7 +123,7 @@ class PopupAlert {
                               style: TextStyle(
                                 fontFamily: 'HelveticaNeue',
                                 color: Color(0xffffffff),
-                                fontSize: 18,
+                                fontSize: 20,
                                 fontWeight: FontWeight.w400,
                                 fontStyle: FontStyle.normal,
                               ),
@@ -133,7 +149,7 @@ class PopupAlert {
                               style: TextStyle(
                                 fontFamily: 'HelveticaNeue',
                                 color: Color(0xffffffff),
-                                fontSize: 18,
+                                fontSize: 20,
                                 fontWeight: FontWeight.w400,
                                 fontStyle: FontStyle.normal,
                               ),
@@ -155,11 +171,37 @@ class PopupAlert {
                           ),
                           Flexible(
                             child: Text(
-                              'Pinch to zoom in and out',
+                              'Pinch to change your Looney Element size',
                               style: TextStyle(
                                 fontFamily: 'HelveticaNeue',
                                 color: Color(0xffffffff),
-                                fontSize: 18,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w400,
+                                fontStyle: FontStyle.normal,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.fingerprint,
+                            color: Colors.white,
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Flexible(
+                            child: Text(
+                              'Tap any other Looney element to replace the current one',
+                              style: TextStyle(
+                                fontFamily: 'HelveticaNeue',
+                                color: Color(0xffffffff),
+                                fontSize: 20,
                                 fontWeight: FontWeight.w400,
                                 fontStyle: FontStyle.normal,
                               ),
