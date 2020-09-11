@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:looney_cam/pages/addVoice.dart';
 import 'package:looney_cam/pages/displayResult.dart';
 import 'package:looney_cam/pages/videoApp.dart';
 import 'package:looney_cam/pages/home.dart';
