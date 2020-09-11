@@ -32,7 +32,7 @@ class _MakeImageState extends State<MakeImage> {
   GlobalKey stackKey = GlobalKey();
   final textController = TextEditingController();
 
-  double eyesPosX = 200.0;
+  double eyesPosX = 100.0;
   double eyesPosy = 200.0;
   double textX = 0;
   double textY = 200;
@@ -144,9 +144,19 @@ class _MakeImageState extends State<MakeImage> {
     }
   }
 
+  void _resetEyes() {
+    setState(() {
+      showEyes = false;
+      eyesImg = '';
+      eyesPosX = 100.0;
+      eyesPosy = 200.0;
+    });
+  }
+
   void _updateEyesImg(String imagePath) {
     setState(() {
       eyesImg = imagePath;
+      showEyes = true;
     });
   }
 
@@ -266,6 +276,11 @@ class _MakeImageState extends State<MakeImage> {
       editing = true;
       showRecordToolbar = false;
     });
+  }
+
+  void handleHelp(context) {
+    print('hello');
+    alert.childAlert(context);
   }
 
   // TODO: move to another class
@@ -555,8 +570,7 @@ class _MakeImageState extends State<MakeImage> {
                       IconButton(
                           icon: Icon(Icons.help_outline, color: Colors.black),
                           onPressed: () {
-                            print('hello');
-                            alert.childAlert(context);
+                            handleHelp(context);
                           }),
                     ],
                   ),
@@ -627,13 +641,20 @@ class _MakeImageState extends State<MakeImage> {
                                           left: eyesPosX,
                                           child: Draggable<String>(
                                             onDragEnd: (details) {
-                                              if (editing) {
+                                              print(
+                                                  'drag ended: ${details.offset} and accepted: ${details.wasAccepted}');
+                                              if (editing &&
+                                                  details.wasAccepted) {
                                                 setState(() {
                                                   eyesPosX = details.offset
                                                       .dx; //.clamp(-30, 300);
                                                   eyesPosy = details.offset
                                                       .dy; //.clamp(-30, 700);
                                                 });
+                                              } else if (editing &&
+                                                  !details.wasAccepted &&
+                                                  details.offset.dy > 100) {
+                                                _resetEyes();
                                               }
                                             },
                                             feedback: !editing
@@ -859,7 +880,9 @@ class _MakeImageState extends State<MakeImage> {
                             addTextcallback: handleAddText)
                         : EyesToolbar(
                             eyesPossition: _setInitialEyesPosition,
-                            updateEyesImg: _updateEyesImg),
+                            updateEyesImg: _updateEyesImg,
+                            // resetEyes: _resetEyes
+                          ),
                     flex: 10,
                   )
                 ],

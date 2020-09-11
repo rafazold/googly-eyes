@@ -6,8 +6,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 class EyesToolbar extends StatefulWidget {
-  EyesToolbar({Key key, @required this.eyesPossition, this.updateEyesImg})
-      : super(key: key);
+  EyesToolbar({
+    Key key,
+    @required this.eyesPossition,
+    this.updateEyesImg,
+  }) : super(key: key);
 
   final eyesPossition;
   final updateEyesImg;
@@ -166,55 +169,6 @@ class _EyesToolbarState extends State<EyesToolbar> {
                 ],
               ),
             ),
-
-            // child: Column(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     Container(
-            //       child: ButtonTheme(
-            //         height: 22,
-            //         child: RaisedButton(
-            //           color: Colors.transparent,
-            //           elevation: 0,
-            //           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            //           // padding: EdgeInsets.all(7),
-            //           onPressed: handleNextList,
-            //           child: Center(
-            //             child: Container(
-            //               child: SizedBox(
-            //                 // height: 20,
-            //                 child: Icon(
-            //                   Icons.keyboard_arrow_up,
-            //                   color: Colors.white,
-            //                   size: 20,
-            //                 ),
-            //               ),
-            //             ),
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //     Container(
-            //       height: 90,
-            //       child: ListView.builder(
-            //         physics: const AlwaysScrollableScrollPhysics(),
-            //         controller: _controller,
-            //         scrollDirection: Axis.horizontal,
-            //         itemCount: draggableImages.length,
-            //         itemBuilder: (context, index) {
-            //           return EyesCard(
-            //             index: currentList + index,
-            //             onPress: () {
-            //               widget.updateEyesImg(draggableImages[index]);
-            //             },
-            //             imagePath: draggableImages[index],
-            //             eyesPossition: widget.eyesPossition,
-            //           );
-            //         },
-            //       ),
-            //     ),
-            //   ],
-            // )
           );
         },
       ),
