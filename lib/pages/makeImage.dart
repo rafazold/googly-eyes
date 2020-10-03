@@ -450,80 +450,107 @@ class _MakeImageState extends State<MakeImage> {
   }
 
   void handleFinish() {
-    if (!isVideoAnimated && !isAudioAnimated) {
-      print('finished with type static');
-      renderFinal('static').then((_) {
-        Navigator.pushNamed(context, '/result', arguments: {
-          'resultUrl': finalUrl,
-          'isVideo': false,
-          'videoFile': File(finalUrl),
-          'mimeType': 'image/png',
-          'fileExtension': 'png'
+    try {
+      if (!isVideoAnimated && !isAudioAnimated) {
+        print('finished with type static');
+        renderFinal('static@').then((_) {
+          Navigator.pushNamed(context, '/result', arguments: {
+            'resultUrl': finalUrl,
+            'isVideo': false,
+            'videoFile': File(finalUrl),
+            'mimeType': 'image/png',
+            'fileExtension': 'png'
+          });
+        }).catchError((onError) {
+          alert.textAlert(
+            context,
+            message: "Error on renderFinal-static: $onError",
+            closeButton: 'Close',
+          );
         });
-      });
-    } else if (!isVideoAnimated && isAudioAnimated) {
-      renderFinal('audioStatic').then((rc) {
-        print(
-            'finished with type audiostatic: res: $rc &&&&&& ${finalDetails['bgW']}');
-        if (rc == 0) {
-          Navigator.pushNamed(context, '/result', arguments: {
-            'resultUrl': finalUrl,
-            'isVideo': true,
-            'videoUrl': finalUrl,
-            'videoFile': File(finalUrl),
-            'bgW': makeIntEven(finalDetails['bgW']),
-            'bgH': makeIntEven(finalDetails['bgH']),
-            'mimeType': 'video/mp4',
-            'fileExtension': 'mp4'
-          });
-        }
-      });
-    } else if (isVideoAnimated && !isAudioAnimated) {
-      renderFinal('animated').then((rc) {
-        print('rc is $rc before');
-        print('finished with type animated');
-        if (rc == 0) {
-          print('rc is $rc after ifed');
-          Navigator.pushNamed(context, '/result', arguments: {
-            'resultUrl': finalUrl,
-            'isVideo': true,
-            'videoUrl': finalUrl,
-            'videoFile': File(finalUrl),
-            'bgW': makeIntEven(finalDetails['bgW']),
-            'bgH': makeIntEven(finalDetails['bgH']),
-            'mimeType': 'video/mp4',
-            'fileExtension': 'mp4'
-          });
-        }
-      });
-      // Navigator.pushNamed(context, '/result',
-      //     arguments: {'resultUrl': finalUrl, 'isVideo': false});
-    } else if (isVideoAnimated && isAudioAnimated) {
-      renderFinal('audioAnimated').then((rc) {
-        print('finished with type audioAnimated');
-        print('finished with type animated');
-        if (rc == 0) {
-          print('rc is $rc after ifed');
-          Navigator.pushNamed(context, '/result', arguments: {
-            'resultUrl': finalUrl,
-            'isVideo': true,
-            'videoUrl': finalUrl,
-            'videoFile': File(finalUrl),
-            'bgW': makeIntEven(finalDetails['bgW']),
-            'bgH': makeIntEven(finalDetails['bgH']),
-            'mimeType': 'video/mp4',
-            'fileExtension': 'mp4'
-          });
-        }
-      });
-      // Navigator.pushNamed(context, '/result',
-      //     arguments: {'resultUrl': finalUrl, 'isVideo': true});
+      } else if (!isVideoAnimated && isAudioAnimated) {
+        renderFinal('audioStatic').then((rc) {
+          print(
+              'finished with type audiostatic: res: $rc &&&&&& ${finalDetails['bgW']}');
+          if (rc == 0) {
+            Navigator.pushNamed(context, '/result', arguments: {
+              'resultUrl': finalUrl,
+              'isVideo': true,
+              'videoUrl': finalUrl,
+              'videoFile': File(finalUrl),
+              'bgW': makeIntEven(finalDetails['bgW']),
+              'bgH': makeIntEven(finalDetails['bgH']),
+              'mimeType': 'video/mp4',
+              'fileExtension': 'mp4'
+            });
+          }
+        }).catchError((onError) {
+          alert.textAlert(
+            context,
+            message: "Error on renderFinal-audioAnimated: $onError",
+            closeButton: 'Close',
+          );
+        });
+      } else if (isVideoAnimated && !isAudioAnimated) {
+        renderFinal('animated').then((rc) {
+          print('rc is $rc before');
+          print('finished with type animated');
+          if (rc == 0) {
+            print('rc is $rc after ifed');
+            Navigator.pushNamed(context, '/result', arguments: {
+              'resultUrl': finalUrl,
+              'isVideo': true,
+              'videoUrl': finalUrl,
+              'videoFile': File(finalUrl),
+              'bgW': makeIntEven(finalDetails['bgW']),
+              'bgH': makeIntEven(finalDetails['bgH']),
+              'mimeType': 'video/mp4',
+              'fileExtension': 'mp4'
+            });
+          }
+        }).catchError((onError) {
+          alert.textAlert(
+            context,
+            message: "Error on renderFinal-audio&video animated: $onError",
+            closeButton: 'Close',
+          );
+        });
+        // Navigator.pushNamed(context, '/result',
+        //     arguments: {'resultUrl': finalUrl, 'isVideo': false});
+      } else if (isVideoAnimated && isAudioAnimated) {
+        renderFinal('audioAnimated').then((rc) {
+          print('finished with type audioAnimated');
+          print('finished with type animated');
+          if (rc == 0) {
+            print('rc is $rc after ifed');
+            Navigator.pushNamed(context, '/result', arguments: {
+              'resultUrl': finalUrl,
+              'isVideo': true,
+              'videoUrl': finalUrl,
+              'videoFile': File(finalUrl),
+              'bgW': makeIntEven(finalDetails['bgW']),
+              'bgH': makeIntEven(finalDetails['bgH']),
+              'mimeType': 'video/mp4',
+              'fileExtension': 'mp4'
+            });
+          }
+        });
+        // Navigator.pushNamed(context, '/result',
+        //     arguments: {'resultUrl': finalUrl, 'isVideo': true});
+      }
+
+      // Navigator.pushNamed(context, '/share', arguments: passArguments);
+
+      print('FINISH: audioUrl: $audioPath, overlayUrl: $eyesImg');
+      // TODO: make ffmpeg magic, pass to new page for sending
+    } catch (e) {
+      alert.textAlert(
+        context,
+        message: "Error on handleFinish: $e",
+        closeButton: 'Close',
+      );
+      print('reset');
     }
-
-    // Navigator.pushNamed(context, '/share', arguments: passArguments);
-
-    print('FINISH: audioUrl: $audioPath, overlayUrl: $eyesImg');
-    // TODO: make ffmpeg magic, pass to new page for sending
   }
 
   @override
