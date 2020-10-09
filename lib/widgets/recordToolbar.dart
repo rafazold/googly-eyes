@@ -32,7 +32,6 @@ class _RecordToolbarState extends State<RecordToolbar> {
 
   @override
   void initState() {
-    print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>toolbar changed!!!');
     super.initState();
   }
 
@@ -51,8 +50,6 @@ class _RecordToolbarState extends State<RecordToolbar> {
 
   void startTimer() {
     _stopwatch = Stopwatch();
-    print(
-        'timer started !!!!!!!!!!!!!! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !  !  !  !  !  !  !  !  !  !  !   !   !   !   !   !    !     !     !      !     !');
     formatTime(Duration d) => d.toString().split('.').last.padLeft(8, "0");
     _stopwatch.reset();
     _stopwatch.start();
@@ -173,7 +170,6 @@ class _RecordToolbarState extends State<RecordToolbar> {
                           onPressed: () {
                             widget.addTextcallback();
                             widget.textFocusNode.requestFocus();
-                            print('hello now');
                           },
                           icon: Icon(
                             Icons.subtitles,

@@ -42,12 +42,12 @@ class _RecordSoundState extends State<RecordSound> {
 
   @override
   void dispose() {
-    print('audio recorder disposed &*&*&*&*&*&*&*&**&*&*&*&*&');
     audioRecorder
         .closeAudioSession()
         .then((_) => print('audio session closed'));
     audioRecorder = null;
     super.dispose();
+    cancelRecorderSubscriptions();
   }
 
   void checkPermissions() async {
@@ -60,9 +60,6 @@ class _RecordSoundState extends State<RecordSound> {
       setState(() {
         readyToRecord = true;
       });
-      print('++++++++++++++++++++++++++all ready');
-    } else {
-      print('somethings wrong here!');
     }
   }
 
@@ -95,20 +92,12 @@ class _RecordSoundState extends State<RecordSound> {
         print(e.duration);
         cancelRecorderSubscriptions();
         endRecording();
-        // if (e.duration > Duration(seconds: 1) &&
-        //     e.duration < Duration(seconds: 3)) {}
-        // DateTime date = new DateTime.fromMillisecondsSinceEpoch(
-        //     e.duration.inMilliseconds,
-        //     isUtc: true);
-        // String txt = DateFormat('mm:ss:SS', 'en_GB').format(date);
-        print('txt');
       }
     });
   }
 
   void endRecording() async {
     if (audioRecorder.isInited.toString() != 'Initialized.notInitialized') {
-      print('CHECKING THIS OUT!!! ${audioRecorder.isInited}');
       await audioRecorder.stopRecorder();
       audioRecorder.closeAudioSession();
       player
@@ -146,7 +135,6 @@ class _RecordSoundState extends State<RecordSound> {
       onLongPress: () {
         // widget.startRecordingCallback(true);
         startRecording();
-        print('should record: status: ');
       },
       onLongPressUp: endRecording,
       onTap: () {

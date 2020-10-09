@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class PopupAlert {
   void textAlert(BuildContext context,
       {String message, List<Widget> buttons, String closeButton}) {
-    print('this is an alert');
+    // print('this is an alert');
     List<Widget> actionButtons = buttons != null ? buttons : [];
 
     if (closeButton != null) {
@@ -35,7 +35,7 @@ class PopupAlert {
   void childAlert(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    print('dialog started');
+    // print('dialog started');
     showDialog(
       context: context,
       useRootNavigator: true,

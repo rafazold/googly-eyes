@@ -41,11 +41,9 @@ class _MakeImageState extends State<MakeImage> {
   double eyesBaseSize = 1.0;
   double eyesLastSize;
   List imagesLists = ['eyes', 'face'];
-  // List imagesLists = ['eyes', 'mouth', 'face', 'animation'];
   int currentList = 0;
   String tempDirPath;
   String assetsDirectory;
-  // String tempAnimatedImgOut;
   String audioPath;
   String imageText = '';
   FocusNode textFocus;
@@ -74,7 +72,6 @@ class _MakeImageState extends State<MakeImage> {
 
   @override
   void initState() {
-    // _getImagesForCards(imagesLists[currentList]);
     getTempDirPath().then((path) {
       setState(() {
         tempDirPath = path;
@@ -173,7 +170,7 @@ class _MakeImageState extends State<MakeImage> {
         // makeScreenShot()
         .then((imgFile) {
       decodeImageFromList(imgFile.readAsBytesSync()).then((asset) {
-        print('renderedStatic');
+        // print('renderedStatic');
         //TODO: set in state an instance of Googlyfied (type: audio/video/both/static, + details below)
         setState(() {
           finalDetails = {
@@ -189,13 +186,13 @@ class _MakeImageState extends State<MakeImage> {
           };
         });
       }).then((_) {
-        print('static rendered with details: $finalDetails');
+        // print('static rendered with details: $finalDetails');
       });
     });
   }
 
   void renderAnimation(String bgPath) {
-    print('S T E P ================      1');
+    // print('S T E P ================      1');
     RenderBox bgContainer = imageKey.currentContext.findRenderObject();
     Offset position = bgContainer.localToGlobal(Offset.zero);
     double xOffset = position.dx;
@@ -208,19 +205,19 @@ class _MakeImageState extends State<MakeImage> {
     double yOff = pos.dy;
     double wid = eyes.size.width * eyesScale;
     double hei = eyes.size.height * eyesScale;
-    print(
-        'x: $xOffset - y: $yOffset - width: $width - height: $height == x: $xOff == y: $yOff == w: $wid == h: $hei == scale: $eyesScale');
-    print('$assetsDirectory/$eyesImg');
+    // print(
+    //     'x: $xOffset - y: $yOffset - width: $width - height: $height == x: $xOff == y: $yOff == w: $wid == h: $hei == scale: $eyesScale');
+    // print('$assetsDirectory/$eyesImg');
     // copyFileAssets(
     //     arguments['imgFile'].path, '/animated.gif');
     //TODO: check if image is rendered in the session and if so pass the path rather than prepare the assets again.
     handleImages
         .copyAnimationFromAssetsToTemp(eyesImg, '/animated.png')
         .then((animatedEyesPath) {
-      print('S T E P ================      2');
+      // print('S T E P ================      2');
       takeScreenshot().then((imgFile) {
         // copyFileAssets(assetName, localName).then((imgFile) {
-        print('S T E P ================      3');
+        // print('S T E P ================      3');
         //TODO: set in state an instance of Googlyfied (type: audio/video/both/static, + details below)
         setState(() {
           finalDetails = {
@@ -250,18 +247,18 @@ class _MakeImageState extends State<MakeImage> {
       print('not editing');
       return;
     }
-    print('handleDone after if');
+    // print('handleDone after if');
     if (overlayPath.contains('animation')) {
       setState(() {
         isVideoAnimated = true;
       });
-      print('rendering A N I M A T E D: $overlayPath');
+      // print('rendering A N I M A T E D: $overlayPath');
       renderAnimation(bgPath);
     } else {
       setState(() {
         isVideoAnimated = false;
       });
-      print('rendering S T A T I C: $overlayPath');
+      // print('rendering S T A T I C: $overlayPath');
       renderStatic(bgPath);
     }
     setState(() {
@@ -271,7 +268,7 @@ class _MakeImageState extends State<MakeImage> {
   }
 
   void handleEdit() {
-    print('edit');
+    // print('edit');
     setState(() {
       editing = true;
       showRecordToolbar = false;
@@ -279,7 +276,7 @@ class _MakeImageState extends State<MakeImage> {
   }
 
   void handleHelp(context) {
-    print('hello');
+    // print('hello');
     alert.childAlert(context);
   }
 
@@ -310,7 +307,7 @@ class _MakeImageState extends State<MakeImage> {
     String timeStamp = (new DateTime.now().millisecondsSinceEpoch).toString();
     String videoUrl = '$tempDirPath/googly_video-$timeStamp.mp4';
     String gifUrl = '$tempDirPath/googly_video-$timeStamp.gif';
-    print('will make $type and details: $finalDetails');
+    // print('will make $type and details: $finalDetails');
     if (type == 'static') {
       setState(() {
         finalUrl = finalDetails['imgFile'].path;
@@ -326,14 +323,10 @@ class _MakeImageState extends State<MakeImage> {
         "1",
         "-c:v",
         "libx264",
-        // "-t",
-        // "15",
         "-pix_fmt",
         "yuv420p",
         "-vf",
-        // "-vsync",
-        // "0",
-        "scale=${makeMax(finalDetails['bgW'])}:-2",
+        "scale=${makeMax(makeIntEven(finalDetails['bgW']))}:-2",
         "$videoUrl"
       ];
       // TODO: fix scale & quality, compare with old addVoice
@@ -352,57 +345,18 @@ class _MakeImageState extends State<MakeImage> {
         "${finalDetails['eyesPath']}",
         "-filter_complex",
         "[0]scale=w=${makeIntEven(finalDetails['bgW'])}:h=${makeIntEven(finalDetails['bgH'])}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(finalDetails['eyW'])}:h=${makeIntEven(finalDetails['eyH'])}[eyes], [bg][eyes]overlay=${finalDetails['xOff']}:${finalDetails['yOff']}",
-        // "[0]scale=w=${makeIntEven(finalDetails['bgW'])}:h=${makeIntEven(finalDetails['bgH'])}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(finalDetails['eyW'])}:h=${makeIntEven(finalDetails['eyH'])}[scaled],[scaled]palettegen[palettegen], [palettegen]paletteuse[eyes], [bg][eyes]overlay=${finalDetails['xOff']}:${finalDetails['yOff']}",
         // TODO: if landscape does not solve it (need to implement yet), try passing if portrait or landscape and according to that transpose.
-        // "[0]transpose=dir=1:passthrough=portrait[bgTranspose], [bgTranspose]scale=w=${makeIntEven(bgW)}:h=${makeIntEven(bgH)}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(eyW)}:h=${makeIntEven(eyH)}[eyes], [bg][eyes]overlay=$xOff:$yOff",
-        // "-c:v",
-        // "libx264",
         "-t",
         "5",
-        // "-pix_fmt",
-        // "yuv420p",
         "-codec:a",
         "copy",
         "-preset",
         "veryslow",
         "-async",
         "1",
-        // "-crf",
-        // "17",
-        // "-shortest",
-        // "$gifUrl"
         "$videoUrl"
       ];
-      // arguments = [
-      //   "-i",
-      //   "${finalDetails['imgFile'].path}",
-      //   "-stream_loop",
-      //   "-1",
-      //   "-r",
-      //   "15",
-      //   "-i",
-      //   "${finalDetails['eyesPath']}",
-      //   "-filter_complex",
-      //   "[0]scale=w=${makeIntEven(finalDetails['bgW'])}:h=${makeIntEven(finalDetails['bgH'])}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(finalDetails['eyW'])}:h=${makeIntEven(finalDetails['eyH'])}[eyes], [bg][eyes]overlay=${finalDetails['xOff']}:${finalDetails['yOff']}",
-      //   // "[0]scale=w=${makeIntEven(finalDetails['bgW'])}:h=${makeIntEven(finalDetails['bgH'])}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(finalDetails['eyW'])}:h=${makeIntEven(finalDetails['eyH'])}[scaled],[scaled]palettegen[palettegen], [palettegen]paletteuse[eyes], [bg][eyes]overlay=${finalDetails['xOff']}:${finalDetails['yOff']}",
-      //   // TODO: if landscape does not solve it (need to implement yet), try passing if portrait or landscape and according to that transpose.
-      //   // "[0]transpose=dir=1:passthrough=portrait[bgTranspose], [bgTranspose]scale=w=${makeIntEven(bgW)}:h=${makeIntEven(bgH)}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(eyW)}:h=${makeIntEven(eyH)}[eyes], [bg][eyes]overlay=$xOff:$yOff",
-      //   // "-c:v",
-      //   // "libx264",
-      //   "-t",
-      //   "5",
-      //   // "-pix_fmt",
-      //   // "yuv420p",
-      //   // "-preset",
-      //   // "veryslow",
-      //   // "-crf",
-      //   // "17",
-      //   // "-shortest",
-      //   // "$gifUrl"
-      //   "$videoUrl"
-      // ];
       setState(() {
-        // finalUrl = gifUrl;
         finalUrl = videoUrl;
       });
     } else {
@@ -417,8 +371,6 @@ class _MakeImageState extends State<MakeImage> {
         "${finalDetails['eyesPath']}",
         "-filter_complex",
         "[0]${finalDetails['bgH'] >= finalDetails['bgW'] ? 'transpose=dir=1:passthrough=portrait[bgTranspose], [bgTranspose]' : ''}scale=w=${makeIntEven(finalDetails['bgW'])}:h=${makeIntEven(finalDetails['bgH'])}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(finalDetails['eyW'])}:h=${makeIntEven(finalDetails['eyH'])}[eyes], [bg][eyes]overlay=${finalDetails['xOff']}:${finalDetails['yOff']}",
-        // TODO: if landscape does not solve it (need to implement yet), try passing if portrait or landscape and according to that transpose.
-        // "[0]transpose=dir=1:passthrough=portrait[bgTranspose], [bgTranspose]scale=w=${makeIntEven(bgW)}:h=${makeIntEven(bgH)}[bg], [1]fps=25[fps],[fps]scale=w=${makeIntEven(eyW)}:h=${makeIntEven(eyH)}[eyes], [bg][eyes]overlay=$xOff:$yOff",
         "-i",
         "$audioPath",
         "-c:v",
@@ -438,22 +390,29 @@ class _MakeImageState extends State<MakeImage> {
         finalUrl = videoUrl;
       });
     }
-    print('arguments: $arguments');
+    // print('arguments: $arguments');
     int render =
         await _flutterFFmpeg.executeWithArguments(arguments).then((rc) {
-      print('ffmpeg completed with response :::::::::::: $rc');
+      // print('ffmpeg completed with response :::::::::::: $rc');
       return rc;
-    }).catchError((e) {
-      print('E R R O R :     $e');
     });
+    // .catchError((e) {
+    //   // sentry
+    //   // print('E R R O R :     $e');
+    //   // alert.textAlert(
+    //   //   context,
+    //   //   message: "Error on renderFinal-FFMPEG: $e - arguments: $arguments",
+    //   //   closeButton: 'Close',
+    //   // );
+    // });
     return render;
   }
 
   void handleFinish() {
     try {
       if (!isVideoAnimated && !isAudioAnimated) {
-        print('finished with type static');
-        renderFinal('static@').then((_) {
+        // print('finished with type static');
+        renderFinal('static').then((_) {
           Navigator.pushNamed(context, '/result', arguments: {
             'resultUrl': finalUrl,
             'isVideo': false,
@@ -470,8 +429,8 @@ class _MakeImageState extends State<MakeImage> {
         });
       } else if (!isVideoAnimated && isAudioAnimated) {
         renderFinal('audioStatic').then((rc) {
-          print(
-              'finished with type audiostatic: res: $rc &&&&&& ${finalDetails['bgW']}');
+          // print(
+          //     'finished with type audiostatic: res: $rc &&&&&& ${finalDetails['bgW']}');
           if (rc == 0) {
             Navigator.pushNamed(context, '/result', arguments: {
               'resultUrl': finalUrl,
@@ -493,10 +452,10 @@ class _MakeImageState extends State<MakeImage> {
         });
       } else if (isVideoAnimated && !isAudioAnimated) {
         renderFinal('animated').then((rc) {
-          print('rc is $rc before');
-          print('finished with type animated');
+          // print('rc is $rc before');
+          // print('finished with type animated');
           if (rc == 0) {
-            print('rc is $rc after ifed');
+            // print('rc is $rc after ifed');
             Navigator.pushNamed(context, '/result', arguments: {
               'resultUrl': finalUrl,
               'isVideo': true,
@@ -519,10 +478,10 @@ class _MakeImageState extends State<MakeImage> {
         //     arguments: {'resultUrl': finalUrl, 'isVideo': false});
       } else if (isVideoAnimated && isAudioAnimated) {
         renderFinal('audioAnimated').then((rc) {
-          print('finished with type audioAnimated');
-          print('finished with type animated');
+          // print('finished with type audioAnimated');
+          // print('finished with type animated');
           if (rc == 0) {
-            print('rc is $rc after ifed');
+            // print('rc is $rc after ifed');
             Navigator.pushNamed(context, '/result', arguments: {
               'resultUrl': finalUrl,
               'isVideo': true,
@@ -541,7 +500,7 @@ class _MakeImageState extends State<MakeImage> {
 
       // Navigator.pushNamed(context, '/share', arguments: passArguments);
 
-      print('FINISH: audioUrl: $audioPath, overlayUrl: $eyesImg');
+      // print('FINISH: audioUrl: $audioPath, overlayUrl: $eyesImg');
       // TODO: make ffmpeg magic, pass to new page for sending
     } catch (e) {
       alert.textAlert(
@@ -549,7 +508,7 @@ class _MakeImageState extends State<MakeImage> {
         message: "Error on handleFinish: $e",
         closeButton: 'Close',
       );
-      print('reset');
+      // print('reset');
     }
   }
 
@@ -609,7 +568,7 @@ class _MakeImageState extends State<MakeImage> {
                     child: Container(
                       child: GestureDetector(
                           onScaleStart: (details) {
-                            print('scale details::::: ----- $details');
+                            // print('scale details::::: ----- $details');
                           },
                           onScaleUpdate: (details) {
                             double scaleValue =
@@ -623,12 +582,12 @@ class _MakeImageState extends State<MakeImage> {
                             }
                           },
                           onScaleEnd: (details) {
-                            print('FINISHED!!! ------->>>> $details');
+                            // print('FINISHED!!! ------->>>> $details');
                             eyesBaseSize = eyesScale;
                           },
                           child: DragTarget<String>(
                             onWillAccept: (d) {
-                              print("on will accept: $editing");
+                              // print("on will accept: $editing");
                               return editing;
                             },
                             onAccept: (d) {
@@ -636,12 +595,12 @@ class _MakeImageState extends State<MakeImage> {
                                 showEyes = true;
                                 eyesImg = d;
                               });
-                              print("ACCEPT 2!: $d");
+                              // print("ACCEPT 2!: $d");
                             },
                             // TODO: use instead of callback for offset
                             onAcceptWithDetails: (details) {
-                              print(
-                                  'acceptWIthDetails = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ${details.offset}');
+                              // print(
+                              //     'acceptWIthDetails = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ${details.offset}');
                             },
                             builder: (context, list, list2) {
                               // TODO retry with repaintBoundary
@@ -668,8 +627,8 @@ class _MakeImageState extends State<MakeImage> {
                                           left: eyesPosX,
                                           child: Draggable<String>(
                                             onDragEnd: (details) {
-                                              print(
-                                                  'drag ended: ${details.offset} and accepted: ${details.wasAccepted}');
+                                              // print(
+                                              //     'drag ended: ${details.offset} and accepted: ${details.wasAccepted}');
                                               if (editing &&
                                                   details.wasAccepted) {
                                                 setState(() {
@@ -737,7 +696,7 @@ class _MakeImageState extends State<MakeImage> {
                                       // top: 50,
                                       child: TextField(
                                           onEditingComplete: () {
-                                            print('editComplete');
+                                            // print('editComplete');
                                             SystemChrome
                                                 .setEnabledSystemUIOverlays([]);
                                           },

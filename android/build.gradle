@@ -12,6 +12,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.google.gms:google-services:4.3.3'  // new
     }
 }
 
@@ -19,6 +20,11 @@ allprojects {
     repositories {
         google()
         jcenter()
+    }
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:deprecation"
+        }
     }
 }
 
