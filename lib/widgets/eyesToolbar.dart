@@ -25,11 +25,11 @@ class _EyesToolbarState extends State<EyesToolbar> {
   List draggableImages = [];
   // List imagesLists = ['eyes', 'mouth', 'face', 'animation'];
   List imagesLists = [
-    'eyes/color-2',
+    'eyes/color-7',
     'eyes/color-1',
+    'eyes/color-2',
     'eyes/color-3',
     'eyes/color-5',
-    'eyes/color-7',
     'face/face-6',
     'face/face-7'
   ];
@@ -38,7 +38,6 @@ class _EyesToolbarState extends State<EyesToolbar> {
 
   @override
   void initState() {
-    print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>HELLO MISTER!!!');
     _initImages(imagesLists[currentList]);
     super.initState();
   }
@@ -69,24 +68,17 @@ class _EyesToolbarState extends State<EyesToolbar> {
   }
 
   Future<String> getEyes() async {
-    print('#############################################');
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;
-
-    print('yoooooo: $appDocPath');
     return appDocPath;
   }
 
   void handleNextList() {
-    print('doing next');
     if (currentList + 1 < imagesLists.length) {
-      print('ifed');
       setState(() {
         currentList++;
       });
-      print(currentList);
     } else {
-      print('elsed');
       setState(() {
         currentList = 0;
       });
@@ -135,17 +127,25 @@ class _EyesToolbarState extends State<EyesToolbar> {
               isAlwaysShown: true,
               child: Row(
                 children: [
-                  StepProgressIndicator(
-                    totalSteps: imagesLists.length,
-                    currentStep: currentList + 1,
-                    direction: Axis.vertical,
-                    selectedColor: Color(0xffff724e),
-                    unselectedColor: Colors.white,
-                    // selectedColor: Colors.white,
-                    // unselectedColor: Color(0xffff724e),
-                    roundedEdges: Radius.circular(10),
-                    padding: 0,
-                    size: 5,
+                  Column(
+                    children: [
+                      Icon(Icons.arrow_drop_up),
+                      Expanded(
+                        child: StepProgressIndicator(
+                          totalSteps: imagesLists.length,
+                          currentStep: currentList + 1,
+                          direction: Axis.vertical,
+                          selectedColor: Color(0xffff724e),
+                          unselectedColor: Colors.white,
+                          // selectedColor: Colors.white,
+                          // unselectedColor: Color(0xffff724e),
+                          roundedEdges: Radius.circular(10),
+                          padding: 0,
+                          size: 5,
+                        ),
+                      ),
+                      Icon(Icons.arrow_drop_down),
+                    ],
                   ),
                   Expanded(
                     child: ListView.builder(

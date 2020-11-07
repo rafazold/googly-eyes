@@ -54,6 +54,7 @@ class _MakeImageState extends State<MakeImage> {
   bool isVideoAnimated = false;
   bool isAudioAnimated = false;
   bool editing = true;
+  bool screenshotFinished = true;
   bool showRecordToolbar = false;
   bool showTextField = false;
   Map finalDetails;
@@ -108,12 +109,23 @@ class _MakeImageState extends State<MakeImage> {
   }
 
 //TODO: pass to external class
-  Future<File> takeScreenshot() {
+  Future<File> takeScreenshot({bool static}) {
+    setState(() {
+      screenshotFinished = false;
+    });
     return screenshotController
-        .capture(delay: Duration(milliseconds: 10), pixelRatio: 3)
-        .then((File image) => image)
-        .catchError((onError) {
-      print('onError');
+        .capture(delay: Duration(milliseconds: 9), pixelRatio: 3)
+        // .then((File image) => image)
+        .then((File image) {
+      // print('getting closer');
+      if (static) {
+        setState(() {
+          screenshotFinished = true;
+        });
+      }
+      return image;
+    }).catchError((onError) {
+      // print('onError');
     });
   }
 
@@ -166,9 +178,11 @@ class _MakeImageState extends State<MakeImage> {
 
   void renderStatic(String bgPath) {
     // RenderBox box = imageKey.currentContext.findRenderObject();
-    takeScreenshot()
+    //TODO: FIX ME!!!
+    takeScreenshot(static: true)
         // makeScreenShot()
         .then((imgFile) {
+      // print('imgFile: ++++   $imgFile');
       decodeImageFromList(imgFile.readAsBytesSync()).then((asset) {
         // print('renderedStatic');
         //TODO: set in state an instance of Googlyfied (type: audio/video/both/static, + details below)
@@ -244,7 +258,7 @@ class _MakeImageState extends State<MakeImage> {
 
   void handleDone(String bgPath, String overlayPath) {
     if (!editing) {
-      print('not editing');
+      // print('not editing');
       return;
     }
     // print('handleDone after if');
@@ -258,7 +272,7 @@ class _MakeImageState extends State<MakeImage> {
       setState(() {
         isVideoAnimated = false;
       });
-      // print('rendering S T A T I C: $overlayPath');
+      print('rendering S T A T I C: $overlayPath');
       renderStatic(bgPath);
     }
     setState(() {
@@ -278,6 +292,14 @@ class _MakeImageState extends State<MakeImage> {
   void handleHelp(context) {
     // print('hello');
     alert.childAlert(context);
+  }
+
+  void pleaseWaitAlert(context) {
+    alert.textAlert(
+      context,
+      message: "please wait while we process your Looney image",
+      closeButton: 'Close',
+    );
   }
 
   // TODO: move to another class
@@ -306,7 +328,7 @@ class _MakeImageState extends State<MakeImage> {
     List<String> arguments;
     String timeStamp = (new DateTime.now().millisecondsSinceEpoch).toString();
     String videoUrl = '$tempDirPath/googly_video-$timeStamp.mp4';
-    String gifUrl = '$tempDirPath/googly_video-$timeStamp.gif';
+    // String gifUrl = '$tempDirPath/googly_video-$timeStamp.gif';
     // print('will make $type and details: $finalDetails');
     if (type == 'static') {
       setState(() {
@@ -503,11 +525,6 @@ class _MakeImageState extends State<MakeImage> {
       // print('FINISH: audioUrl: $audioPath, overlayUrl: $eyesImg');
       // TODO: make ffmpeg magic, pass to new page for sending
     } catch (e) {
-      alert.textAlert(
-        context,
-        message: "Error on handleFinish: $e",
-        closeButton: 'Close',
-      );
       // print('reset');
     }
   }
@@ -539,9 +556,16 @@ class _MakeImageState extends State<MakeImage> {
                               },
                             )
                           : PinkButton(
+                              enabled: screenshotFinished,
                               buttonText: ' Finish',
                               icon: Icons.done,
-                              callback: handleFinish),
+                              callback: screenshotFinished
+                                  ? handleFinish
+                                  : () {
+                                      pleaseWaitAlert(context);
+                                      throw new StateError(
+                                          'This is a Dart exception.');
+                                    }),
                       SizedBox(width: 10),
                       editing
                           ? Container()
