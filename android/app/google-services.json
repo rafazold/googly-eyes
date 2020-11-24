@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "147487789803",
+    "firebase_url": "https://looneycam-8e3e2.firebaseio.com",
+    "project_id": "looneycam-8e3e2",
+    "storage_bucket": "looneycam-8e3e2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:147487789803:android:5f23074e062ec2dfc7a4ae",
+        "android_client_info": {
+          "package_name": "com.looneycam.looneycam"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "147487789803-lc8l9lotfhubh4hst6gkq23fvl6m647h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.looneycam.looneycam",
+            "certificate_hash": "cc244a09da4eef5c66809133391dc1e8847fd9e0"
+          }
+        },
+        {
+          "client_id": "147487789803-fa5nvelmhv6nj15064cq9nurdpkbvkmt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHgQfs4TnPYIc_lcTBlT0phT-cBmtRM28"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "147487789803-fa5nvelmhv6nj15064cq9nurdpkbvkmt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
