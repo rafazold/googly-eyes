@@ -50,9 +50,3 @@ android/
 ios/
 .metadata
 .vscode/
-README.md
-lib/pages/loader.dart
-lib/pages/test.dart
-lib/providers/
-lib/widgets/recordVideo.dart
-pubspec.lock
